@@ -2,7 +2,7 @@ import fs from 'fs';
 import Papa from 'papaparse';
 import path from 'path';
 
-export function getUrlsFromCSV(page = 1, pageSize = 20) {
+export function getUrlsFromCSV(page = 1, pageSize = 15) {
   const filePath = path.join(process.cwd(), '/nyc_Domain_Registrations_20241115.csv');
   const fileContent = fs.readFileSync(filePath, 'utf8');
   
