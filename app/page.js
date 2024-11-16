@@ -90,7 +90,7 @@ const [query, setQuery] = useState('');
         ))}
       </div>
       ) : (
-        <p className="text-center">Loading...</p>
+        <p className="text-center">Loading some sweet, sweet data...</p>
       )}
 
       <div className="mt-12 flex items-center justify-center space-x-6">
