@@ -3,58 +3,78 @@ import Papa from 'papaparse';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTmO4zZCoQVROb9q_pRRLZG4voK03u3eIzAcsy69R9Q2bAqejFO41_1SzWSoA1m83p8HiNu3xJyiZ1J/pub?gid=1714697285&single=true&output=csv';
 
+let cachedData = null;
+let lastFetchedTime = 0;
+
+// Cache for 5 minutes (adjust as needed)
+const CACHE_DURATION_MS = 5 * 60 * 1000;
+
 export async function GET(request) {
-  try {
-    // Pagination and Search info from the request parameters
-    const page = parseInt(request.nextUrl.searchParams.get('page') || '1', 10);
-    const pageSize = parseInt(request.nextUrl.searchParams.get('pageSize') || '20', 10);
-    const searchQuery = request.nextUrl.searchParams.get('search')?.toLowerCase() || '';
-
-    // Pagination indices
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-
-    // Fetch the CSV content from the Google Sheets URL
-    const response = await fetch(GOOGLE_SHEET_CSV_URL, { method: 'GET' });
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
-    }
-
-    // Read the response as text (CSV content)
-    const csvText = await response.text();
-
-    // Parse the CSV data using PapaParse
-    const parsedData = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      // worker: true,
-    }).data;
+  // Pagination and Search info from the request parameters
+  const page = parseInt(request.nextUrl.searchParams.get('page') || '1', 10);
+  const pageSize = parseInt(request.nextUrl.searchParams.get('pageSize') || '15', 10);
+  const searchQuery = request.nextUrl.searchParams.get('search')?.toLowerCase() || '';
+  
+  const currentTime = Date.now();
+  
+  // Check if cached data is still valid
+  if (cachedData && currentTime - lastFetchedTime < CACHE_DURATION_MS) {
+    console.log('Using cached data');
 
     // Filter data based on search query if provided
     const filteredData = searchQuery
-      ? parsedData.filter((row) => row.url?.toLowerCase().includes(searchQuery))
-      : parsedData;
+    ? cachedData.filter((row) => row.url?.toLowerCase().includes(searchQuery))
+    : cachedData;
 
-    // console.log(filteredData);
-
-    // Pagination logic
-    const paginatedData = filteredData.slice(startIndex, endIndex);
-
-    // console.log(paginatedData);
-
-    // console.log(response);
-    // console.log(csvText);
-    // console.log(parsedData);
-
-    // Return the parsed data as a JSON response
-    return NextResponse.json({
-      urls: paginatedData,
-      total: filteredData.length,
-      currentPage: page,
-      totalPages: Math.ceil(filteredData.length / pageSize,
-    )});
-  } catch (error) {
-    console.error('Error fetching Google Sheet CSV:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return paginateData(filteredData, page, pageSize);
   }
+  
+    console.log("Fetching new data...");
+    try {
+      const data = await fetchCSVData();
+      cachedData = data;
+      lastFetchedTime = currentTime;
+
+      // Filter data based on search query if provided
+      const filteredData = searchQuery
+      ? cachedData.filter((row) => row.url?.toLowerCase().includes(searchQuery))
+      : cachedData;
+
+      return paginateData(filteredData, page, pageSize);
+    } catch (error) {
+      console.error('Error fetching Google Sheet CSV:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+async function fetchCSVData() {
+  const response = await fetch(GOOGLE_SHEET_CSV_URL);
+  if (!response.ok) throw new Error('Failed to fetch data');
+
+  // Read the response as text (CSV content)
+  const csvText = await response.text();
+
+  // Parse the CSV data using PapaParse
+  const parsedData = Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true,
+  }).data;
+
+  return parsedData;
+}
+
+// Handle pagination of data
+function paginateData(data, page, pageSize) {
+  // Pagination indices
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+
+  const paginatedData = data.slice(startIndex, endIndex);
+
+  return NextResponse.json({
+    urls: paginatedData,
+    total: data.length,
+    currentPage: page,
+    totalPages: Math.ceil(data.length / pageSize),
+  });
 }
