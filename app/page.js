@@ -5,25 +5,29 @@ import { useEffect, useState } from 'react';
 export default function Home() {
 const [urls, setUrls] = useState([]);
 const [page, setPage] = useState(1);
+// const [total, setTotal] = useState(0);
+const [totalPages, setTotalPages] = useState(1);
 const [pageSize] = useState(15);
-const [total, setTotal] = useState(0);
 const [search, setSearch] = useState('');
 const [query, setQuery] = useState('');
 
   // Fetch data from the server
   const fetchUrls = async (currentPage, currentQuery) => {
-    const res = await fetch(`/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`);
-    const { urls, total } = await res.json();
-    setUrls(urls);
-    setTotal(total);
+    try {
+      const res = await fetch(`/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`);
+      const result = await res.json();
+      setUrls(result.urls);
+      setTotalPages(result.totalPages);
+      // setTotal(total);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
 
   // Fetch data on initial load and when page changes
   useEffect(() => {
     fetchUrls(page, query);
   }, [page, query]);
-
-  const totalPages = Math.ceil(total / pageSize);
 
   // Pagination handlers
   const handleNextPage = () => {
@@ -65,6 +69,7 @@ const [query, setQuery] = useState('');
       </form>
 
       {/* URL Cards */}
+      {urls.length > 0 ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {urls.map((url, index) => (
            <a
@@ -84,6 +89,9 @@ const [query, setQuery] = useState('');
           </a>
         ))}
       </div>
+      ) : (
+        <p className="text-center">Loading...</p>
+      )}
 
       <div className="mt-12 flex items-center justify-center space-x-6">
         <button
