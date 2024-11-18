@@ -4,7 +4,7 @@ from populate_metadata import ensure_protocol, get_status_code, get_meta_data
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 
-csv_rows_schema = [
+CSV_ROWS_SCHEMA = [
     'url',
     'registration_date',
     'status_code',
@@ -62,9 +62,9 @@ def enrich_urls(input_csv_path, output_csv_path):
             if file_exists:
                 existing_data = pd.read_csv(output_csv_path)
             else:
-                existing_data = pd.DataFrame(columns=csv_rows_schema)
+                existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
         except FileNotFoundError:
-            existing_data = pd.DataFrame(columns=csv_rows_schema)
+            existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
 
         # Collect the list of URLs that have already been processed into the output file
         processed_urls = set(existing_data['url'])
