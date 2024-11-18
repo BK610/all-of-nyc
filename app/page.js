@@ -6,7 +6,6 @@ import Pagination from './components/pagination';
 export default function Home() {
 const [urls, setUrls] = useState([]);
 const [page, setPage] = useState(1);
-// const [total, setTotal] = useState(0);
 const [totalPages, setTotalPages] = useState(1);
 const [pageSize] = useState(15);
 const [search, setSearch] = useState('');
@@ -29,15 +28,6 @@ const [query, setQuery] = useState('');
   useEffect(() => {
     fetchUrls(page, query);
   }, [page, query]);
-
-  // Pagination handlers
-  const handleNextPage = () => {
-    if (page < totalPages) setPage((prev) => prev + 1);
-  };
-  
-  const handlePrevPage = () => {
-    if (page > 1) setPage((prev) => prev - 1);
-  };
 
   // Handle search submission
   const handleSearch = (e) => {
@@ -93,43 +83,6 @@ const [query, setQuery] = useState('');
       ) : (
         <p className="text-center">Loading some sweet, sweet data...</p>
       )}
-
-      {/* <div className="mt-12 flex items-center justify-center space-x-6">
-        <button
-          onClick={handlePrevPage}
-          disabled={page === 1}
-          className={`px-4 py-2 bg-nyc-orange dark:bg-nyc-blue text-white rounded-lg ${
-            page === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-700 dark:hover:bg-blue-700'
-          }`}
-        >
-          Previous
-        </button>
-        <span className="text-lg font-semibold">
-          Page
-        </span>
-        <input
-          type="integer"
-          value={page}
-          max="5000"
-          min={1}
-          step={1}
-          onChange={(e) => setPage(e.target.value)}
-          placeholder={page}
-          className="w-1/12 px-4 py-2 border border-nyc-light-gray dark:border-dark-card rounded-lg text-gray-900 placeholder-gray-500 dark:placeholder-gray-500 focus:outline-none focus:ring focus:ring-nyc-blue dark:focus:ring-nyc-orange"
-        />
-        <span className="text-lg font-semibold">
-          of {totalPages}
-        </span>
-        <button
-          onClick={handleNextPage}
-          disabled={page === totalPages}
-          className={`px-4 py-2 bg-nyc-orange dark:bg-nyc-blue text-white rounded-lg ${
-            page === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-700 dark:hover:bg-blue-700'
-          }`}
-        >
-          Next
-        </button>
-      </div> */}
       <Pagination
         currentPage={page}
         totalPages={totalPages}
