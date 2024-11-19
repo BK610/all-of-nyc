@@ -3,6 +3,7 @@ import pandas as pd
 from populate_metadata import ensure_protocol, get_status_code, get_meta_data
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
+import sys
 
 CSV_ROWS_SCHEMA = [
     'url',
@@ -104,12 +105,15 @@ def enrich_urls(input_csv_path, output_csv_path):
     except Exception as e:
         print(f"Error during processing: {e}")
 
-# Test files
-test_csv_path = 'test_file.csv' # Sample of ~100 rows from the real data
-test_output_path = 'test_output_file.csv' # Path to save enriched test data
+# # Test files
+# test_csv_path = 'test_file.csv' # Sample of ~100 rows from the real data
+# test_output_path = 'test_output_file.csv' # Path to save enriched test data
 
-# Real files
-real_csv_path = 'nyc_Domain_Registrations_20241115.csv'  # Path to your input CSV file
-real_output_path = 'output_urls_enriched.csv'  # Path to save enriched CSV file
+# # Real files
+# real_csv_path = 'nyc_Domain_Registrations_20241115.csv'  # Path to your input CSV file
+# real_output_path = 'output_urls_enriched.csv'  # Path to save enriched CSV file
 
-enrich_urls(test_csv_path, test_output_path)
+if __name__ == "__main__":
+    input_csv_path = sys.argv[1]
+    output_csv_path = sys.argv[2]
+    enrich_urls(input_csv_path, output_csv_path)
