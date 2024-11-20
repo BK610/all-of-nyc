@@ -41,3 +41,6 @@ next-env.d.ts
 
 # python local cache
 __pycache__
+
+# Jupyter notebook cache
+.ipynb_checkpoints/
