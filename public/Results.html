@@ -7520,7 +7520,17 @@ a.anchor-link {
 <p>The <code>.nyc</code> TLD is a bit of an outlier. There are only <a href="https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains#Geographic_top-level_domains">a handful of TLDs</a> that are used to indicate a specific geographic area that's <em>not</em> an entire country. Said another way, most cities or geographic areas don't have their own TLD. While it's easy for internet users to navigate, it's certainly not common practice for websites to use a geographically-focused TLD like <code>.nyc</code>.</p>
 <p>That said, I was curious exactly how <code>.nyc</code> has been used since its introduction as a generally-available TLD in 2014. Thankfully, <a href="https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data">NYC OpenData maintains an open data source for <code>.nyc</code> Domain Registrations</a> that can be used to understand the history and use of <code>.nyc</code> domains.</p>
 <p>This project is exploratory, without a particular hypothesis in mind. I'm aiming to understand and visualize <code>.nyc</code> TLD usage over time, and connect it to real-world events and trends when possible.</p>
-<h2 id="Quick-reference-on-URLs">Quick reference on URLs<a class="anchor-link" href="#Quick-reference-on-URLs">¶</a></h2><p>Before we get started, a quick background on URLs. Skip to the next section if you're already familiar, or use this as a reference as you read.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=8f3279e0">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Quick-reference-on-URLs">Quick reference on URLs<a class="anchor-link" href="#Quick-reference-on-URLs">¶</a></h2><p>Before we get started, some quick background on URLs. Skip to the next section if you're already familiar, or use this as a reference as you read.</p>
 <p>Websites are a set of content–text, images, interactive elements–located at a <strong>URL</strong> (Uniform Resource Locator), which is like a digital address. When we navigate to a URL in a web browser, we're requesting the data located at that address.</p>
 <p>Just like real-world geograph addresses, URLs have multiple components:</p>
 <ul>
@@ -7532,6 +7542,79 @@ a.anchor-link {
 <li><strong>Scheme</strong> - The beginning of a URL defines the <strong>Scheme</strong>, or the way that the browser needs to request the data at this URL. Most commonly this is <code>https</code> or <code>http</code> (the insecure version of <code>https</code>), which are the modern standard used to access website content. This could also be <code>mailto</code> for opening an email client, or <code>tel</code> for opening a phone call client.</li>
 </ul>
 <p><em>There's more to learn about URLs, and some things were simplified here, but we don't need more detail for this project. <a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL">See Mozilla's documentation for more information.</a></em></p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=31f73d7b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Why-.nyc">Why <code>.nyc</code><a class="anchor-link" href="#Why-.nyc">¶</a></h2><p>Anyone can register a domain name with a common TLD like <code>.com</code>, so why choose <code>.nyc</code>?</p>
+<p><a href="https://www.ownit.nyc/what-is-nyc">From the <code>.nyc</code> registration site</a>:</p>
+<blockquote>
+<h3 id="What-is-.nyc?">What is .nyc?<a class="anchor-link" href="#What-is-.nyc?">¶</a></h3><p>.nyc is The Official Web Address for New Yorkers. Anyone with a business, brand or residence within the five boroughs can register a .nyc domain name.</p>
+<p><strong>What does it mean to own a .nyc?</strong></p>
+<p>Own It. Our tagline is more than a call-to-action; it’s a state of mind. It’s the internal voice inside us: living, working, and creating, continually pushing to be the best.</p>
+<p><strong>Never settle.</strong></p>
+<p>New York City is the place where success takes many shapes and where there are countless ways to dream big. The .nyc extension provides infinite possibilities and a powerful way to use your location as proof of your value and success.</p>
+<p><strong>Stand out from the crowd.</strong></p>
+<p>Beyond having a physical street address or primary place of residence in the City, .nyc owners share a desire to be unforgettable, inspirational and above all, “make it” in New York.</p>
+</blockquote>
+<p>Let's find out if this is actually how <code>.nyc</code> domains are being used.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d6a6d38b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id=".nyc-Open-Data"><code>.nyc</code> Open Data<a class="anchor-link" href="#.nyc-Open-Data">¶</a></h2><p>The existing <a href="https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data">data on <code>.nyc</code> registrations from NYC Open Data</a> is available in multiple formats. For the sake of easily understanding and processing the data, we'll imagine it in a <code>CSV</code> file. There are three columns:</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Registration Date</th>
+<th>Nexus Category</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>caffeine.nyc</td>
+<td>12/23/2015 05:39:04 PM</td>
+<td>INDIV</td>
+</tr>
+<tr>
+<td>flirts.nyc</td>
+<td>02/18/2024 06:56:50 PM</td>
+<td>ORG</td>
+</tr>
+<tr>
+<td>aclipse.nyc</td>
+<td>01/04/2017 06:06:11 AM</td>
+<td>INDIV</td>
+</tr>
+<tr>
+<td>etc.</td>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<p><code>URL</code> is the domain name that was registered, and <code>Registration Date</code> is the date and time that the registration was made.</p>
+<h3 id="Nexus-Category">Nexus Category<a class="anchor-link" href="#Nexus-Category">¶</a></h3><p><code>Nexus Category</code> was a new one for me. Nexus Categories are primarily used to indicate the type of person or entity registering domains with the <code>.us</code> TLD. There are <a href="https://www.a2hosting.com/kb/getting-started-guide/registering-a-domain1/nexus-codes-and-us-domain-registration/">various options for each entity type</a>, generally categorized into personal/individual, business, and foreign entity registration.</p>
+<p><code>.nyc</code> domains simplify these categories to two:</p>
+<ul>
+<li><strong>INDIV</strong> - Described as, "Private individual with a physical NYC street address" on the domain registration form</li>
+<li><strong>ORG</strong> - Described as, "Corporation or charity with a physical NYC street address"</li>
+</ul>
+<p>This categorization is part of establishing proof of NYC presence by the registrant. I'm not sure how easily or strictly this is enforced, but I assume there are some legal complications</p>
+<p><a href="https://www.ownit.nyc/policies/nyc-nexus-policy">More on the <code>.nyc</code> Nexus Policy.</a></p>
 </div>
 </div>
 </div>
