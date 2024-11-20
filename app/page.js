@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import Pagination from './components/pagination';
 import NotebookEmbed from './components/notebookEmbed';
+import Search from './components/search';
 
 export default function Home() {
 const [urls, setUrls] = useState([]);
 const [page, setPage] = useState(1);
 const [totalPages, setTotalPages] = useState(1);
 const [pageSize] = useState(15);
-const [search, setSearch] = useState('');
 const [query, setQuery] = useState('');
 
   // Fetch data from the server
@@ -31,11 +31,10 @@ const [query, setQuery] = useState('');
   }, [page, query]);
 
   // Handle search submission
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setPage(1); // Reset to the first page on new search
+  const handleSearch = (search) => {
+    setPage(1); // Reset to the first page on search
     setQuery(search);
-  };
+  }
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-4">
@@ -45,21 +44,7 @@ const [query, setQuery] = useState('');
       </h1>
 
       {/* Search Form */}
-      <form onSubmit={handleSearch} className="mb-8 flex justify-center items-center gap-4">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search URLs..."
-          className="w-1/3 px-4 py-2 border border-nyc-light-gray rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring focus:ring-nyc-blue"
-        />
-        <button
-          type="submit"
-          className="px-4 py-2 bg-nyc-orange text-white rounded-lg hover:bg-orange-700 transition-colors"
-          >
-          Search
-        </button>
-      </form>
+      <Search onSearch={handleSearch}/>
 
       {/* URL Cards */}
       {urls.length > 0 ? (
