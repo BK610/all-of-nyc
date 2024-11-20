@@ -32,8 +32,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`px-4 py-2 bg-nyc-orange dark:bg-nyc-blue text-white rounded-lg ${
-            currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-700 dark:hover:bg-blue-700'
+          className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
+            currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-700'
           }`}      >
           Previous
         </button>
@@ -44,10 +44,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
             type="text"
             value={inputPage}
             onChange={handleInputChange}
-            className="w-16 text-center border border-gray-300 rounded-md p-2 dark:bg-gray-800 dark:text-white"
+            className="w-16 text-center border border-gray-300 rounded-md p-2"
           />
           <span> of {totalPages}</span>
-          <button type="submit" className="px-4 py-2 bg-nyc-orange dark:bg-nyc-blue text-white rounded-lg hover:bg-orange-700 dark:hover:bg-blue-700">
+          <button type="submit" className="px-4 py-2 bg-nyc-orange text-white rounded-lg hover:bg-orange-700">
             Go
           </button>
         </form>
@@ -55,8 +55,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`px-4 py-2 bg-nyc-orange dark:bg-nyc-blue text-white rounded-lg ${
-            currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-700 dark:hover:bg-blue-700'
+          className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
+            currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-700'
           }`}
         >
           Next
