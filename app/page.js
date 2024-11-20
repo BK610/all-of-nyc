@@ -94,7 +94,7 @@ const [query, setQuery] = useState('');
       </div>
       <NotebookEmbed
         src={"Results.html"}
-        fallbackUrl={"https://github.com/BK610/all-of-nyc/blob/main/Results.ipynb"}
+        fallbackUrl={"https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb"}
       />
     </div>
   );
