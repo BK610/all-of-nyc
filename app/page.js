@@ -8,6 +8,7 @@ import Search from './components/search';
 export default function Home() {
 const [urls, setUrls] = useState([]);
 const [page, setPage] = useState(1);
+const [total, setTotal] = useState(0);
 const [totalPages, setTotalPages] = useState(1);
 const [pageSize] = useState(15);
 const [query, setQuery] = useState('');
@@ -18,8 +19,8 @@ const [query, setQuery] = useState('');
       const res = await fetch(`/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`);
       const result = await res.json();
       setUrls(result.urls);
+      setTotal(result.total);
       setTotalPages(result.totalPages);
-      // setTotal(total);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -42,10 +43,12 @@ const [query, setQuery] = useState('');
       <h1 className="text-3xl font-bold text-nyc-blue text-center mb-8">
         All of .nyc
       </h1>
-
       {/* Search Form */}
       <Search onSearch={handleSearch}/>
 
+      <p className='text-center mb-2'>
+        Found {total} URLs
+      </p>
       {/* URL Cards */}
       {urls.length > 0 ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -61,7 +64,6 @@ const [query, setQuery] = useState('');
              {url.url}
            </h2>
             <p className="text-gray-600 mt-2">
-              {/* Display additional metadata here*/}
               Registered: {url.registration_date}
             </p>
           </a>
@@ -75,7 +77,6 @@ const [query, setQuery] = useState('');
         totalPages={totalPages}
         onPageChange={(page) => setPage(page)}
         />
-      <h2></h2>
       </div>
       <NotebookEmbed
         src={"Results.html"}
