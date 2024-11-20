@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Pagination from './components/pagination';
+import NotebookEmbed from './components/notebookEmbed';
 
 export default function Home() {
 const [urls, setUrls] = useState([]);
@@ -38,7 +39,8 @@ const [query, setQuery] = useState('');
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-bold text-nyc-blue dark:text-white text-center mb-8">
+    <div className="border-b-2 pb-6">
+      <h1 className="text-3xl font-bold text-nyc-blue text-center mb-8">
         All of .nyc
       </h1>
 
@@ -49,11 +51,11 @@ const [query, setQuery] = useState('');
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search URLs..."
-          className="w-1/3 px-4 py-2 border border-nyc-light-gray dark:border-dark-card rounded-lg text-gray-900 placeholder-gray-500 dark:placeholder-gray-500 focus:outline-none focus:ring focus:ring-nyc-blue dark:focus:ring-nyc-orange"
+          className="w-1/3 px-4 py-2 border border-nyc-light-gray rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring focus:ring-nyc-blue"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-nyc-orange dark:bg-nyc-blue text-white rounded-lg hover:bg-orange-700 dark:hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-nyc-orange text-white rounded-lg hover:bg-orange-700 transition-colors"
           >
           Search
         </button>
@@ -68,12 +70,12 @@ const [query, setQuery] = useState('');
            href={url.url}
            target="_blank"
            rel="noopener noreferrer"
-           className="block bg-white dark:bg-dark-card shadow-lg rounded-lg p-6 border border-gray-200 dark:border-nyc-light-gray transition-transform transform hover:scale-105 hover:shadow-xl"
+           className="block bg-white shadow-lg rounded-lg p-6 border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl"
          >
-           <h2 className="text-nyc-blue dark:text-soft-blue text-xl font-semibold mb-2">
+           <h2 className="text-nyc-blue text-xl font-semibold mb-2">
              {url.url}
            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mt-2">
+            <p className="text-gray-600 mt-2">
               {/* Display additional metadata here*/}
               Registered: {url.registration_date}
             </p>
@@ -88,7 +90,12 @@ const [query, setQuery] = useState('');
         totalPages={totalPages}
         onPageChange={(page) => setPage(page)}
         />
-
+      <h2></h2>
+      </div>
+      <NotebookEmbed
+        src={"Results.html"}
+        fallbackUrl={"https://github.com/BK610/all-of-nyc/blob/main/Results.ipynb"}
+      />
     </div>
   );
 }
