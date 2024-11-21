@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 const NotebookEmbed = ({src, fallbackUrl}) => {
   const [html, setHtml] = useState('');
 
-  console.log(src);
+  // console.log(src);
 
   useEffect(() => {
     fetch(src)
       .then((response) => response.text())
       .then((data) => setHtml(data));
-  }, []);
+  }, [src]);
 
   return (
     <div className="w-full py-10">
