@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Pagination from './components/pagination';
 import NotebookEmbed from './components/notebookEmbed';
 import Search from './components/search';
@@ -14,22 +14,25 @@ const [pageSize] = useState(15);
 const [query, setQuery] = useState('');
 
   // Fetch data from the server
-  const fetchUrls = async (currentPage, currentQuery) => {
-    try {
-      const res = await fetch(`/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`);
-      const result = await res.json();
-      setUrls(result.urls);
-      setTotal(result.total);
-      setTotalPages(result.totalPages);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+  const fetchUrls = useCallback(
+    async (currentPage, currentQuery) => {
+      try {
+        const res = await fetch(`/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`);
+        const result = await res.json();
+        setUrls(result.urls);
+        setTotal(result.total);
+        setTotalPages(result.totalPages);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
+    [pageSize]
+  );
 
   // Fetch data on initial load and when page changes
   useEffect(() => {
     fetchUrls(page, query);
-  }, [page, query]);
+  }, [fetchUrls, page, query]);
 
   // Handle search submission
   const handleSearch = (search) => {
