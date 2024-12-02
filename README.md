@@ -1,36 +1,18 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# What's up with `.nyc`
 
-## Getting Started
+All websites have a top-level domain (TLD) that is used to indicate the purpose of the website. For example, `.com`, `.org`, `.sucks`, `.io`, and many others.
 
-First, run the development server:
+The `.nyc` TLD is a bit of an outlier. There are only [a handful of TLDs](https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains#Geographic_top-level_domains) that are used to indicate a specific geographic area that's *not* an entire country. Said another way, most cities or geographic areas don't have their own TLD. While it's easy for internet users to navigate, it's certainly not common practice for websites to use a geographically-focused TLD like `.nyc`.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+That said, I was curious exactly how `.nyc` has been used since its introduction as a generally-available TLD in 2014. Thankfully, [NYC OpenData maintains an open data source for `.nyc` Domain Registrations](https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data) that can be used to understand the history and use of `.nyc` domains.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This project is exploratory, without a particular hypothesis in mind. I'm aiming to understand and visualize `.nyc` TLD usage over time, and connect it to real-world events and trends when possible.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### See [Results.ipynb](https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb) for more information.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Built with
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [NYC Open Data](https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data) - Official source for `.nyc` data, and 1500 other data sets.
+- [Jupyter Notebook](https://jupyter.org/) - "The Jupyter Notebook is the original web application for creating and sharing computational documents. It offers a simple, streamlined, document-centric experience." Python-based 
+- [Python](https://www.python.org/) - Programming language used for enriching and processing the data.
+- [Next.js](https://nextjs.org/) - React framework used for building the web app.
