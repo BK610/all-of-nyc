@@ -12,7 +12,7 @@ This project is exploratory, without a particular hypothesis in mind. I'm aiming
 
 ## Built with
 
-- [NYC Open Data](https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data) - Official source for `.nyc` data, and 1500 other data sets.
-- [Jupyter Notebook](https://jupyter.org/) - "The Jupyter Notebook is the original web application for creating and sharing computational documents. It offers a simple, streamlined, document-centric experience." Python-based 
+- [NYC Open Data](https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data) - Official source for `.nyc` data, and 3000+ other data sets.
+- [Jupyter Notebook](https://jupyter.org/) - "The Jupyter Notebook is the original web application for creating and sharing computational documents. It offers a simple, streamlined, document-centric experience."
 - [Python](https://www.python.org/) - Programming language used for enriching and processing the data.
 - [Next.js](https://nextjs.org/) - React framework used for building the web app.
