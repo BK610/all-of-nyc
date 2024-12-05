@@ -101,6 +101,8 @@ def enrich_urls(input_csv_path, output_csv_path):
             )
             print(f"Successfully processed: {row['url']}")
             file_exists = True  # Set to True after first write if file was created
+        
+        print(f"Finished processing all of: {input_csv_path}")
 
     except Exception as e:
         print(f"Error during processing: {e}")
