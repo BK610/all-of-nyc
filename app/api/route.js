@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import Papa from 'papaparse';
 
-const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTmO4zZCoQVROb9q_pRRLZG4voK03u3eIzAcsy69R9Q2bAqejFO41_1SzWSoA1m83p8HiNu3xJyiZ1J/pub?gid=1714697285&single=true&output=csv';
+const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTmO4zZCoQVROb9q_pRRLZG4voK03u3eIzAcsy69R9Q2bAqejFO41_1SzWSoA1m83p8HiNu3xJyiZ1J/pub?gid=1960351903&single=true&output=csv';
 
 let cachedData = null;
 let lastFetchedTime = 0;
