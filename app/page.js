@@ -58,7 +58,7 @@ const [query, setQuery] = useState('');
         {urls.map((url, index) => (
            <a
            key={index}
-           href={url.url}
+           href={url.final_url ? url.final_url : ""}
            target="_blank"
            rel="noopener noreferrer"
            className="block bg-white shadow-lg rounded-lg p-6 border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl"
