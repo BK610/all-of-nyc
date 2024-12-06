@@ -53,6 +53,11 @@ export default function Home() {
         <Search onSearch={handleSearch} />
 
         <p className="text-center mb-2">Found {total} URLs</p>
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={(page) => setPage(page)}
+        />
         {/* URL Cards */}
         {urls.length > 0 ? ( // grid-cols-1 md:grid-cols-2 lg:grid-cols-3
           <div
@@ -67,11 +72,6 @@ export default function Home() {
         ) : (
           <p className="text-center">Loading some sweet, sweet data...</p>
         )}
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={(page) => setPage(page)}
-        />
       </div>
       <NotebookEmbed
         src={"Results.html"}
