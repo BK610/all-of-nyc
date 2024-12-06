@@ -52,7 +52,7 @@ export async function GET(request) {
 }
 
 async function fetchCSVData() {
-  const response = await fetch(GOOGLE_SHEET_CSV_URL);
+  const response = await fetch(GOOGLE_SHEET_URL);
   if (!response.ok) throw new Error("Failed to fetch data");
 
   // Read the response as text (CSV content)
