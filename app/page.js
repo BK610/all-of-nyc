@@ -59,7 +59,7 @@ export default function Home() {
           onPageChange={(page) => setPage(page)}
         />
         {/* URL Cards */}
-        {urls.length > 0 ? ( // grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+        {urls.length > 0 ? (
           <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
             {urls.map((url, index) => (
               <Card key={index} url={url} />
