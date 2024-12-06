@@ -46,9 +46,12 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto py-10 px-4">
       <div className="border-b-2 pb-6">
-        <h1 className="text-3xl font-bold text-nyc-blue text-center mb-8">
+        <h1 className="text-3xl font-bold text-nyc-blue text-center mb-2">
           All of .nyc
         </h1>
+        <p className="text-center mb-4">
+          Discover how .nyc domains are being used.
+        </p>
         {/* Search Form */}
         <Search onSearch={handleSearch} />
 
