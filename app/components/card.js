@@ -24,19 +24,25 @@ const Card = ({ url }) => {
       href={found_url ? url.final_url : ""} // Set href to "" if found_url is false
       target={found_url ? "_blank" : ""} // Set target to "" if found_url is false
       rel="noopener noreferrer"
-      className={`block bg-white shadow-lg rounded-lg p-6 border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl
+      className={`block bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl
         ${found_url ? "" : "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
     >
       {found_image ? <img className="w-full border-b-2" src={url.image} /> : ""}
-      <h2 className="text-nyc-blue text-xl font-semibold mb-2">
-        {url.url}&nbsp;
-        {found_url ? "✅" : "💀"}
-      </h2>
-      <p className="">Title: {url.title}</p>
-      <p className="line-clamp-3">Description: {url.description}</p>
-      <p className="text-gray-600 mt-2 pt-1 w-full border-t-2">
-        Registered: {url.registration_date}
-      </p>
+      <div className="p-6">
+        <h2 className="text-nyc-blue text-xl font-semibold mb-2">
+          {url.url}&nbsp;
+          {found_url ? "✅" : "💀"}
+        </h2>
+        <p className="mb-1">
+          <b>Title:</b> {found_url ? url.title : "N/A"}
+        </p>
+        <p className="mb-1 line-clamp-3">
+          <b>Description:</b> {found_url ? url.description : "N/A"}
+        </p>
+        <p className="text-gray-600 pt-1 w-full border-t-2">
+          Registered: {url.registration_date}
+        </p>
+      </div>
     </a>
   );
 };
