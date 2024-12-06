@@ -8,10 +8,19 @@ const Card = ({ url }) => {
     url.final_url == "Not found"
   );
 
+  // Not using this for now. There are too many false negatives
+  //   for URLs that have bad status codes but still work.
   // Check if the status code is 2xx or 3xx, indicating a success
-  let status_code_success =
-    url.status_code.substring(0, 1) == 2 ||
-    url.status_code.substring(0, 1) == 3;
+  // let status_code_success =
+  //   url.status_code.substring(0, 1) == 2 ||
+  //   url.status_code.substring(0, 1) == 3;
+
+  // Check if we successfully got an Open Graph title
+  let found_title = !(
+    !url.title ||
+    url.title == "Error" ||
+    url.title == "Not found"
+  );
 
   // Check if we successfully got an Open Graph image
   let found_image = !(
@@ -29,10 +38,10 @@ const Card = ({ url }) => {
         ${found_url ? "" : "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
     >
       {found_image ? <img className="w-full border-b-2" src={url.image} /> : ""}
-      <div className="p-6">
+      <div className="p-5 whitespace-pre">
         <h2 className="text-nyc-blue text-xl font-semibold mb-2">
           {url.url}&nbsp;
-          {found_url ? "✅" : "💀"}
+          {found_url ? <>{found_title ? "✅" : "❓"}</> : "💀"}
         </h2>
         <p className="mb-1">
           <b>Title:</b> {found_url ? url.title : "N/A"}
@@ -41,6 +50,8 @@ const Card = ({ url }) => {
           <b>Description:</b> {found_url ? url.description : "N/A"}
         </p>
         <p className="text-gray-600 pt-2 w-full border-t-2">
+          Final URL: {url.final_url}
+          <br />
           Registered: {url.registration_date}
         </p>
       </div>
