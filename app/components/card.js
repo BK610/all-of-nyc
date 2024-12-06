@@ -1,4 +1,6 @@
 const Card = ({ url }) => {
+  if (!url) return null; // Handle null or undefined objects gracefully
+
   return (
     <a
       href={url.final_url ? url.final_url : ""}
