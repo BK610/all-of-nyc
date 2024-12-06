@@ -19,7 +19,7 @@ const Search = ({ onSearch }) => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search URLs..."
-        className="w-8/12 md:w-1/3 px-4 py-2 border border-nyc-light-gray rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring focus:ring-nyc-blue"
+        className="w-8/12 md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500"
       />
       <button
         type="submit"
