@@ -24,7 +24,7 @@ const Card = ({ url }) => {
       href={found_url ? url.final_url : ""} // Set href to "" if found_url is false
       target={found_url ? "_blank" : ""} // Set target to "" if found_url is false
       rel="noopener noreferrer"
-      className={`block bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl
+      className={`inline-block w-full mb-4 overflow-hidden bg-white shadow-lg rounded-lg border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl
         ${found_url ? "" : "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
     >
       {found_image ? <img className="w-full border-b-2" src={url.image} /> : ""}
@@ -39,7 +39,7 @@ const Card = ({ url }) => {
         <p className="mb-1 line-clamp-3">
           <b>Description:</b> {found_url ? url.description : "N/A"}
         </p>
-        <p className="text-gray-600 pt-1 w-full border-t-2">
+        <p className="text-gray-600 pt-2 w-full border-t-2">
           Registered: {url.registration_date}
         </p>
       </div>
