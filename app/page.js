@@ -54,8 +54,12 @@ export default function Home() {
 
         <p className="text-center mb-2">Found {total} URLs</p>
         {/* URL Cards */}
-        {urls.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {urls.length > 0 ? ( // grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+          <div
+            className="columns-1 md:columns-2 lg:columns-3
+          
+           gap-5"
+          >
             {urls.map((url, index) => (
               <Card key={index} url={url} />
             ))}
