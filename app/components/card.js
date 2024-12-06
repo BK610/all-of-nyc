@@ -37,7 +37,16 @@ const Card = ({ url }) => {
       className={`inline-block w-full mb-4 overflow-hidden bg-white shadow-lg rounded-lg border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl
         ${found_url ? "" : "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
     >
-      {found_image ? <img className="w-full border-b-2" src={url.image} /> : ""}
+      {found_image ? (
+        <div className="w-full">
+          <img
+            className="object-cover w-full h-52 border-b-2"
+            src={url.image}
+          />
+        </div>
+      ) : (
+        ""
+      )}
       <div className="p-5">
         <h2 className="text-nyc-blue text-xl font-semibold mb-2">
           {url.url}&nbsp;
