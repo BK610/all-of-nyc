@@ -1,23 +1,24 @@
 const Card = ({ url }) => {
   if (!url) return null; // Handle null or undefined objects gracefully
 
-  let found_url = true;
-
   // Check if we successfully got info about the URL
-  if (
+  let found_url = !(
     !url.final_url ||
     url.final_url == "Error" ||
     url.final_url == "Not found"
-  ) {
-    found_url = false;
-  }
+  );
 
-  let found_image = true;
+  // Check if the status code is 2xx or 3xx, indicating a success
+  let status_code_success =
+    url.status_code.substring(0, 1) == 2 ||
+    url.status_code.substring(0, 1) == 3;
 
   // Check if we successfully got an Open Graph image
-  if (!url.image || url.image == "Error" || url.image == "Not found") {
-    found_image = false;
-  }
+  let found_image = !(
+    !url.image ||
+    url.image == "Error" ||
+    url.image == "Not found"
+  );
 
   return (
     <a
