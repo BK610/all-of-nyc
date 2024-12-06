@@ -38,7 +38,7 @@ const Card = ({ url }) => {
         ${found_url ? "" : "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
     >
       {found_image ? <img className="w-full border-b-2" src={url.image} /> : ""}
-      <div className="p-5 whitespace-pre">
+      <div className="p-5">
         <h2 className="text-nyc-blue text-xl font-semibold mb-2">
           {url.url}&nbsp;
           {found_url ? <>{found_title ? "✅" : "❓"}</> : "💀"}
