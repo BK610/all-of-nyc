@@ -1,3 +1,7 @@
+/** Code Feedback - Good enapasulation; Consider a more precise name
+ *
+ * The name "Card" sounds like a generic. "DomainCard" or "UrlCard" might be more descriptive.
+ */
 const Card = ({ url }) => {
   if (!url) return null; // Handle null or undefined objects gracefully
 
@@ -7,6 +11,20 @@ const Card = ({ url }) => {
     url.final_url == "Error" ||
     url.final_url == "Not found"
   );
+  /** Code Feedback - great use of using intermediate variables
+   *
+   * I really like using that you're encapsulating the logic for checking if the URL is found
+   * in a variable. It makes the code easier to read and understand.
+   *
+   * One pattern that's common for naming these variables is to use the word "is" or "has" at the beginning.
+   * For example, you could name this variable "isUrlFound" or "hasUrl".
+   *
+   * "found_url" is pretty good, but it seems like it could also be a string, like it's the url you found.
+   *
+   * The "is" pattern is common so it's something another developer would understand quickly.
+   *
+   * (remove the comments above them, though. Your great names are enough.)
+   */
 
   // Not using this for now. There are too many false negatives
   //   for URLs that have bad status codes but still work.
@@ -28,6 +46,19 @@ const Card = ({ url }) => {
     url.image == "Error" ||
     url.image == "Not found"
   );
+
+  /** Musings
+   *
+   * One risk of leaving overly verbose comments in place is that it
+   * can kind of look like you might have used copilot to write the code.
+   *
+   * Like one thing I have done is write a comment, let copilot write the code,
+   * review it, and remove the comment.
+   *
+   * I think doing it this way is ok, but it's good to remove the comments because they
+   * are no longer needed. Also, I think if someone is evaluating a junior engineer's code,
+   * they want to be sure that you wrote the code yourself and understand it.
+   */
 
   return (
     <a
