@@ -95,7 +95,6 @@ export default function Home() {
     <div className="max-w-6xl mx-auto py-10 px-4">
       <div className="border-b-2 pb-6">
         <HomeHeader />
-        {/* Search Form */}
         <Search onSearch={handleSearch} />
 
         <p className="text-center mb-2">Found {total} URLs</p>
