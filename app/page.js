@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Search from "./components/search";
-import Card from "./components/card";
+import DomainCard from "./components/card";
 import Pagination from "./components/pagination";
 import NotebookEmbed from "./components/notebookEmbed";
 
@@ -19,7 +19,7 @@ export default function Home() {
     async (currentPage, currentQuery) => {
       try {
         const res = await fetch(
-          `/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`,
+          `/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`
         );
         const result = await res.json();
         setUrls(result.urls);
@@ -29,7 +29,7 @@ export default function Home() {
         console.error("Error fetching data:", error);
       }
     },
-    [pageSize],
+    [pageSize]
   );
 
   // Fetch data on initial load and when page changes
@@ -113,7 +113,7 @@ export default function Home() {
         {urls.length > 0 ? (
           <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
             {urls.map((url, index) => (
-              <Card key={index} url={url} />
+              <DomainCard key={index} url={url} />
             ))}
           </div>
         ) : (
