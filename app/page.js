@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Search from "./components/search";
-import DomainCard from "./components/card";
+import DomainCard from "./components/domainCard";
 import Pagination from "./components/pagination";
 import NotebookEmbed from "./components/notebookEmbed";
 
