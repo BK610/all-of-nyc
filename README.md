@@ -1,5 +1,7 @@
 # What's up with `.nyc`
 
+### 🔗 [See it live at allof.nyc](https://allof.nyc/).
+
 All websites have a top-level domain (TLD) that is used to indicate the purpose of the website. For example, `.com`, `.org`, `.sucks`, `.io`, and many others.
 
 The `.nyc` TLD is a bit of an outlier. There are only [a handful of TLDs](https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains#Geographic_top-level_domains) that are used to indicate a specific geographic area that's _not_ an entire country. Said another way, most cities or geographic areas don't have their own TLD. While it's easy for internet users to navigate, it's certainly not common practice for websites to use a geographically-focused TLD like `.nyc`.
@@ -7,8 +9,6 @@ The `.nyc` TLD is a bit of an outlier. There are only [a handful of TLDs](https:
 That said, I was curious exactly how `.nyc` has been used since its introduction as a generally-available TLD in 2014. Thankfully, [NYC OpenData maintains an open data source for `.nyc` Domain Registrations](https://data.cityofnewyork.us/Business/-nyc-Domain-Registrations/9cw8-7heb/about_data) that can be used to understand the history and use of `.nyc` domains.
 
 This project is exploratory, without a particular hypothesis in mind. I'm aiming to understand and visualize `.nyc` TLD usage over time, and connect it to real-world events and trends when possible.
-
-### See it live at [allof.nyc](https://allof.nyc/).
 
 ### See [Results.ipynb](https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb) for more information.
 
