@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 
-def ensure_protocol(url):
+def ensure_valid_protocol(url):
     """Ensure the URL starts with 'http://' or 'https://'."""
     if not url.startswith(('http://', 'https://')):
         return 'https://' + url
