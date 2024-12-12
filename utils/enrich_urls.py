@@ -1,15 +1,17 @@
 import requests
 import pandas as pd
-from populate_metadata import ensure_protocol, get_status_code, get_meta_data, get_status_code_async, get_meta_data_async
+from populate_metadata import ensure_protocol, get_status_code, get_meta_data, get_meta_data_v2
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
 import asyncio
 import argparse
+import time
 
 CSV_ROWS_SCHEMA = [
     'url',
     'registration_date',
+    'nexus_category',
     'status_code',
     'final_url',
     'title',
@@ -30,7 +32,7 @@ def setup_session():
 
     return session
 
-def append_to_csv_from_dataframe(row, file_path, file_exists):
+def append_to_csv(row, file_path, file_exists):
     pd.DataFrame([row]).to_csv(
         file_path,
         mode='a',
@@ -100,7 +102,7 @@ def enrich_urls(input_csv_path, output_csv_path):
             enriched_row = enrich_url(row['url'], row['registration_date'], session)
 
             # Convert enriched data to DataFrame and save it
-            print(enriched_row)
+            # print(enriched_row)
             pd.DataFrame([enriched_row]).to_csv(
                 output_csv_path,
                 mode='a',
@@ -108,7 +110,7 @@ def enrich_urls(input_csv_path, output_csv_path):
                 header=not file_exists, # Write header only if file doesn't exist
                 index=False
             )
-            print(f"Successfully processed: {row['url']}")
+            print(f"Finished processing: {row['url']}")
             file_exists = True  # Set to True after first write if file was created
         
         print(f"Finished processing all of: {input_csv_path}")
@@ -117,9 +119,10 @@ def enrich_urls(input_csv_path, output_csv_path):
         print(f"Error during processing: {e}")
 
 async def process_urls(input_data, session, processed_urls, output_csv_path, file_exists):
+    sem = asyncio.Semaphore(5)
 
     tasks_test = [
-        enrich_url_async(row['url'], row['registration_date'], row['nexus_category'], session)
+        enrich_url_async(row['url'], row['registration_date'], row['nexus_category'], session, sem)
         for index, row in input_data.iterrows()
         if row['url'] not in processed_urls
     ]
@@ -127,86 +130,63 @@ async def process_urls(input_data, session, processed_urls, output_csv_path, fil
     async for task in asyncio.as_completed(tasks_test):
         result = await task
         if result:
-            append_to_csv_from_dataframe(result, output_csv_path, file_exists)
+            append_to_csv(result, output_csv_path, file_exists)
             file_exists = True
-            
-    # tasks = []
 
-    # for index, row in input_data.iterrows():
-    #     if row['url'] in processed_urls:
-    #         continue
-        
-    #     print('process_urls:', row['url'])
-
-    #     tasks.append(enrich_url_async(row['url'], row['registration_date'], row['nexus_category'], session))
-
-    # results = await asyncio.gather(*tasks)
-
-    # print("results:", results)
-
-    # pd.DataFrame(results).to_csv(
-    #     output_csv_path,
-    #     mode='a',
-    #     sep=",",
-    #     header=not file_exists, # Write header only if file doesn't exist
-    #     index=False,
-    # )
-
-async def enrich_url_async(url, registration_date, nexus_category, session):
-
-    # Ensure url starts with https or http protocol
+async def enrich_url_async(url, registration_date, nexus_category, session, semaphore):
+    
+    # Ensure url starts with https protocol
     url_with_protocol = ensure_protocol(url)
 
-    # print("in enrich_url for", url_with_protocol)
-    try:
-        async with session.get(url_with_protocol) as response:
-            # print('async trying: ', url_with_protocol)
+    status_code = "Error"
+    final_url = "Error"
+    metadata = {
+        'title': "Error",
+        'description': "Error",
+        'image': "Error"
+    }
 
-            # Fetch HTTP status code
-            status_code = await get_status_code_async(url_with_protocol, session)
+    async with semaphore:
+        # Try with https
+        try:
+            async with session.get(url_with_protocol, timeout=5) as response:
+                response_text = await response.text()
+                status_code = response.status
+                final_url = response.url
+                metadata = get_meta_data_v2(url, response_text)
 
-            # status_code = 200
+        # Try with http if https fails
+        except requests.exceptions.SSLError:
+            print(f"SSL error with {url}, trying http connection.")
+            url = url.replace("https://", "http://")
+            try:
+                async with session.get(url_with_protocol, timeout=5) as response:
+                    response_text = await response.text()
+                    status_code = response.status
+                    final_url = response.url
+                    metadata = get_meta_data_v2(url, response_text)
+                    
+            except requests.RequestException as e:
+                print(f"Error fetching {url}: {e}")
+        except requests.RequestException as e:
+            print(f"Error fetching {url}: {e}")
+        except Exception as e:
+            print(f"Error processing URL {url}: {e}")
 
-            # Fetch Open Graph metadata
-            # if status_code != "Error":
-            metadata = await get_meta_data_async(url_with_protocol, session)
-
-            # metadata = {
-            #     "final_url": "url.com",
-            #     "title": "title",
-            #     "description": "description",
-            #     "image": "image"
-            # }
-
-            print('url:', url_with_protocol, "status:", status_code)
-
-            return {
-                # Original data
-                'url': url,
-                'registration_date': registration_date,
-                # 'nexus_category': nexus_category,           # Uncomment later!!
-                # Status code from pinging URL
-                'status_code': status_code,
-                # Metadata from URL, or redirected URL
-                'final_url': metadata['final_url'],
-                'title': metadata['title'],
-                'description': metadata['description'],
-                'image': metadata['image']
-            }
-    except Exception as e:
-        print(f"Error processing URL {url}: {e}")
+        print(f"Finished processing: {url}")
 
         return {
             # Original data
             'url': url,
             'registration_date': registration_date,
+            'nexus_category': nexus_category,
             # Status code from pinging URL
-            'status_code': "Error",
+            'status_code': status_code,
             # Metadata from URL, or redirected URL
-            'final_url': "Error",
-            'title': "Error",
-            'description': "Error",
-            'image': "Error"
+            'final_url': final_url,
+            'title': metadata['title'],
+            'description': metadata['description'],
+            'image': metadata['image']
         }
 
 async def enrich_urls_async(input_csv_path, output_csv_path):
@@ -230,7 +210,9 @@ async def enrich_urls_async(input_csv_path, output_csv_path):
             print("CSV must contain a 'url' column")
             return
         
-        async with aiohttp.ClientSession() as session:
+        conn = aiohttp.TCPConnector(limit=5)
+
+        async with aiohttp.ClientSession(connector=conn) as session:
             await process_urls(
                 input_data,
                 session,
@@ -238,22 +220,11 @@ async def enrich_urls_async(input_csv_path, output_csv_path):
                 output_csv_path,
                 file_exists
             )
-
-            print('finished process_urls')
-        print('finished!')
+        
+        print(f'Finished processing all URLs in {input_csv_path}')
 
     except Exception as e:
         print(f"Error during processing: {e}")
-        
-
-
-# # Test files
-# test_csv_path = 'test_file.csv' # Sample of ~100 rows from the real data
-# test_output_path = 'test_output_file.csv' # Path to save enriched test data
-
-# # Real files
-# real_csv_path = 'nyc_Domain_Registrations_20241115.csv'  # Path to your input CSV file
-# real_output_path = 'output_urls_enriched.csv'  # Path to save enriched CSV file
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -267,7 +238,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    start_time = time.perf_counter()
     if args.asynchronous:
         asyncio.run(enrich_urls_async(args.input_csv_path, args.output_csv_path))
     else:
         enrich_urls(args.input_csv_path, args.output_csv_path)
+    
+    end_time = time.perf_counter()
+
+    print(f"Time taken: {end_time - start_time}")
