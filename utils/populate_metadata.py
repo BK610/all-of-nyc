@@ -75,30 +75,11 @@ def get_meta_data_old(url, session):
             'description': "Error",
             'image': "Error",
         }
-
-# async def get_status_code_async(url, session):
-#     """Fetch the HTTP status code for a given URL."""
-#     try:
-#         # Try with https
-#         async with session.head(url, timeout=5) as response:
-#             return response.status
-#     except requests.exceptions.SSLError:
-#         print(f"SSL error with {url}, trying http instead.")
-#         # Try with http if https fails
-#         url = url.replace("https://", "http://")
-#         try:
-#             async with session.head(url, timeout=5) as response:
-#                 return response.status
-#         except requests.RequestException as e:
-#             print(f"Error fetching {url}: {e}")
-#             return "Error"
-#     except requests.RequestException as e:
-#         print(f"Error fetching {url}: {e}")
-#         return "Error"
     
-def get_meta_data(url, response_text):
+def parse_open_graph_metadata(webpage_content):
+    """Parse Open Graph metadata from the provided webpage_content."""
     try:
-        soup = BeautifulSoup(response_text, 'html.parser')
+        soup = BeautifulSoup(webpage_content, 'html.parser')
 
         # Open Graph metadata
         og_title = soup.find('meta', property='og:title')
@@ -124,7 +105,7 @@ def get_meta_data(url, response_text):
             'image': get_content(og_image) or get_content(twitter_image) or 'Not found'
         }
     except Exception as e:
-        print(f"Error getting metadata for {url}: {e}")
+        print(f"Error extracting Open Graph data: {e}")
         return {
                 'title': 'Error',
                 'description': 'Error',

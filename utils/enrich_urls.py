@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from populate_metadata import ensure_protocol, get_status_code, get_meta_data, get_meta_data_v2
+from populate_metadata import ensure_protocol, get_status_code, get_meta_data_old, parse_open_graph_metadata
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
@@ -19,6 +19,8 @@ CSV_ROWS_SCHEMA = [
     'image'
     ]
 
+# Helper functions used in the primary processing functions
+
 def setup_session():
     session = requests.Session()
 
@@ -32,7 +34,15 @@ def setup_session():
 
     return session
 
-def append_to_csv(row, file_path, file_exists):
+def append_rows_to_csv(rows, file_path):
+    """Append an array of rows to the given file. If the file doesn't exist yet, create it."""
+    for row in rows:
+        append_row_to_csv(row, file_path)
+
+def append_row_to_csv(row, file_path):
+    """Append a single row to the given file. If the file doesn't exist yet, create it."""
+    file_exists = os.path.isfile(file_path)
+
     pd.DataFrame([row]).to_csv(
         file_path,
         mode='a',
@@ -41,21 +51,57 @@ def append_to_csv(row, file_path, file_exists):
         index=False
     )
 
-def enrich_url(url, registration_date, session):
+def get_existing_csv_data(file_path):
+    """Get existing CSV data at provided file_path. If the file doesn't exist yet, create it."""
+    existing_data = None
+
+    try:
+        file_exists = os.path.isfile(file_path)
+
+        if file_exists:
+            existing_data = pd.read_csv(file_path)
+        else:
+            existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
+    except FileNotFoundError:
+        existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
+    
+    return existing_data
+
+async def get_metadata_async(url, session):
+    status_code = "Error"
+    final_url = "Error"
+    open_graph_metadata = {
+        'title': "Error",
+        'description': "Error",
+        'image': "Error"
+    }
+
+    try:
+        async with session.get(url, timeout=5) as response:
+            response_text = await response.text()
+            status_code = response.status
+            final_url = response.url
+            open_graph_metadata = parse_open_graph_metadata(response_text)
+    except Exception as e:
+        print(f"Error processing {url}: {e}")
+    
+    return status_code, final_url, open_graph_metadata
+
+# Synchronous versions of the URL enriching functions
+
+def enrich_url(url, registration_date, nexus_category, session):
     """Process an individual URL to get status code and Open Graph data."""
     # Ensure url starts with https or http protocol
     url_with_protocol = ensure_protocol(url)
 
-    # Fetch HTTP status code
     status_code = get_status_code(url_with_protocol, session)
-
-    # Fetch Open Graph metadata
-    metadata = get_meta_data(url_with_protocol, session)
+    metadata = get_meta_data_old(url_with_protocol, session)
 
     return {
         # Original data
         'url': url,
         'registration_date': registration_date,
+        'nexus_category': nexus_category,
         # Status code from pinging URL
         'status_code': status_code,
         # Metadata from URL, or redirected URL
@@ -68,48 +114,29 @@ def enrich_url(url, registration_date, session):
 def enrich_urls(input_csv_path, output_csv_path):
     """Read URLs from CSV, process them, and save enriched data to a new CSV file."""
     try:
-        # Check if output CSV exists
-        file_exists = os.path.isfile(output_csv_path)
 
-        # Load existing data if output CSV exists, otherwise create new DataFrame
-        try:
-            if file_exists:
-                existing_data = pd.read_csv(output_csv_path)
-            else:
-                existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
-        except FileNotFoundError:
-            existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
+        existing_enriched_data = get_existing_csv_data(output_csv_path)
 
         # Collect the list of URLs that have already been processed into the output file
-        processed_urls = set(existing_data['url'])
+        processed_urls = set(existing_enriched_data['url'])
         
-        # Read URLs from CSV
         input_data = pd.read_csv(input_csv_path)
 
-        # Check that `url` column exists
         if 'url' not in input_data.columns:
             print("CSV must contain a 'url' column")
             return
         
-        # Create new requests.Session() with desired settings
         session = setup_session()
 
-        # Get the info for each URL and add it to the array that's being built
+        # Iterate through rows, enrich the data, append to the output CSV
         for index, row in input_data.iterrows():
             if row['url'] in processed_urls:
                 continue # Skip URLs that we've already processed
 
-            enriched_row = enrich_url(row['url'], row['registration_date'], session)
+            enriched_row = enrich_url(row['url'], row['registration_date'], row['nexus_category'], session)
 
-            # Convert enriched data to DataFrame and save it
-            # print(enriched_row)
-            pd.DataFrame([enriched_row]).to_csv(
-                output_csv_path,
-                mode='a',
-                sep=",",
-                header=not file_exists, # Write header only if file doesn't exist
-                index=False
-            )
+            append_row_to_csv(enriched_row, output_csv_path)
+
             print(f"Finished processing: {row['url']}")
             file_exists = True  # Set to True after first write if file was created
         
@@ -118,7 +145,10 @@ def enrich_urls(input_csv_path, output_csv_path):
     except Exception as e:
         print(f"Error during processing: {e}")
 
-async def process_urls(input_data, session, processed_urls, output_csv_path, file_exists):
+# Asynchronous versions of the URL enriching functions
+
+async def process_urls(input_data, session, processed_urls, output_csv_path):
+    """TODO: Write docstring when I figure out why this is a separate function."""
     sem = asyncio.Semaphore(5)
 
     tasks_test = [
@@ -130,86 +160,72 @@ async def process_urls(input_data, session, processed_urls, output_csv_path, fil
     async for task in asyncio.as_completed(tasks_test):
         result = await task
         if result:
-            append_to_csv(result, output_csv_path, file_exists)
-            file_exists = True
+            append_row_to_csv(result, output_csv_path)
 
 async def enrich_url_async(url, registration_date, nexus_category, session, semaphore):
-    
+    """Enrich one URL with HTTP status code and available Open Graph data.
+       Performed asynchronously using aiohttp, asyncio, and asyncio.Semaphore."""
+
     # Ensure url starts with https protocol
     url_with_protocol = ensure_protocol(url)
 
     status_code = "Error"
     final_url = "Error"
-    metadata = {
+    open_graph_metadata = {
         'title': "Error",
         'description': "Error",
         'image': "Error"
     }
 
     async with semaphore:
-        # Try with https
+        # Try with HTTPS
         try:
-            async with session.get(url_with_protocol, timeout=5) as response:
-                response_text = await response.text()
-                status_code = response.status
-                final_url = response.url
-                metadata = get_meta_data_v2(url, response_text)
+            status_code, final_url, open_graph_metadata = await get_metadata_async(url_with_protocol, session)
 
-        # Try with http if https fails
+        # Try with HTTP if HTTPS fails
         except requests.exceptions.SSLError:
-            print(f"SSL error with {url}, trying http connection.")
-            url = url.replace("https://", "http://")
+            print(f"SSL error with {url}, trying HTTP connection.")
+            url_with_protocol = url_with_protocol.replace("https://", "http://")
             try:
-                async with session.get(url_with_protocol, timeout=5) as response:
-                    response_text = await response.text()
-                    status_code = response.status
-                    final_url = response.url
-                    metadata = get_meta_data_v2(url, response_text)
+                status_code, final_url, open_graph_metadata = await get_metadata_async(url_with_protocol, session)
                     
-            except requests.RequestException as e:
-                print(f"Error fetching {url}: {e}")
-        except requests.RequestException as e:
-            print(f"Error fetching {url}: {e}")
+            except Exception as e:
+                print(f"Error processing URL {url}: {e}")
         except Exception as e:
             print(f"Error processing URL {url}: {e}")
 
         print(f"Finished processing: {url}")
 
         return {
-            # Original data
+            # Original data from NYC Open Data
             'url': url,
             'registration_date': registration_date,
             'nexus_category': nexus_category,
-            # Status code from pinging URL
+            # HTTP status code from requesting original URL
             'status_code': status_code,
-            # Metadata from URL, or redirected URL
+            # Metadata from original URL or redirected final URL
             'final_url': final_url,
-            'title': metadata['title'],
-            'description': metadata['description'],
-            'image': metadata['image']
+            'title': open_graph_metadata['title'],
+            'description': open_graph_metadata['description'],
+            'image': open_graph_metadata['image']
         }
 
 async def enrich_urls_async(input_csv_path, output_csv_path):
-
-    # Load existing data if output CSV exists, otherwise create new DataFrame
+    """Enrich all urls in CSV at input_csv_path with HTTP status code and available Open Graph data.
+       Output to CSV at output_csv_path.
+       Performed asynchronously using aiohttp, asyncio, and async.Semaphore."""
+    
     try:
-        file_exists = os.path.isfile(output_csv_path)
-
-        if file_exists:
-            existing_data = pd.read_csv(output_csv_path)
-        else:
-            existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
-    except FileNotFoundError:
-        existing_data = pd.DataFrame(columns=CSV_ROWS_SCHEMA)
-        
-    try:
-        processed_urls = set(existing_data['url'])
+        existing_enriched_data = get_existing_csv_data(output_csv_path)
+        processed_urls = set(existing_enriched_data['url'])
         input_data = pd.read_csv(input_csv_path)
 
         if 'url' not in input_data.columns:
             print("CSV must contain a 'url' column")
             return
         
+        # Limit the number of concurrent connections to manage network bandwidth and machine resources.
+        # TODO: Play around to find the right balance of processing speed and receiving valid responses
         conn = aiohttp.TCPConnector(limit=5)
 
         async with aiohttp.ClientSession(connector=conn) as session:
@@ -218,11 +234,11 @@ async def enrich_urls_async(input_csv_path, output_csv_path):
                 session,
                 processed_urls,
                 output_csv_path,
-                file_exists
             )
         
         print(f'Finished processing all URLs in {input_csv_path}')
-
+    except FileNotFoundError:
+        print(f"File not found at {input_csv_path}: {e}")
     except Exception as e:
         print(f"Error during processing: {e}")
 
