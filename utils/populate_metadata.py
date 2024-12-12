@@ -27,7 +27,7 @@ def get_status_code(url, session):
         print(f"Error fetching {url}: {e}")
         return None
 
-def get_meta_data(url, session):
+def get_meta_data_old(url, session):
     """Fetch metadata (title, description, and image) for a URL."""
     try:
         response = session.get(url, timeout=5)
@@ -96,7 +96,7 @@ def get_meta_data(url, session):
 #         print(f"Error fetching {url}: {e}")
 #         return "Error"
     
-def get_meta_data_v2(url, response_text):
+def get_meta_data(url, response_text):
     try:
         soup = BeautifulSoup(response_text, 'html.parser')
 
