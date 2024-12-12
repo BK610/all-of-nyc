@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from populate_metadata import ensure_protocol, get_status_code, get_meta_data_old, parse_open_graph_metadata
+from populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
@@ -22,6 +22,8 @@ CSV_ROWS_SCHEMA = [
 # Helper functions used in the primary processing functions
 
 def setup_session():
+    """Create a requests Session to be used for all synchronous requests, with desired configuration.
+       Cleaner than creating a new request and configuring the settings every time."""
     session = requests.Session()
 
     # Disable SSL verification for the session to improve redirect handling
@@ -67,7 +69,61 @@ def get_existing_csv_data(file_path):
     
     return existing_data
 
-async def get_metadata_async(url, session):
+def get_response(url, session):
+    """Get the response at the provided url using the provided requests.Session.
+       Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
+    url = ensure_valid_protocol(url)
+
+    try:
+        # Try with HTTPS
+        response = session.get(url, timeout=5)
+        return response
+    except requests.exceptions.SSLError:
+        print(f"SSL error with {url}, trying HTTP instead.")
+        # Try with HTTP if HTTPS fails
+        url = url.replace("https://", "http://")
+        try:
+            response = session.get(url, timeout=5)
+            return response
+        except requests.RequestException as e:
+            print(f"Error fetching {url}: {e}")
+            return None
+    except requests.RequestException as e:
+        print(f"Error fetching {url}: {e}")
+        return None
+    
+async def get_response_async(url, session):
+    """Get the response at the provided url using the provided aiohttp.ClientSession.
+       Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
+    # TODO: Can get_response and get_response_async be combined?
+    # Almost the entire function is the same, but the async processing
+    # works differently.
+    url = ensure_valid_protocol(url)
+
+    try:
+        # Try with HTTPS
+        async with session.get(url, timeout=10) as response:
+            response_text = await response.text()
+            return response, response_text
+    except requests.exceptions.SSLError:
+        print(f"SSL error with {url}, trying HTTP instead.")
+        # Try with HTTP if HTTPS fails
+        url = url.replace("https://", "http://")
+        try:
+            async with session.get(url, timeout=10) as response:
+                response_text = await response.text()
+                return response, response_text
+        except requests.RequestException as e:
+            print(f"Error fetching {url}: {e}")
+            return None
+    except requests.RequestException as e:
+        print(f"Error fetching {url}: {e}")
+        return None
+
+# Synchronous versions of the URL enriching functions
+
+def enrich_url(url, registration_date, nexus_category, session):
+    """Process an individual URL to get status code and Open Graph data."""
     status_code = "Error"
     final_url = "Error"
     open_graph_metadata = {
@@ -75,27 +131,13 @@ async def get_metadata_async(url, session):
         'description': "Error",
         'image': "Error"
     }
-
-    try:
-        async with session.get(url, timeout=5) as response:
-            response_text = await response.text()
-            status_code = response.status
-            final_url = response.url
-            open_graph_metadata = parse_open_graph_metadata(response_text)
-    except Exception as e:
-        print(f"Error processing {url}: {e}")
     
-    return status_code, final_url, open_graph_metadata
+    response = get_response(url, session)
 
-# Synchronous versions of the URL enriching functions
-
-def enrich_url(url, registration_date, nexus_category, session):
-    """Process an individual URL to get status code and Open Graph data."""
-    # Ensure url starts with https or http protocol
-    url_with_protocol = ensure_protocol(url)
-
-    status_code = get_status_code(url_with_protocol, session)
-    metadata = get_meta_data_old(url_with_protocol, session)
+    if response:
+        status_code = response.status_code
+        final_url = response.url
+        open_graph_metadata = parse_open_graph_metadata(response.content)
 
     return {
         # Original data
@@ -104,17 +146,17 @@ def enrich_url(url, registration_date, nexus_category, session):
         'nexus_category': nexus_category,
         # Status code from pinging URL
         'status_code': status_code,
-        # Metadata from URL, or redirected URL
-        'final_url': metadata['final_url'],
-        'title': metadata['title'],
-        'description': metadata['description'],
-        'image': metadata['image']
+        # Final URL that the original URL directed to
+        'final_url': final_url,
+        # Metadata available at final URL
+        'title': open_graph_metadata['title'],
+        'description': open_graph_metadata['description'],
+        'image': open_graph_metadata['image']
     }
 
 def enrich_urls(input_csv_path, output_csv_path):
     """Read URLs from CSV, process them, and save enriched data to a new CSV file."""
     try:
-
         existing_enriched_data = get_existing_csv_data(output_csv_path)
 
         # Collect the list of URLs that have already been processed into the output file
@@ -134,11 +176,8 @@ def enrich_urls(input_csv_path, output_csv_path):
                 continue # Skip URLs that we've already processed
 
             enriched_row = enrich_url(row['url'], row['registration_date'], row['nexus_category'], session)
-
             append_row_to_csv(enriched_row, output_csv_path)
-
             print(f"Finished processing: {row['url']}")
-            file_exists = True  # Set to True after first write if file was created
         
         print(f"Finished processing all of: {input_csv_path}")
 
@@ -147,27 +186,9 @@ def enrich_urls(input_csv_path, output_csv_path):
 
 # Asynchronous versions of the URL enriching functions
 
-async def process_urls(input_data, session, processed_urls, output_csv_path):
-    """TODO: Write docstring when I figure out why this is a separate function."""
-    sem = asyncio.Semaphore(5)
-
-    tasks_test = [
-        enrich_url_async(row['url'], row['registration_date'], row['nexus_category'], session, sem)
-        for index, row in input_data.iterrows()
-        if row['url'] not in processed_urls
-    ]
-
-    async for task in asyncio.as_completed(tasks_test):
-        result = await task
-        if result:
-            append_row_to_csv(result, output_csv_path)
-
 async def enrich_url_async(url, registration_date, nexus_category, session, semaphore):
     """Enrich one URL with HTTP status code and available Open Graph data.
        Performed asynchronously using aiohttp, asyncio, and asyncio.Semaphore."""
-
-    # Ensure url starts with https protocol
-    url_with_protocol = ensure_protocol(url)
 
     status_code = "Error"
     final_url = "Error"
@@ -178,22 +199,15 @@ async def enrich_url_async(url, registration_date, nexus_category, session, sema
     }
 
     async with semaphore:
-        # Try with HTTPS
         try:
-            status_code, final_url, open_graph_metadata = await get_metadata_async(url_with_protocol, session)
-
-        # Try with HTTP if HTTPS fails
-        except requests.exceptions.SSLError:
-            print(f"SSL error with {url}, trying HTTP connection.")
-            url_with_protocol = url_with_protocol.replace("https://", "http://")
-            try:
-                status_code, final_url, open_graph_metadata = await get_metadata_async(url_with_protocol, session)
-                    
-            except Exception as e:
-                print(f"Error processing URL {url}: {e}")
+            response, response_text = await get_response_async(url, session)
+            if response:
+                status_code = response.status
+                final_url = response.url
+                open_graph_metadata = parse_open_graph_metadata(response_text)
         except Exception as e:
             print(f"Error processing URL {url}: {e}")
-
+        
         print(f"Finished processing: {url}")
 
         return {
@@ -203,17 +217,36 @@ async def enrich_url_async(url, registration_date, nexus_category, session, sema
             'nexus_category': nexus_category,
             # HTTP status code from requesting original URL
             'status_code': status_code,
-            # Metadata from original URL or redirected final URL
+            # Final URL that the original URL directed to
             'final_url': final_url,
+            # Metadata available at final URL
             'title': open_graph_metadata['title'],
             'description': open_graph_metadata['description'],
             'image': open_graph_metadata['image']
         }
 
+async def process_urls(input_data, session, processed_urls, output_csv_path):
+    """TODO: Write docstring when I figure out why this is a separate function."""
+
+    # Limit the number of async threads to manage network bandwidth and machine resources.
+    # TODO: Play around to find the right balance of processing speed and receiving valid responses
+    sem = asyncio.Semaphore(5)
+
+    async_url_tasks = [
+        enrich_url_async(row['url'], row['registration_date'], row['nexus_category'], session, sem)
+        for index, row in input_data.iterrows()
+        if row['url'] not in processed_urls
+    ]
+
+    async for task in asyncio.as_completed(async_url_tasks):
+        enriched_row = await task
+        if enriched_row:
+            append_row_to_csv(enriched_row, output_csv_path)
+
 async def enrich_urls_async(input_csv_path, output_csv_path):
     """Enrich all urls in CSV at input_csv_path with HTTP status code and available Open Graph data.
        Output to CSV at output_csv_path.
-       Performed asynchronously using aiohttp, asyncio, and async.Semaphore."""
+       Performed asynchronously using aiohttp, asyncio, and asyncio.Semaphore."""
     
     try:
         existing_enriched_data = get_existing_csv_data(output_csv_path)
