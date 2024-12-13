@@ -27,7 +27,9 @@ export async function GET(request) {
 
     // Filter data based on search query if provided
     const filteredData = searchQuery
-      ? cachedData.filter((row) => row.url?.toLowerCase().includes(searchQuery))
+      ? cachedData.filter((row) =>
+          row.domain_name?.toLowerCase().includes(searchQuery)
+        )
       : cachedData;
 
     return paginateData(filteredData, page, pageSize);
@@ -41,7 +43,9 @@ export async function GET(request) {
 
     // Filter data based on search query if provided
     const filteredData = searchQuery
-      ? cachedData.filter((row) => row.url?.toLowerCase().includes(searchQuery))
+      ? cachedData.filter((row) =>
+          row.domain_name?.toLowerCase().includes(searchQuery)
+        )
       : cachedData;
 
     return paginateData(filteredData, page, pageSize);

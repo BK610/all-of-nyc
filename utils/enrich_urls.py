@@ -9,8 +9,8 @@ import argparse
 import time
 
 CSV_ROWS_SCHEMA = [
-    'url',
-    'registration_date',
+    'domain_name',
+    'domain_registration_date',
     'nexus_category',
     'status_code',
     'final_url',
@@ -141,8 +141,8 @@ def enrich_url(url, registration_date, nexus_category, session):
 
     return {
         # Original data
-        'url': url,
-        'registration_date': registration_date,
+        'domain_name': url,
+        'domain_registration_date': registration_date,
         'nexus_category': nexus_category,
         # Status code from pinging URL
         'status_code': status_code,
@@ -160,24 +160,24 @@ def enrich_urls(input_csv_path, output_csv_path):
         existing_enriched_data = get_existing_csv_data(output_csv_path)
 
         # Collect the list of URLs that have already been processed into the output file
-        processed_urls = set(existing_enriched_data['url'])
+        processed_urls = set(existing_enriched_data['domain_name'])
         
         input_data = pd.read_csv(input_csv_path)
 
-        if 'url' not in input_data.columns:
-            print("CSV must contain a 'url' column")
+        if 'domain_name' not in input_data.columns:
+            print("CSV must contain a 'domain_name' column")
             return
         
         session = setup_session()
 
         # Iterate through rows, enrich the data, append to the output CSV
         for index, row in input_data.iterrows():
-            if row['url'] in processed_urls:
+            if row['domain_name'] in processed_urls:
                 continue # Skip URLs that we've already processed
 
-            enriched_row = enrich_url(row['url'], row['registration_date'], row['nexus_category'], session)
+            enriched_row = enrich_url(row['domain_name'], row['domain_registration_date'], row['nexus_category'], session)
             append_row_to_csv(enriched_row, output_csv_path)
-            print(f"Finished processing: {row['url']}")
+            print(f"Finished processing: {row['domain_name']}")
         
         print(f"Finished processing all of: {input_csv_path}")
 
@@ -211,11 +211,11 @@ async def enrich_url_async(url, registration_date, nexus_category, session, sema
         print(f"Finished processing: {url}")
 
         return {
-            # Original data from NYC Open Data
-            'url': url,
-            'registration_date': registration_date,
+            # Original data
+            'domain_name': url,
+            'domain_registration_date': registration_date,
             'nexus_category': nexus_category,
-            # HTTP status code from requesting original URL
+            # Status code from pinging URL
             'status_code': status_code,
             # Final URL that the original URL directed to
             'final_url': final_url,
@@ -233,9 +233,9 @@ async def process_urls(input_data, session, processed_urls, output_csv_path):
     sem = asyncio.Semaphore(5)
 
     async_url_tasks = [
-        enrich_url_async(row['url'], row['registration_date'], row['nexus_category'], session, sem)
+        enrich_url_async(row['domain_name'], row['domain_registration_date'], row['nexus_category'], session, sem)
         for index, row in input_data.iterrows()
-        if row['url'] not in processed_urls
+        if row['domain_name'] not in processed_urls
     ]
 
     async for task in asyncio.as_completed(async_url_tasks):
@@ -250,11 +250,11 @@ async def enrich_urls_async(input_csv_path, output_csv_path):
     
     try:
         existing_enriched_data = get_existing_csv_data(output_csv_path)
-        processed_urls = set(existing_enriched_data['url'])
+        processed_urls = set(existing_enriched_data['domain_name'])
         input_data = pd.read_csv(input_csv_path)
 
-        if 'url' not in input_data.columns:
-            print("CSV must contain a 'url' column")
+        if 'domain_name' not in input_data.columns:
+            print("CSV must contain a 'domain_name' column")
             return
         
         # Limit the number of concurrent connections to manage network bandwidth and machine resources.

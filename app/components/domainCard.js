@@ -46,7 +46,7 @@ const DomainCard = ({ url }) => {
       )}
       <div className="p-5">
         <h2 className="text-nyc-blue text-xl font-semibold mb-2">
-          {url.url}&nbsp;
+          {url.domain_name}&nbsp;
           {isUrlFound ? <>{isOGTitleFound ? "✅" : "❓"}</> : "💀"}
         </h2>
         <p className="mb-1">
@@ -58,7 +58,7 @@ const DomainCard = ({ url }) => {
         <p className="text-gray-600 pt-2 w-full border-t-2">
           Final URL: {url.final_url}
           <br />
-          Registered: {url.registration_date}
+          Registered: {url.domain_registration_date}
         </p>
       </div>
     </a>
