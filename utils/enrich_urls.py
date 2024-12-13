@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
 from get_open_api_data import get_open_api_data_from_url
+from csv_processing import append_row_to_csv, append_rows_to_csv
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
@@ -36,23 +37,6 @@ def setup_session():
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     return session
-
-def append_rows_to_csv(rows, file_path):
-    """Append an array of rows to the given file. If the file doesn't exist yet, create it."""
-    for row in rows:
-        append_row_to_csv(row, file_path)
-
-def append_row_to_csv(row, file_path):
-    """Append a single row to the given file. If the file doesn't exist yet, create it."""
-    file_exists = os.path.isfile(file_path)
-
-    pd.DataFrame([row]).to_csv(
-        file_path,
-        mode='a',
-        sep=",",
-        header=not file_exists, # Write header only if file doesn't exist
-        index=False
-    )
 
 def get_input_csv_data(csv_path):
     """Read the provided CSV file into a pandas.DataFrame."""
