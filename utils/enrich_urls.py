@@ -1,6 +1,7 @@
 import requests
 import pandas as pd
 from populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
+from get_open_api_data import get_open_api_data_from_url
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
@@ -52,6 +53,15 @@ def append_row_to_csv(row, file_path):
         header=not file_exists, # Write header only if file doesn't exist
         index=False
     )
+
+def get_input_csv_data(csv_path):
+    """Read the provided CSV file into a pandas.DataFrame."""
+
+    # TODO: Find a better way to identify if the provided path is a URL.
+    if not csv_path.startswith("http"):
+        return pd.read_csv(csv_path)
+    else:
+        return get_open_api_data_from_url(csv_path)
 
 def get_existing_csv_data(file_path):
     """Get existing CSV data at provided file_path. If the file doesn't exist yet, create it."""
@@ -162,7 +172,7 @@ def enrich_urls(input_csv_path, output_csv_path):
         # Collect the list of URLs that have already been processed into the output file
         processed_urls = set(existing_enriched_data['domain_name'])
         
-        input_data = pd.read_csv(input_csv_path)
+        input_data = get_input_csv_data(input_csv_path)
 
         if 'domain_name' not in input_data.columns:
             print("CSV must contain a 'domain_name' column")
@@ -251,7 +261,7 @@ async def enrich_urls_async(input_csv_path, output_csv_path):
     try:
         existing_enriched_data = get_existing_csv_data(output_csv_path)
         processed_urls = set(existing_enriched_data['domain_name'])
-        input_data = pd.read_csv(input_csv_path)
+        input_data = get_input_csv_data(input_csv_path)
 
         if 'domain_name' not in input_data.columns:
             print("CSV must contain a 'domain_name' column")
