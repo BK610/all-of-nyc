@@ -26,29 +26,19 @@ export async function GET(request) {
   if (cachedData && currentTime - lastFetchedTime < CACHE_DURATION_MS) {
     console.log("Using cached data");
 
-    // Filter data based on search query if provided
-    const filteredData = searchQuery
-      ? cachedData.filter((row) =>
-          row.domain_name?.toLowerCase().includes(searchQuery)
-        )
-      : cachedData;
+    const filteredData = filterData(searchQuery);
 
     return paginateData(filteredData, page, pageSize);
   }
 
   console.log("Fetching new data...");
   try {
-    // const data = await fetchCSVData();
-    const data = await fetchData();
+    const data = await fetchCSVData();
+    // const data = await fetchData();
     cachedData = data;
     lastFetchedTime = currentTime;
 
-    // Filter data based on search query if provided
-    const filteredData = searchQuery
-      ? cachedData.filter((row) =>
-          row.domain_name?.toLowerCase().includes(searchQuery)
-        )
-      : cachedData;
+    const filteredData = filterData(searchQuery);
 
     return paginateData(filteredData, page, pageSize);
   } catch (error) {
@@ -87,6 +77,17 @@ async function fetchCSVData() {
   }).data;
 
   return parsedData;
+}
+
+function filterData(searchQuery) {
+  // Filter data based on search query if provided
+  const filteredData = searchQuery
+    ? cachedData.filter((row) =>
+        row.domain_name?.toLowerCase().includes(searchQuery)
+      )
+    : cachedData;
+
+  return filteredData;
 }
 
 // Handle pagination of data
