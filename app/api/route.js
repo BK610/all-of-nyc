@@ -33,7 +33,7 @@ export async function GET(request) {
 
   console.log("Fetching new data...");
   try {
-    const data = await fetchCSVData();
+    const data = await fetchData();
     // const data = await fetchData();
     cachedData = data;
     lastFetchedTime = currentTime;
@@ -53,34 +53,73 @@ async function fetchData() {
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
-  const { data, error } = await supabase_client
+  let index = 0;
+  const count = await getTableCount(supabase_client);
+
+  let allData = [];
+
+  while (index < count) {
+    console.log("Fetching rows", index, "to", index + 999);
+
+    const { data, error } = await supabase_client
+      .from("enriched_url_data")
+      .select("*")
+      .range(index, index + 999)
+      .csv();
+
+    if (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+
+    const newData = Papa.parse(data, {
+      header: true,
+      skipEmptyLines: true,
+    }).data;
+
+    allData = allData.concat(newData);
+
+    index += 1000;
+  }
+
+  return allData;
+}
+
+// async function fetchCSVData() {
+//   const response = await fetch(GOOGLE_SHEET_URL);
+
+//   if (!response.ok) throw new Error("Failed to fetch data");
+
+//   // Read the response as text (CSV content)
+//   const csvText = await response.text();
+
+//   // Parse the CSV data using PapaParse
+//   const parsedData = Papa.parse(csvText, {
+//     header: true,
+//     skipEmptyLines: true,
+//   }).data;
+
+//   return parsedData;
+// }
+
+// Get the total count of rows in the table
+async function getTableCount(supabase_client) {
+  const { count, error } = await supabase_client
     .from("enriched_url_data")
-    .select("*");
+    .select("*", { count: "exact", head: true });
 
-  console.log(data);
+  if (error) {
+    console.error("Error fetching table count:", error);
+    return null;
+  }
 
-  return;
+  console.log("Table count:", count);
+
+  return count;
 }
 
-async function fetchCSVData() {
-  const response = await fetch(GOOGLE_SHEET_URL);
-
-  if (!response.ok) throw new Error("Failed to fetch data");
-
-  // Read the response as text (CSV content)
-  const csvText = await response.text();
-
-  // Parse the CSV data using PapaParse
-  const parsedData = Papa.parse(csvText, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
-
-  return parsedData;
-}
-
+// Filter data based on search query
 function filterData(searchQuery) {
-  // Filter data based on search query if provided
   const filteredData = searchQuery
     ? cachedData.filter((row) =>
         row.domain_name?.toLowerCase().includes(searchQuery)
