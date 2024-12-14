@@ -47,12 +47,12 @@ def test_writing_list():
     table = 'enriched_url_data'
     data = [{"domain_name":"test.nyc"}]
 
-    print(data)
-    print(type(data))
+    # print(data)
+    # print(type(data))
 
     response = insert_to_supabase(table, data, supabase)
 
-    print(response)
+    # print(response)
 
 def test_writing_file():
     url = os.getenv('SUPABASE_URL')
@@ -62,18 +62,50 @@ def test_writing_file():
     supabase = connect_to_supabase(url, key)
     
     table = 'enriched_url_data'
-    csv_file = 'files/test/test_1.csv'
+    csv_file = 'files/test/test_7.csv'
 
     data = csv_to_json(csv_file)
 
-    print(data)
-    print(type(data))
+    # print(data)
+    # print(type(data))
 
     response = insert_to_supabase(table, data, supabase)
     
-    print(response)
+    # print(response)
+
+def test_upsert_file():
+    url = os.getenv('SUPABASE_URL')
+    # Other keys available for different role types.
+    key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+
+    supabase = connect_to_supabase(url, key)
+    
+    table = 'enriched_url_data'
+    csv_file = 'files/test/test_7.csv'
+
+    data = csv_to_json(csv_file)
+
+    # print(data)
+    # print(type(data))
+
+    response = upsert_to_supabase(table, data, 'domain_name', supabase)
+    
+    # print(response)
 
 if __name__ == '__main__':
     load_dotenv('.env.local')
 
-    test_writing_file()
+    # test_upsert_file()
+
+    url = os.getenv('SUPABASE_URL')
+    # Other keys available for different role types.
+    key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+
+    supabase = connect_to_supabase(url, key)
+    
+    table = 'enriched_url_data'
+    csv_file = 'files/test/test_7.csv'
+
+    data = csv_to_json(csv_file)
+
+    response = upsert_to_supabase(table, data, 'domain_name', supabase)
