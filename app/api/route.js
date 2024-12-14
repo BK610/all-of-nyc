@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Papa from "papaparse";
+import { createClient } from "@supabase/supabase-js";
 
 const GOOGLE_SHEET_URL = process.env.GOOGLE_SHEET_URL;
 
@@ -37,7 +38,8 @@ export async function GET(request) {
 
   console.log("Fetching new data...");
   try {
-    const data = await fetchCSVData();
+    // const data = await fetchCSVData();
+    const data = await fetchData();
     cachedData = data;
     lastFetchedTime = currentTime;
 
@@ -50,13 +52,29 @@ export async function GET(request) {
 
     return paginateData(filteredData, page, pageSize);
   } catch (error) {
-    console.error("Error fetching Google Sheet CSV:", error);
+    console.error("Error fetching data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
+async function fetchData() {
+  const supabase_client = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  const { data, error } = await supabase_client
+    .from("enriched_url_data")
+    .select("*");
+
+  console.log(data);
+
+  return;
+}
+
 async function fetchCSVData() {
   const response = await fetch(GOOGLE_SHEET_URL);
+
   if (!response.ok) throw new Error("Failed to fetch data");
 
   // Read the response as text (CSV content)
