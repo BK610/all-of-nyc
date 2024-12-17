@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { clamp } from "../../utils/math.utils";
 
 /**
  * One thing that's tough about this codebase is that it's not typescript.
