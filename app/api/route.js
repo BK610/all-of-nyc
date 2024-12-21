@@ -8,35 +8,40 @@ let lastFetchedTime = 0;
 // Cache for 5 minutes (adjust as needed)
 const CACHE_DURATION_MS = 5 * 60 * 1000;
 
+const supabase_client = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
 export async function GET(request) {
-  // Pagination and Search info from the request parameters
-  const page = parseInt(request.nextUrl.searchParams.get("page") || "1", 10);
-  const pageSize = parseInt(
-    request.nextUrl.searchParams.get("pageSize") || "15",
-    10
-  );
-  const searchQuery =
-    request.nextUrl.searchParams.get("search")?.toLowerCase() || "";
+  const [page, pageSize, query] = getUrlParams(request);
 
   const currentTime = Date.now();
 
-  // Check if cached data is still valid
+  // TODO: Upgrade caching solution. Caching in local variables seems to
+  //   fail occasionally. Maybe periodic storage cleanup?
+  // console.log("Cache info:");
+  // console.log(cachedData);
+  // console.log(lastFetchedTime);
+  // console.log(currentTime);
+  // console.log(CACHE_DURATION_MS);
+
+  // Use cached data if still valid
   if (cachedData && currentTime - lastFetchedTime < CACHE_DURATION_MS) {
     console.log("Using cached data");
 
-    const filteredData = filterData(searchQuery);
+    const filteredData = filterData(query);
 
     return paginateData(filteredData, page, pageSize);
   }
-
-  console.log("Fetching new data...");
+  // Fetch new data if cache is invalid
   try {
+    console.log("Fetching new data...");
     const data = await fetchData();
-    // const data = await fetchData();
     cachedData = data;
     lastFetchedTime = currentTime;
 
-    const filteredData = filterData(searchQuery);
+    const filteredData = filterData(query);
 
     return paginateData(filteredData, page, pageSize);
   } catch (error) {
@@ -45,14 +50,10 @@ export async function GET(request) {
   }
 }
 
+// Fetch all available data from Supabase
 async function fetchData() {
-  const supabase_client = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-
   let index = 0;
-  const count = await getTableCount(supabase_client);
+  const count = await getTableCount();
 
   let allData = [];
 
@@ -83,25 +84,19 @@ async function fetchData() {
   return allData;
 }
 
-// async function fetchCSVData() {
-//   const response = await fetch(GOOGLE_SHEET_URL);
+// Get the request URL parameter values
+function getUrlParams(request) {
+  const page = parseInt(request.nextUrl.searchParams.get("page") || "1");
+  const pageSize = parseInt(
+    request.nextUrl.searchParams.get("pageSize") || "15"
+  );
+  const query = request.nextUrl.searchParams.get("search")?.toLowerCase() || "";
 
-//   if (!response.ok) throw new Error("Failed to fetch data");
-
-//   // Read the response as text (CSV content)
-//   const csvText = await response.text();
-
-//   // Parse the CSV data using PapaParse
-//   const parsedData = Papa.parse(csvText, {
-//     header: true,
-//     skipEmptyLines: true,
-//   }).data;
-
-//   return parsedData;
-// }
+  return [page, pageSize, query];
+}
 
 // Get the total count of rows in the table
-async function getTableCount(supabase_client) {
+async function getTableCount() {
   const { count, error } = await supabase_client
     .from("enriched_url_data")
     .select("*", { count: "exact", head: true });
@@ -111,17 +106,15 @@ async function getTableCount(supabase_client) {
     return null;
   }
 
-  console.log("Table count:", count);
+  console.log("Table row count:", count);
 
   return count;
 }
 
-// Filter data based on search query
-function filterData(searchQuery) {
-  const filteredData = searchQuery
-    ? cachedData.filter((row) =>
-        row.domain_name?.toLowerCase().includes(searchQuery)
-      )
+// Filter data based on query
+function filterData(query) {
+  const filteredData = query
+    ? cachedData.filter((row) => row.domain_name?.toLowerCase().includes(query))
     : cachedData;
 
   return filteredData;
