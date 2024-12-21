@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import Papa from "papaparse";
 import { createClient } from "@supabase/supabase-js";
 
-const GOOGLE_SHEET_URL = process.env.GOOGLE_SHEET_URL;
-
 let cachedData = null;
 let lastFetchedTime = 0;
 
