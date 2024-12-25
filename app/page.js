@@ -2,15 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Search from "./components/search";
-import DomainCard from "./components/domainCard";
+import HomeHeader from "./components/homeHeader";
 import Pagination from "./components/pagination";
 import NotebookEmbed from "./components/notebookEmbed";
-import HomeHeader from "./components/homeHeader";
+import QueryResultsList from "./components/queryResultsList";
 
 export default function Home() {
   const [urls, setUrls] = useState([]);
   const [page, setPage] = useState(1); // Code Feedback - "page" is a little ambiguous. Maybe "currentPageIndex"?
-  const [total, setTotal] = useState(0); // Code Feedback - "total" is a little ambiguous. Maybe "totalResultsCount"?
+  // const [total, setTotal] = useState(0); // Code Feedback - "total" is a little ambiguous. Maybe "totalResultsCount"?
   const [totalPages, setTotalPages] = useState(1); // Code Feedback - "totalPages" isn't super ambiguous, but making it clear it's a count, not something else like a list of all pages, would be nice.
   const [pageSize] = useState(15);
   const [query, setQuery] = useState("");
@@ -24,7 +24,7 @@ export default function Home() {
         );
         const result = await res.json();
         setUrls(result.urls);
-        setTotal(result.total);
+        // setTotal(result.total);
         setTotalPages(result.totalPages);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -101,17 +101,7 @@ export default function Home() {
           totalPages={totalPages}
           onPageChange={(page) => setPage(page)}
         />
-        {/* Code Feedback - This is a good example of a comment that points you towards a better organization. Make a component for the cards */}
-        {/* URL Cards */}
-        {urls.length > 0 ? (
-          <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
-            {urls.map((url, index) => (
-              <DomainCard key={index} url={url} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-center">Loading some sweet, sweet data...</p>
-        )}
+        <QueryResultsList urls={urls} />
       </div>
       <NotebookEmbed
         src={"Results.html"}
