@@ -14,7 +14,7 @@ const supabase_client = createClient(
 );
 
 export async function GET(request) {
-  const [page, pageSize, query] = getUrlParams(request);
+  const [pageIndex, pageSize, query] = getUrlParams(request);
 
   const currentTime = Date.now();
 
@@ -32,7 +32,7 @@ export async function GET(request) {
 
     const filteredData = filterData(query);
 
-    return paginateData(filteredData, page, pageSize);
+    return paginateData(filteredData, pageIndex, pageSize);
   }
   // Fetch new data if cache is invalid
   try {
@@ -43,7 +43,7 @@ export async function GET(request) {
 
     const filteredData = filterData(query);
 
-    return paginateData(filteredData, page, pageSize);
+    return paginateData(filteredData, pageIndex, pageSize);
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
