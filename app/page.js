@@ -2,17 +2,17 @@
 
 import { useEffect, useState, useCallback } from "react";
 import HomeLayout from "./components/homeLayout";
-import Search from "./components/search";
 import HomeHeader from "./components/homeHeader";
+import Search from "./components/search";
 import Pagination from "./components/pagination";
 import QueryResultsList from "./components/queryResultsList";
 import NotebookEmbed from "./components/notebookEmbed";
 
 export default function Home() {
   const [urls, setUrls] = useState([]);
-  const [page, setPage] = useState(1); // Code Feedback - "page" is a little ambiguous. Maybe "currentPageIndex"?
-  // const [total, setTotal] = useState(0); // Code Feedback - "total" is a little ambiguous. Maybe "totalResultsCount"?
-  const [totalPages, setTotalPages] = useState(1); // Code Feedback - "totalPages" isn't super ambiguous, but making it clear it's a count, not something else like a list of all pages, would be nice.
+  const [currentPageIndex, setCurrentPageIndex] = useState(1);
+  // const [totalResultsCount, setTotalResultsCount] = useState(0);
+  const [totalPagesCount, setTotalPagesCount] = useState(1);
   const [pageSize] = useState(15);
   const [query, setQuery] = useState("");
 
@@ -25,8 +25,8 @@ export default function Home() {
         );
         const result = await res.json();
         setUrls(result.urls);
-        // setTotal(result.total);
-        setTotalPages(result.totalPages);
+        // setTotalResultsCount(result.total);
+        setTotalPagesCount(result.totalPages);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -36,8 +36,8 @@ export default function Home() {
 
   // Fetch data on initial load and when page changes
   useEffect(() => {
-    fetchUrls(page, query);
-  }, [fetchUrls, page, query]);
+    fetchUrls(currentPageIndex, query);
+  }, [fetchUrls, currentPageIndex, query]);
 
   /** Code Feedback - Avoid the same name for multiple concepts. Notice that the verb form and noun form of a word are separate concepts.
    *
@@ -66,40 +66,20 @@ export default function Home() {
    * unlikely to read the source code, so gratuitous comments are more appropriate.
    */
   const resetPaginationToFirstPage = () => {
-    setPage(1);
+    setCurrentPageIndex(1);
   };
 
-  /**
-   * Code Feedback - This was pretty easy to read, but ideally, the top-level JSX
-   * makes the structure of the page even clear.
-   *
-   * Mixing in HTML and CSS makes it harder to see the structure
-   *
-   * Something like this allows the reader to quickly see that you've structured your
-   * page in a sane way.
-   *
-   * (You did structure you page in a sane way - it's just not 100% obvious at a glance.
-   * That quick impression seems important for a project someone is using to evaluate you.)
-   *
-   * <div className="body">
-   *   <Header/>
-   *   <SearchForm/>
-   *   <QueryResultsList/>
-   *   <JupyterNotebook/>
-   * </div>
-   *
-   * This might also help you move state down a bit. I could imagine a "QueryResultsList" component
-   * that takes the list of URLs and displays them. That component could handle the pagination, making this
-   * component even simpler.
-   */
   return (
     <HomeLayout>
       <HomeHeader />
+      {/* TODO: Consider combining Search, Pagination, and QueryResultsList into a single component.
+       * State and logic could be handled on that level too.
+       */}
       <Search onSearch={handleSearch} />
       <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={(page) => setPage(page)}
+        currentPage={currentPageIndex}
+        totalPages={totalPagesCount}
+        onPageChange={(page) => setCurrentPageIndex(page)}
       />
       <QueryResultsList urls={urls} />
       <NotebookEmbed
