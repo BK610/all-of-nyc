@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import HomeLayout from "./components/homeLayout";
 import Search from "./components/search";
 import HomeHeader from "./components/homeHeader";
 import Pagination from "./components/pagination";
-import NotebookEmbed from "./components/notebookEmbed";
 import QueryResultsList from "./components/queryResultsList";
+import NotebookEmbed from "./components/notebookEmbed";
 
 export default function Home() {
   const [urls, setUrls] = useState([]);
@@ -92,23 +93,21 @@ export default function Home() {
    * component even simpler.
    */
   return (
-    <div className="max-w-6xl mx-auto py-10 px-4">
-      <div className="border-b-2 pb-6">
-        <HomeHeader />
-        <Search onSearch={handleSearch} />
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={(page) => setPage(page)}
-        />
-        <QueryResultsList urls={urls} />
-      </div>
+    <HomeLayout>
+      <HomeHeader />
+      <Search onSearch={handleSearch} />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={(page) => setPage(page)}
+      />
+      <QueryResultsList urls={urls} />
       <NotebookEmbed
         src={"Results.html"}
         fallbackUrl={
           "https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb"
         }
       />
-    </div>
+    </HomeLayout>
   );
 }
