@@ -96,8 +96,6 @@ export default function Home() {
       <div className="border-b-2 pb-6">
         <HomeHeader />
         <Search onSearch={handleSearch} />
-
-        <p className="text-center mb-2">Found {total} URLs</p>
         <Pagination
           currentPage={page}
           totalPages={totalPages}
