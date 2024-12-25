@@ -13,10 +13,19 @@ const supabase_client = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+/** Defines an endpoint at `https://allof.nyc/api?{URL parameters}/` to get the list of URLs
+ * from the Supabase database, using the provided URL parameters.
+ *
+ * The URL parameters include:
+ * @param pageIndex: The index of the page to return. Primarily used during pagination. New searches reset this to 1.
+ * @param pageSize: The number of URLs to return per page.
+ * @param query: The provided search query to filter the returned URLs.
+ */
 export async function GET(request) {
   const [pageIndex, pageSize, query] = getUrlParams(request);
 
   const currentTime = Date.now();
+  const filteredData = [];
 
   // TODO: Upgrade caching solution. Caching in local variables seems to
   //   fail occasionally. Maybe periodic storage cleanup?
@@ -30,7 +39,7 @@ export async function GET(request) {
   if (cachedData && currentTime - lastFetchedTime < CACHE_DURATION_MS) {
     console.log("Using cached data");
 
-    const filteredData = filterData(query);
+    filteredData = filterData(query);
 
     return paginateData(filteredData, pageIndex, pageSize);
   }
@@ -41,16 +50,29 @@ export async function GET(request) {
     cachedData = data;
     lastFetchedTime = currentTime;
 
-    const filteredData = filterData(query);
+    filteredData = filterData(query);
 
     return paginateData(filteredData, pageIndex, pageSize);
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  // const paginatedData = paginateData(filteredData, pageIndex, pageSize);
+
+  // return NextResponse.json({
+  //   urls: paginatedData,
+  //   total: data.length,
+  //   currentPage: page,
+  //   totalPages: Math.ceil(data.length / pageSize),
+  // })
 }
 
-// Fetch all available data from Supabase
+/** Fetch all available data from Supabase.
+ *
+ * Fetches data in batches of 1000 rows, as Supabase has a default limit of 1000 rows per request.
+ * Repeats until all data is fetched.
+ */
 async function fetchData() {
   let index = 0;
   const count = await getTableCount();
@@ -84,18 +106,20 @@ async function fetchData() {
   return allData;
 }
 
-// Get the request URL parameter values
+/** Helper function to get the URL parameter values from the provided request. */
 function getUrlParams(request) {
-  const page = parseInt(request.nextUrl.searchParams.get("page") || "1");
+  const pageIndex = parseInt(
+    request.nextUrl.searchParams.get("pageIndex") || "1"
+  );
   const pageSize = parseInt(
     request.nextUrl.searchParams.get("pageSize") || "15"
   );
-  const query = request.nextUrl.searchParams.get("search")?.toLowerCase() || "";
+  const query = request.nextUrl.searchParams.get("query")?.toLowerCase() || "";
 
-  return [page, pageSize, query];
+  return [pageIndex, pageSize, query];
 }
 
-// Get the total count of rows in the table
+/** Helper function to get the total count of rows in the table. */
 async function getTableCount() {
   const { count, error } = await supabase_client
     .from("enriched_url_data")
@@ -111,7 +135,7 @@ async function getTableCount() {
   return count;
 }
 
-// Filter data based on query
+/** Helper function to filter data based on query. */
 function filterData(query) {
   const filteredData = query
     ? cachedData.filter((row) => row.domain_name?.toLowerCase().includes(query))
@@ -120,7 +144,7 @@ function filterData(query) {
   return filteredData;
 }
 
-// Handle pagination of data
+/** Helper function to handle pagination of data. */
 function paginateData(data, page, pageSize) {
   // Pagination indices
   const startIndex = (page - 1) * pageSize;
