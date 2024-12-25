@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-const NotebookEmbed = ({src, fallbackUrl}) => {
-  const [html, setHtml] = useState('');
-
-  // console.log(src);
+const NotebookEmbed = ({ src, fallbackUrl }) => {
+  const [html, setHtml] = useState("");
 
   useEffect(() => {
     fetch(src)
@@ -13,11 +11,30 @@ const NotebookEmbed = ({src, fallbackUrl}) => {
 
   return (
     <div className="w-full py-10">
-      <p>
-        This is a rendered <a href='https://jupyter.org/' target='_blank' className='text-nyc-blue hover:text-nyc-blue hover:underline'>Jupyter</a> Notebook.
-        If it isn&apos;t rendering correctly, view the Notebook at <a href={fallbackUrl} target='_blank' className='text-nyc-blue hover:text-nyc-blue hover:underline' >{fallbackUrl}</a>.
-      </p>
-      <div className="w-full" dangerouslySetInnerHTML={{ __html: html }}/>
+      {html ? (
+        <p>
+          The{" "}
+          <a
+            href="https://jupyter.org/"
+            target="_blank"
+            className="text-nyc-blue hover:text-nyc-blue hover:underline"
+          >
+            Jupyter Notebook
+          </a>{" "}
+          with analysis on the .nyc URLs isn&apos;t rendering correctly. View
+          the source at{" "}
+          <a
+            href={fallbackUrl}
+            target="_blank"
+            className="text-nyc-blue hover:text-nyc-blue hover:underline"
+          >
+            {fallbackUrl}
+          </a>
+          .
+        </p>
+      ) : (
+        <div className="w-full" dangerouslySetInnerHTML={{ __html: html }} />
+      )}
     </div>
   );
 };
