@@ -14,14 +14,17 @@ export default function Home() {
   // const [totalResultsCount, setTotalResultsCount] = useState(0);
   const [totalPagesCount, setTotalPagesCount] = useState(1);
   const [pageSize] = useState(15);
-  const [query, setQuery] = useState("");
+  const [currentQuery, setCurrentQuery] = useState("");
 
-  // Fetch data from the server
+  /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
+   *
+   * Uses the base GET endpoint defined in api/route.js.
+   */
   const fetchUrls = useCallback(
-    async (currentPage, currentQuery) => {
+    async (currentPageIndex, currentQuery) => {
       try {
         const res = await fetch(
-          `/api?page=${currentPage}&pageSize=${pageSize}&search=${currentQuery}`
+          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}`
         );
         const result = await res.json();
         setUrls(result.urls);
@@ -34,37 +37,16 @@ export default function Home() {
     [pageSize]
   );
 
-  // Fetch data on initial load and when page changes
+  // Reminder: useEffect runs when initial page load and when page changes.
   useEffect(() => {
-    fetchUrls(currentPageIndex, query);
-  }, [fetchUrls, currentPageIndex, query]);
+    fetchUrls(currentPageIndex, currentQuery);
+  }, [fetchUrls, currentPageIndex, currentQuery]);
 
-  /** Code Feedback - Avoid the same name for multiple concepts. Notice that the verb form and noun form of a word are separate concepts.
-   *
-   * "search" in the previous implementation is kind of ambiguous because it
-   * could refer to the *action* of searching, but you used it to refer to the *search term*.
-   *
-   * Above, you call the query string the "query". That's a good name to stick with and be consistent with.
-   */
   const handleSearch = (query) => {
     resetPaginationToFirstPage();
-    setQuery(query);
+    setCurrentQuery(query);
   };
 
-  /**
-   * Code Feedback - Avoid comments that are just restating the code
-   *
-   * If you think something is complicated enough to need a comment,
-   * it's probably better to refactor it into a function with a descriptive name.
-   * The exception is when you can't make it simpler or you need to something unintuitive.
-   * When the code *can't* be clear, that's comments are most appropriate.
-   *
-   * The other main reason to use comments is documentation for other developers who
-   * won't be able to read (or shouldn't be expected to) read the source code. For example,
-   * when you're publishing an npm package, you want the exposed functions to be especially
-   * well documented. That's an interface people will be interacting with often, and they are
-   * unlikely to read the source code, so gratuitous comments are more appropriate.
-   */
   const resetPaginationToFirstPage = () => {
     setCurrentPageIndex(1);
   };
