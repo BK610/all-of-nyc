@@ -1,7 +1,7 @@
 const DomainCard = ({ url }) => {
   if (!url) return null;
 
-  let isUrlFound = !(
+  const isUrlFound = !(
     !url.final_url ||
     url.final_url == "Error" ||
     url.final_url == "Not found"
@@ -14,13 +14,13 @@ const DomainCard = ({ url }) => {
   //   url.status_code.substring(0, 1) == 2 ||
   //   url.status_code.substring(0, 1) == 3;
 
-  let isOGTitleFound = !(
+  const isOGTitleFound = !(
     !url.title ||
     url.title == "Error" ||
     url.title == "Not found"
   );
 
-  let isOGImageFound = !(
+  const isOGImageFound = !(
     !url.image ||
     url.image == "Error" ||
     url.image == "Not found"
