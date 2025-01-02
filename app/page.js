@@ -20,13 +20,18 @@ const supabaseClient = createClient(
  */
 async function fetchData() {
   let index = 0;
-  const increment = 1000;
+  const increment = 10000;
   const count = await getTableCount();
 
   let allData = [];
 
   while (index < count) {
-    console.log("Fetching rows", index, "to", index + increment - 1);
+    console.log(
+      "Fetching rows",
+      index,
+      "to",
+      Math.min(index + increment - 1, count)
+    );
 
     const { data, error } = await supabaseClient
       .from("enriched_url_data")
