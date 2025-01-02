@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const DomainCard = ({ url }) => {
   if (!url) return null;
 
@@ -38,7 +40,9 @@ const DomainCard = ({ url }) => {
         <div className="w-full">
           <img
             className="object-cover w-full h-52 border-b-2"
-            src={url.image}
+            src={decodeURI(url.image)}
+            // width={358}
+            // height={208}
           />
         </div>
       ) : (
