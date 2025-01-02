@@ -25,7 +25,8 @@ export async function GET(request) {
   const [pageIndex, pageSize, query] = getUrlParams(request);
 
   const currentTime = Date.now();
-  const filteredData = [];
+  let filteredData = [];
+  let paginatedData = [];
 
   // TODO: Upgrade caching solution. Caching in local variables seems to
   //   fail occasionally. Maybe periodic storage cleanup?
@@ -40,8 +41,7 @@ export async function GET(request) {
     console.log("Using cached data");
 
     filteredData = filterData(query);
-
-    return paginateData(filteredData, pageIndex, pageSize);
+    paginatedData = paginateData(filteredData, pageIndex, pageSize);
   }
   // Fetch new data if cache is invalid
   try {
@@ -51,21 +51,18 @@ export async function GET(request) {
     lastFetchedTime = currentTime;
 
     filteredData = filterData(query);
-
-    return paginateData(filteredData, pageIndex, pageSize);
+    paginatedData = paginateData(filteredData, pageIndex, pageSize);
   } catch (error) {
     console.error("Error fetching data:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // const paginatedData = paginateData(filteredData, pageIndex, pageSize);
-
-  // return NextResponse.json({
-  //   urls: paginatedData,
-  //   total: data.length,
-  //   currentPage: page,
-  //   totalPages: Math.ceil(data.length / pageSize),
-  // })
+  return NextResponse.json({
+    urls: paginatedData,
+    total: filteredData.length,
+    currentPage: pageIndex,
+    totalPages: Math.ceil(filteredData.length / pageSize),
+  });
 }
 
 /** Fetch all available data from Supabase.
@@ -109,7 +106,7 @@ async function fetchData() {
 /** Helper function to get the URL parameter values from the provided request. */
 function getUrlParams(request) {
   const pageIndex = parseInt(
-    request.nextUrl.searchParams.get("pageIndex") || "1"
+    request.nextUrl.searchParams.get("currentPageIndex") || "1"
   );
   const pageSize = parseInt(
     request.nextUrl.searchParams.get("pageSize") || "15"
@@ -152,10 +149,5 @@ function paginateData(data, page, pageSize) {
 
   const paginatedData = data.slice(startIndex, endIndex);
 
-  return NextResponse.json({
-    urls: paginatedData,
-    total: data.length,
-    currentPage: page,
-    totalPages: Math.ceil(data.length / pageSize),
-  });
+  return paginatedData;
 }
