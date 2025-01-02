@@ -9,51 +9,30 @@ import Pagination from "./pagination";
 import QueryResultsList from "./queryResultsList";
 import NotebookEmbed from "./notebookEmbed";
 
-export default function Home() {
-  const [urls, setUrls] = useState([]);
+export default function Home({ initialUrls }) {
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
   // const [totalResultsCount, setTotalResultsCount] = useState(0);
   const [totalPagesCount, setTotalPagesCount] = useState(1);
   const [pageSize] = useState(15);
+  const [urls, setUrls] = useState(initialUrls.slice(0, pageSize));
   const [currentQuery, setCurrentQuery] = useState("");
 
-  /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
-   *
-   * Uses the base GET endpoint defined in api/route.js.
-   */
-  const fetchUrls = useCallback(
-    async (pageSize, currentPageIndex, currentQuery) => {
-      try {
-        const res = await fetch(
-          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}`
-        );
-        const result = await res.json();
-        setUrls(result.urls);
-        // setTotalResultsCount(result.total);
-        setTotalPagesCount(result.totalPages);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    },
-    [pageSize]
-  );
-
-  // Reminder: useEffect runs when initial page load and when page changes.
+  // Reminder: useEffect runs on initial page load and when the page changes.
   useEffect(() => {
-    fetchUrls(pageSize, currentPageIndex, currentQuery);
+    const filteredUrls = initialUrls.filter((url) =>
+      url.domain_name.toLowerCase().includes(currentQuery.toLowerCase())
+    );
 
-    // const [ tempUrls, tempTotalPagesCount ] = fetchUrls(
-    //   pageSize,
-    //   currentPageIndex,
-    //   currentQuery
-    // );
+    const total = filteredUrls.length;
+    const totalPages = Math.ceil(total / pageSize);
 
-    // console.log(tempUrls);
-    // console.log(tempTotalPagesCount);
+    const startIndex = (currentPageIndex - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedUrls = filteredUrls.slice(startIndex, endIndex);
 
-    // setUrls(tempUrls);
-    // setTotalPagesCount(tempTotalPagesCount);
-  }, [fetchUrls, pageSize, currentPageIndex, currentQuery]);
+    setUrls(paginatedUrls);
+    setTotalPagesCount(totalPages);
+  }, [pageSize, currentPageIndex, currentQuery, initialUrls]);
 
   const handleSearch = (query) => {
     resetPaginationToFirstPage();
@@ -72,7 +51,7 @@ export default function Home() {
        */}
       <Search onSearch={handleSearch} />
       <Pagination
-        currentPage={currentPageIndex}
+        currentPageIndex={currentPageIndex}
         totalPages={totalPagesCount}
         onPageChange={(page) => setCurrentPageIndex(page)}
       />
