@@ -4,42 +4,11 @@ import { createClient } from "@supabase/supabase-js";
 
 export default async function Page() {
   const initialUrls = await fetchData();
-  // const initialUrls = [
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  //   { url: "a" },
-  // ];
 
   return <Home initialUrls={initialUrls} />;
 }
 
-const supabase_client = createClient(
+const supabaseClient = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
@@ -59,7 +28,7 @@ async function fetchData() {
   while (index < count) {
     console.log("Fetching rows", index, "to", index + increment - 1);
 
-    const { data, error } = await supabase_client
+    const { data, error } = await supabaseClient
       .from("enriched_url_data")
       .select("*")
       .range(index, index + increment - 1)
@@ -85,7 +54,7 @@ async function fetchData() {
 
 /** Helper function to get the total count of rows in the table. */
 async function getTableCount() {
-  const { count, error } = await supabase_client
+  const { count, error } = await supabaseClient
     .from("enriched_url_data")
     .select("*", { count: "exact", head: true });
 
