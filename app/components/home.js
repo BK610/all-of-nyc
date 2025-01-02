@@ -11,9 +11,13 @@ import NotebookEmbed from "./notebookEmbed";
 
 export default function Home({ initialUrls }) {
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
-  // const [totalResultsCount, setTotalResultsCount] = useState(0);
-  const [totalPagesCount, setTotalPagesCount] = useState(1);
+  const [totalResultsCount, setTotalResultsCount] = useState(
+    initialUrls.length
+  );
   const [pageSize] = useState(15);
+  const [totalPagesCount, setTotalPagesCount] = useState(
+    Math.ceil(totalResultsCount / pageSize)
+  );
   const [urls, setUrls] = useState(initialUrls.slice(0, pageSize));
   const [currentQuery, setCurrentQuery] = useState("");
 
