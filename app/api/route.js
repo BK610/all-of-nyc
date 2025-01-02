@@ -20,6 +20,8 @@ const supabase_client = createClient(
  * @param pageIndex: The index of the page to return. Primarily used during pagination. New searches reset this to 1.
  * @param pageSize: The number of URLs to return per page.
  * @param query: The provided search query to filter the returned URLs.
+ *
+ * @deprecated This endpoint is deprecated in favor of performing data fetching server-side.
  */
 export async function GET(request) {
   const [pageIndex, pageSize, query] = getUrlParams(request);
@@ -28,33 +30,26 @@ export async function GET(request) {
   let filteredData = [];
   let paginatedData = [];
 
-  // TODO: Upgrade caching solution. Caching in local variables seems to
-  //   fail occasionally. Maybe periodic storage cleanup?
-  // console.log("Cache info:");
-  // console.log(cachedData);
-  // console.log(lastFetchedTime);
-  // console.log(currentTime);
-  // console.log(CACHE_DURATION_MS);
-
   // Use cached data if still valid
   if (cachedData && currentTime - lastFetchedTime < CACHE_DURATION_MS) {
     console.log("Using cached data");
 
     filteredData = filterData(query);
     paginatedData = paginateData(filteredData, pageIndex, pageSize);
-  }
-  // Fetch new data if cache is invalid
-  try {
-    console.log("Fetching new data...");
-    const data = await fetchData();
-    cachedData = data;
-    lastFetchedTime = currentTime;
+  } else {
+    // Fetch new data if cache is invalid
+    try {
+      console.log("Fetching new data...");
+      const data = await fetchData();
+      cachedData = data;
+      lastFetchedTime = currentTime;
 
-    filteredData = filterData(query);
-    paginatedData = paginateData(filteredData, pageIndex, pageSize);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+      filteredData = filterData(query);
+      paginatedData = paginateData(filteredData, pageIndex, pageSize);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
 
   return NextResponse.json({
@@ -106,7 +101,7 @@ async function fetchData() {
 /** Helper function to get the URL parameter values from the provided request. */
 function getUrlParams(request) {
   const pageIndex = parseInt(
-    request.nextUrl.searchParams.get("currentPageIndex") || "1"
+    request.nextUrl.searchParams.get("pageIndex") || "1"
   );
   const pageSize = parseInt(
     request.nextUrl.searchParams.get("pageSize") || "15"
