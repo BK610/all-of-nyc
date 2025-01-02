@@ -10,12 +10,12 @@ import { clamp } from "../../utils/math.utils";
  * I think something like "currentPageIndex" is much more clear
  * than currentPage.
  */
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  const [inputPage, setInputPage] = useState(currentPage); // it seems like it would be better to make this a string right away, so it's not a mix of types
+const Pagination = ({ currentPageIndex, totalPages, onPageChange }) => {
+  const [inputPage, setInputPage] = useState(currentPageIndex); // it seems like it would be better to make this a string right away, so it's not a mix of types
 
   useEffect(() => {
-    setInputPage(currentPage);
-  }, [currentPage]);
+    setInputPage(currentPageIndex);
+  }, [currentPageIndex]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -50,7 +50,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
    */
   const getValidPageNumber = (maybePageNumber) => {
     const parsedPageNumber = parseInt(maybePageNumber, 10);
-    if (isNaN(parsedPageNumber)) return currentPage;
+    if (isNaN(parsedPageNumber)) return currentPageIndex;
 
     return clamp(1, totalPages, parsedPageNumber);
   };
@@ -58,10 +58,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   return (
     <div className="flex items-center justify-center space-x-4 mb-4">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        onClick={() => onPageChange(currentPageIndex - 1)}
+        disabled={currentPageIndex === 1}
         className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
-          currentPage === 1
+          currentPageIndex === 1
             ? "opacity-50 cursor-not-allowed"
             : "hover:bg-orange-700"
         }`}
@@ -87,10 +87,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       </form>
 
       <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPageIndex + 1)}
+        disabled={currentPageIndex === totalPages}
         className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
-          currentPage === totalPages
+          currentPageIndex === totalPages
             ? "opacity-50 cursor-not-allowed"
             : "hover:bg-orange-700"
         }`}
