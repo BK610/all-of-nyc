@@ -1,11 +1,8 @@
 import Home from "./components/home";
-import Papa from "papaparse";
 import { createClient } from "@supabase/supabase-js";
 
 export default async function Page() {
-  const initialUrls = await fetchData();
-
-  return <Home initialUrls={initialUrls} />;
+  return <Home />;
 }
 
 const supabaseClient = createClient(
@@ -13,62 +10,69 @@ const supabaseClient = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-/** Fetch all available data from Supabase.
- *
- * Fetches data in batches of 1000 rows, as Supabase has a default limit of 1000 rows per request.
- * Repeats until all data is fetched.
- */
-async function fetchData() {
-  let index = 0;
-  const increment = 10000;
-  const count = await getTableCount();
+// The following code represents an attempt to fetch all data from Supabase server-side,
+// to improve the client experience by improved performance. Unfortunately, the amount of
+// data that was requested to be fetched server-side (i.e. the entire database) exceeds
+// Vercel's limit of ~20MB (see https://vercel.link/oversized-isr-page), so building
+// fails. Instead, a simplified, lightweight API route in app/api/route.js reduces the
+// complexity of the site and provides a still-fast client experience.
 
-  let allData = [];
+// /** Fetch all available data from Supabase.
+//  *
+//  * Fetches data in batches of 1000 rows, as Supabase has a default limit of 1000 rows per request.
+//  * Repeats until all data is fetched.
+//  */
+// async function fetchData() {
+//   let index = 0;
+//   const increment = 10000;
+//   const count = await getTableCount();
 
-  while (index < count) {
-    console.log(
-      "Fetching rows",
-      index,
-      "to",
-      Math.min(index + increment - 1, count)
-    );
+//   let allData = [];
 
-    const { data, error } = await supabaseClient
-      .from("enriched_url_data")
-      .select("*")
-      .range(index, index + increment - 1)
-      .csv();
+//   while (index < count) {
+//     console.log(
+//       "Fetching rows",
+//       index,
+//       "to",
+//       Math.min(index + increment - 1, count)
+//     );
 
-    if (error) {
-      console.error("Error fetching data:", error);
-      return null;
-    }
+//     const { data, error } = await supabaseClient
+//       .from("enriched_url_data")
+//       .select("*")
+//       .range(index, index + increment - 1)
+//       .csv();
 
-    const newData = Papa.parse(data, {
-      header: true,
-      skipEmptyLines: true,
-    }).data;
+//     if (error) {
+//       console.error("Error fetching data:", error);
+//       return null;
+//     }
 
-    allData = allData.concat(newData);
+//     const newData = Papa.parse(data, {
+//       header: true,
+//       skipEmptyLines: true,
+//     }).data;
 
-    index += increment;
-  }
+//     allData = allData.concat(newData);
 
-  return allData;
-}
+//     index += increment;
+//   }
 
-/** Helper function to get the total count of rows in the table. */
-async function getTableCount() {
-  const { count, error } = await supabaseClient
-    .from("enriched_url_data")
-    .select("*", { count: "exact", head: true });
+//   return allData;
+// }
 
-  if (error) {
-    console.error("Error fetching table count:", error);
-    return null;
-  }
+// /** Helper function to get the total count of rows in the table. */
+// async function getTableCount() {
+//   const { count, error } = await supabaseClient
+//     .from("enriched_url_data")
+//     .select("*", { count: "exact", head: true });
 
-  console.log("Table row count:", count);
+//   if (error) {
+//     console.error("Error fetching table count:", error);
+//     return null;
+//   }
 
-  return count;
-}
+//   console.log("Table row count:", count);
+
+//   return count;
+// }

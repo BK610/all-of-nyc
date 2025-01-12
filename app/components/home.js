@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-// import { fetchUrls } from "./actions";
 import HomeLayout from "./homeLayout";
 import HomeHeader from "./homeHeader";
 import Search from "./search";
@@ -9,34 +8,39 @@ import Pagination from "./pagination";
 import QueryResultsList from "./queryResultsList";
 import NotebookEmbed from "./notebookEmbed";
 
-export default function Home({ initialUrls }) {
+export default function Home() {
+  const [urls, setUrls] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
-  const [totalResultsCount, setTotalResultsCount] = useState(
-    initialUrls.length
-  );
+  // const [totalResultsCount, setTotalResultsCount] = useState(0);
   const [pageSize] = useState(15);
-  const [totalPagesCount, setTotalPagesCount] = useState(
-    Math.ceil(totalResultsCount / pageSize)
-  );
-  const [urls, setUrls] = useState(initialUrls.slice(0, pageSize));
+  const [totalPagesCount, setTotalPagesCount] = useState(1);
   const [currentQuery, setCurrentQuery] = useState("");
+
+  /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
+   *
+   * Uses the base GET endpoint defined in api/route.js.
+   */
+  const fetchUrls = useCallback(
+    async (currentPageIndex, currentQuery) => {
+      try {
+        const res = await fetch(
+          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}`
+        );
+        const result = await res.json();
+        setUrls(result.urls);
+        // setTotalResultsCount(result.total);
+        setTotalPagesCount(result.totalPages);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    [pageSize]
+  );
 
   // Reminder: useEffect runs on initial page load and when the page changes.
   useEffect(() => {
-    const filteredUrls = initialUrls.filter((url) =>
-      url.domain_name.toLowerCase().includes(currentQuery.toLowerCase())
-    );
-
-    const total = filteredUrls.length;
-    const totalPages = Math.ceil(total / pageSize);
-
-    const startIndex = (currentPageIndex - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedUrls = filteredUrls.slice(startIndex, endIndex);
-
-    setUrls(paginatedUrls);
-    setTotalPagesCount(totalPages);
-  }, [pageSize, currentPageIndex, currentQuery, initialUrls]);
+    fetchUrls(currentPageIndex, currentQuery);
+  }, [pageSize, currentPageIndex, currentQuery]);
 
   const handleSearch = (query) => {
     resetPaginationToFirstPage();
@@ -61,7 +65,7 @@ export default function Home({ initialUrls }) {
       />
       <QueryResultsList urls={urls} />
       <NotebookEmbed
-        src={"Results.html"}
+        src={"/Results.html"}
         fallbackUrl={
           "https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb"
         }
