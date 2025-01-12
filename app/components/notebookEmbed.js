@@ -12,6 +12,8 @@ const NotebookEmbed = ({ src, fallbackUrl }) => {
   return (
     <div className="w-full py-10">
       {html ? (
+        <div className="w-full" dangerouslySetInnerHTML={{ __html: html }} />
+      ) : (
         <p>
           The{" "}
           <a
@@ -32,8 +34,6 @@ const NotebookEmbed = ({ src, fallbackUrl }) => {
           </a>
           .
         </p>
-      ) : (
-        <div className="w-full" dangerouslySetInnerHTML={{ __html: html }} />
       )}
     </div>
   );
