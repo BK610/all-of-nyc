@@ -8,12 +8,15 @@ import Pagination from "./pagination";
 import QueryResultsList from "./queryResultsList";
 import NotebookEmbed from "./notebookEmbed";
 
-export default function Home() {
+export default function Home({ initialUrls, initialTotalCount }) {
+  // const [urls, setUrls] = useState(initialUrls); // Avoiding using this for now. Weird behavior on initial load
   const [urls, setUrls] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
   // const [totalResultsCount, setTotalResultsCount] = useState(0);
   const [pageSize] = useState(15);
-  const [totalPagesCount, setTotalPagesCount] = useState(1);
+  const [totalPagesCount, setTotalPagesCount] = useState(
+    Math.ceil(initialTotalCount / pageSize)
+  );
   const [currentQuery, setCurrentQuery] = useState("");
 
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
@@ -23,10 +26,10 @@ export default function Home() {
   const fetchUrls = useCallback(
     async (currentPageIndex, currentQuery) => {
       try {
-        const res = await fetch(
+        const response = await fetch(
           `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}`
         );
-        const result = await res.json();
+        const result = await response.json();
         setUrls(result.urls);
         // setTotalResultsCount(result.total);
         setTotalPagesCount(result.totalPages);
