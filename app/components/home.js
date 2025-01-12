@@ -40,7 +40,7 @@ export default function Home() {
   // Reminder: useEffect runs on initial page load and when the page changes.
   useEffect(() => {
     fetchUrls(currentPageIndex, currentQuery);
-  }, [pageSize, currentPageIndex, currentQuery]);
+  }, [fetchUrls, pageSize, currentPageIndex, currentQuery]);
 
   const handleSearch = (query) => {
     resetPaginationToFirstPage();
