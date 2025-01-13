@@ -8,7 +8,7 @@ const Filter = ({ onFilter }) => {
 
   const handleFilter = (e) => {
     e.preventDefault();
-    // console.log(filters);
+    console.log("Filter component changed to:", filters);
     onFilter(filters);
   };
 
@@ -19,7 +19,7 @@ const Filter = ({ onFilter }) => {
     >
       {/* <div>Filters</div> */}
       <div className="p-2 flex flex-col justify-center border border-gray-300 rounded-lg">
-        <label className="text-gray-500" for="website-status-select">
+        <label className="text-gray-500" htmlFor="website-status-select">
           Website status
         </label>
         <select
@@ -31,6 +31,7 @@ const Filter = ({ onFilter }) => {
           <option value="is_complete">✅ Complete</option>
           <option value="is_live">❓ Live</option>
           <option value="is_down">💀 Down</option>
+          <option value="">Show all</option>
         </select>
       </div>
       <Button type="submit">Filter</Button>
