@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "./button";
 
 const Search = ({ onSearch }) => {
   const [query, setQuery] = useState("");
@@ -21,12 +22,7 @@ const Search = ({ onSearch }) => {
         placeholder="Search URLs..."
         className="w-8/12 md:w-1/3 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500"
       />
-      <button
-        type="submit"
-        className="px-4 py-2 bg-nyc-orange text-white rounded-lg hover:bg-orange-700"
-      >
-        Search
-      </button>
+      <Button type="submit">Search</Button>
     </form>
   );
 };

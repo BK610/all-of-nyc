@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { clamp } from "../../utils/math.utils";
+import Button from "@/app/components/button";
 
 /**
  * One thing that's tough about this codebase is that it's not typescript.
@@ -57,7 +58,7 @@ const Pagination = ({ currentPageIndex, totalPages, onPageChange }) => {
 
   return (
     <div className="flex items-center justify-center space-x-4 mb-4">
-      <button
+      <Button
         onClick={() => onPageChange(currentPageIndex - 1)}
         disabled={currentPageIndex === 1}
         className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
@@ -67,7 +68,7 @@ const Pagination = ({ currentPageIndex, totalPages, onPageChange }) => {
         }`}
       >
         Previous
-      </button>
+      </Button>
 
       {/* Page Input */}
       <form onSubmit={handlePageSubmit} className="flex items-center space-x-2">
@@ -78,25 +79,20 @@ const Pagination = ({ currentPageIndex, totalPages, onPageChange }) => {
           className="w-16 text-center border border-gray-300 rounded-md p-2"
         />
         <span> of {totalPages}</span>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-nyc-orange text-white rounded-lg hover:bg-orange-700"
-        >
-          Go
-        </button>
+        <Button type="submit">Go</Button>
       </form>
 
-      <button
+      <Button
         onClick={() => onPageChange(currentPageIndex + 1)}
         disabled={currentPageIndex === totalPages}
-        className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
+        className={`${
           currentPageIndex === totalPages
             ? "opacity-50 cursor-not-allowed"
             : "hover:bg-orange-700"
         }`}
       >
         Next
-      </button>
+      </Button>
     </div>
   );
 };
