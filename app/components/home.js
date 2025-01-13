@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import HomeLayout from "./homeLayout";
 import HomeHeader from "./homeHeader";
+import Filter from "./filter";
 import Search from "./search";
 import Pagination from "./pagination";
 import QueryResultsList from "./queryResultsList";
@@ -17,6 +18,9 @@ export default function Home({ initialUrls, initialTotalCount }) {
   const [totalPagesCount, setTotalPagesCount] = useState(
     Math.ceil(initialTotalCount / pageSize)
   );
+  const [currentFilters, setCurrentFilters] = useState({
+    status: "is_complete",
+  });
   const [currentQuery, setCurrentQuery] = useState("");
 
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
@@ -24,10 +28,10 @@ export default function Home({ initialUrls, initialTotalCount }) {
    * Uses the base GET endpoint defined in api/route.js.
    */
   const fetchUrls = useCallback(
-    async (currentPageIndex, currentQuery) => {
+    async (currentPageIndex, currentQuery, currentFilters) => {
       try {
         const response = await fetch(
-          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}`
+          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}&status=${currentFilters.status}`
         );
         const result = await response.json();
         setUrls(result.urls);
@@ -42,8 +46,13 @@ export default function Home({ initialUrls, initialTotalCount }) {
 
   // Reminder: useEffect runs on initial page load and when the page changes.
   useEffect(() => {
-    fetchUrls(currentPageIndex, currentQuery);
-  }, [fetchUrls, pageSize, currentPageIndex, currentQuery]);
+    fetchUrls(currentPageIndex, currentQuery, currentFilters);
+  }, [fetchUrls, pageSize, currentPageIndex, currentQuery, currentFilters]);
+
+  const handleFilter = (filters) => {
+    resetPaginationToFirstPage();
+    setCurrentFilters(filters);
+  };
 
   const handleSearch = (query) => {
     resetPaginationToFirstPage();
@@ -57,6 +66,7 @@ export default function Home({ initialUrls, initialTotalCount }) {
   return (
     <HomeLayout>
       <HomeHeader />
+      <Filter onFilter={handleFilter} />
       {/* TODO: Consider combining Search, Pagination, and QueryResultsList into a single component.
        * State and logic could be handled on that level too.
        */}
