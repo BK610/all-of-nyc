@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase_client = createClient(
+const supabaseClient = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
@@ -15,10 +15,10 @@ const supabase_client = createClient(
  * @param query: The provided search query to filter the returned URLs.
  */
 export async function GET(request) {
-  const [pageIndex, pageSize, query] = getUrlParams(request);
+  const [pageIndex, pageSize, query, status] = getUrlParams(request);
 
-  const urls = await fetchData(pageIndex, pageSize, query);
-  const total = await getTableCount(query);
+  const urls = await fetchData(pageIndex, pageSize, query, status);
+  const total = await getTableCount(query, status);
   const currentPage = pageIndex;
   const totalPages = Math.ceil(total / pageSize);
 
@@ -39,8 +39,10 @@ function getUrlParams(request) {
     request.nextUrl.searchParams.get("pageSize") || "15"
   );
   const query = request.nextUrl.searchParams.get("query")?.toLowerCase() || "";
+  const status =
+    request.nextUrl.searchParams.get("status")?.toLowerCase() || "";
 
-  return [pageIndex, pageSize, query];
+  return [pageIndex, pageSize, query, status];
 }
 
 /** Fetch all available data from Supabase.
@@ -48,15 +50,20 @@ function getUrlParams(request) {
  * Fetches data in batches of 1000 rows, as Supabase has a default limit of 1000 rows per request.
  * Repeats until all data is fetched.
  */
-async function fetchData(pageIndex, pageSize, query) {
+async function fetchData(pageIndex, pageSize, query, status) {
   const startSearchIndex = (pageIndex - 1) * pageSize;
   const endSearchIndex = startSearchIndex + (pageSize - 1);
 
-  const { data, error } = await supabase_client
+  let supabaseQuery = supabaseClient
     .from("enriched_url_data")
     .select("*")
-    .ilike("domain_name", `%${query}%`)
-    .range(startSearchIndex, endSearchIndex);
+    .ilike("domain_name", `%${query}%`);
+
+  if (status) supabaseQuery = supabaseQuery.eq("website_status", status);
+
+  supabaseQuery = supabaseQuery.range(startSearchIndex, endSearchIndex);
+
+  const { data, error } = await supabaseQuery;
 
   if (error) {
     console.error("Error fetching data:", error);
@@ -67,11 +74,15 @@ async function fetchData(pageIndex, pageSize, query) {
 }
 
 /** Helper function to get the total count of rows that match the query. */
-async function getTableCount(query) {
-  const { count, error } = await supabase_client
+async function getTableCount(query, status) {
+  let supabaseQuery = supabaseClient
     .from("enriched_url_data")
     .select("*", { count: "exact", head: true })
     .ilike("domain_name", `%${query}%`);
+
+  if (status) supabaseQuery = supabaseQuery.eq("website_status", status);
+
+  const { count, error } = await supabaseQuery;
 
   if (error) {
     console.error("Error fetching table count:", error);
