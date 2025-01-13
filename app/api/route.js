@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import Papa from "papaparse";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase_client = createClient(
@@ -57,18 +56,14 @@ async function fetchData(pageIndex, pageSize, query) {
     .from("enriched_url_data")
     .select("*")
     .ilike("domain_name", `%${query}%`)
-    .range(startSearchIndex, endSearchIndex)
-    .csv();
+    .range(startSearchIndex, endSearchIndex);
 
   if (error) {
     console.error("Error fetching data:", error);
     return null;
   }
 
-  return Papa.parse(data, {
-    header: true,
-    skipEmptyLines: true,
-  }).data;
+  return data;
 }
 
 /** Helper function to get the total count of rows that match the query. */
