@@ -26,7 +26,7 @@ class SupabaseDataProcessor:
         now = datetime.utcnow().isoformat()
 
         # True if no conditions are true:
-        #   1. Does the column have a value?
+        #   1. Does the column not have a value?
         #   2. Is the value equal to "Error"?
         #   3. Is the value equal to "Not found"?
         is_url_found = (not
