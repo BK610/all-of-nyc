@@ -1,7 +1,6 @@
 import os
-from supabase import create_client
 from dotenv import load_dotenv
-from supabase_data_processor import SupabaseDataProcessor
+from utils.supabase_data_processor import SupabaseDataProcessor
 
 if __name__ == "__main__":
     load_dotenv('.env.local')

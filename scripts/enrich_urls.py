@@ -1,8 +1,8 @@
 import requests
 import pandas as pd
-from populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
-from get_open_api_data import get_open_api_data_from_url
-from csv_processing import append_row_to_csv, append_rows_to_csv
+from utils.populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
+from utils.get_open_api_data import get_open_api_data_from_url
+from utils.csv_processing import append_row_to_csv, append_rows_to_csv
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
