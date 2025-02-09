@@ -1,7 +1,7 @@
 import os
 from supabase import create_client
 from dotenv import load_dotenv
-from csv_processing import csv_to_json
+from .csv_processing import csv_to_json
 
 def connect_to_supabase(url, key):
     """Create and return a client connection to supabase using the provided URL and auth key."""
@@ -47,12 +47,9 @@ def test_writing_list():
     table = 'enriched_url_data'
     data = [{"domain_name":"test.nyc"}]
 
-    # print(data)
-    # print(type(data))
-
     response = insert_to_supabase(table, data, supabase)
 
-    # print(response)
+    print(response)
 
 def test_writing_file():
     url = os.getenv('SUPABASE_URL')
@@ -66,12 +63,9 @@ def test_writing_file():
 
     data = csv_to_json(csv_file)
 
-    # print(data)
-    # print(type(data))
-
     response = insert_to_supabase(table, data, supabase)
     
-    # print(response)
+    print(response)
 
 def test_upsert_file():
     url = os.getenv('SUPABASE_URL')
@@ -85,13 +79,10 @@ def test_upsert_file():
 
     data = csv_to_json(csv_file)
 
-    # print(data)
-    # print(type(data))
-
     response = upsert_to_supabase(table, data, 'domain_name', supabase)
-    
-    # print(response)
 
+    print(response)
+    
 if __name__ == '__main__':
     load_dotenv('.env.local')
 
