@@ -21,4 +21,4 @@ jobs:
         run: pip install requests pandas supabase
 
       - name: Run Python script
-        run: python /scripts/add_new_urls.py
+        run: python scripts/add_new_urls.py
