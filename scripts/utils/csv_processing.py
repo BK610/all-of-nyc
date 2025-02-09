@@ -19,11 +19,15 @@ def append_row_to_csv(row, file_path):
         index=False
     )
 
-def csv_to_json(csv_path):
-    """Convert CSV file at csv_path to an array of JSON objects for each row."""
-    csv_file = pd.DataFrame(pd.read_csv(csv_path))
+def csv_path_to_json(csv_path):
+    """Read the CSV at csv_path, and convert it to an array of JSON objects for each row."""
+    csv = pd.DataFrame(pd.read_csv(csv_path))
 
-    json_string = csv_file.to_json(orient="records")
+    return csv_to_json(csv)
+
+def csv_to_json(csv):
+    """Convert CSV file to an array of JSON objects, one for each row."""
+    json_string = csv.to_json(orient="records")
 
     json_obj = json.loads(json_string)
 
