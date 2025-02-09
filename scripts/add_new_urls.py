@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from utils.supabase_connector import connect_to_supabase, upsert_to_supabase
 from utils.csv_processing import csv_to_json
-from utils.get_open_api_data import OpenApiDataProcessor
+from utils.open_api_data_processor import OpenApiDataProcessor
 
 # Set up the data in this script.
 load_dotenv('.env.local')
