@@ -4,6 +4,20 @@ from utils.supabase_connector import connect_to_supabase, upsert_to_supabase
 from utils.csv_processing import csv_to_json
 from utils.open_api_data_processor import OpenApiDataProcessor
 
+"""
+Run this file to:
+1. Check the latest registration date for rows already in Supabase
+2. Get all new data from the NYC Open Data portal since that registration date
+3. Add that new data to Supabase
+
+Note: This step only adds the raw data from NYC Open Data to Supabase, without any data enriching
+
+This is part 1 of the pipeline:
+1. Add new URLs from NYC Open Data to Supabase (add_new_urls.py)
+2. Enrich URLs that don't yet have metadata (enrich_urls.py)
+3. Clean up the derived Supabase columns (update_all_urls.py)
+"""
+
 # Set up the data in this script.
 load_dotenv('.env.local')
 
@@ -38,7 +52,6 @@ def get_latest_registration_date():
     return latest_registration_date
 
 if __name__ == "__main__":
-
     # 1. Get the latest domain_registration_date value for existing Supabase records
     latest_registration_date = get_latest_registration_date()
     print(f"Latest registration date: {latest_registration_date}")
