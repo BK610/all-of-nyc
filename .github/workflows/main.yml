@@ -18,7 +18,7 @@ jobs:
           python-version: '3.13'
 
       - name: Install dependencies
-        run: pip install requests pandas supabase
+        run: pip install requests pandas supabase dotenv
 
       - name: Run Python script
         run: python scripts/add_new_urls.py
