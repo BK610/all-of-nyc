@@ -15,7 +15,7 @@ table = "enriched_url_data"
 
 api_url = "https://data.cityofnewyork.us/resource/9cw8-7heb.csv"
 
-def get_latest_registration_date(url):
+def get_latest_registration_date():
     """
     Get the latest domain_registration_date value in Supabase.
 
@@ -40,7 +40,7 @@ def get_latest_registration_date(url):
 if __name__ == "__main__":
 
     # 1. Get the latest domain_registration_date value for existing Supabase records
-    latest_registration_date = get_latest_registration_date(api_url)
+    latest_registration_date = get_latest_registration_date()
     print(f"Latest registration date: {latest_registration_date}")
 
     # 2. Fetch new data from the NYC Open Data API from the latest domain_registration_date to today
