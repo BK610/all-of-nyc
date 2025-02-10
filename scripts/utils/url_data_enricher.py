@@ -8,6 +8,7 @@ import os
 import aiohttp
 import asyncio
 import logging
+import datetime
 
 class UrlDataEnricher:
     def __init__(self):
@@ -15,6 +16,7 @@ class UrlDataEnricher:
         self.logger = logging.getLogger(__name__)
 
         self.requests_session = self.setup_requests_session()
+
         self.CSV_ROWS_SCHEMA = [
             'domain_name',
             'domain_registration_date',
@@ -27,12 +29,11 @@ class UrlDataEnricher:
             'is_url_found',
             'is_og_title_found',
             'is_og_image_found',
-            'created_at',
             'last_updated_at',
             'website_status',
         ]
 
-    def setup_requests_session(self):
+    def setup_requests_session(self) -> requests.Session:
         """Create a requests Session to be used for all synchronous requests, with desired configuration."""
         session = requests.Session()
 
@@ -46,101 +47,36 @@ class UrlDataEnricher:
 
         return session
 
-    def read_csv_data(self, csv):
+    def read_csv_data(self, csv) -> pd.DataFrame | None:
         """
         Read the provided CSV data into a pandas.DataFrame.
         
         Scenarios
         1. Provided CSV data is invalid                 -> Return None
-        2. Provided CSV data is a valid file path       -> Read from that file
-        3. Provided CSV data is a List[Any]             -> Read from that data
+        2. Provided CSV data is a List[Any]             -> Read from that data
+        3. Provided CSV data is a valid file path       -> Read from that file
         4. Provided CSV data is an invalid file path    -> Create that file
         """
 
         if csv == None:
             self.logger.error(f"Failed to read invalid CSV: {csv}")
             return None
-        elif os.path.isfile(str(csv)):
-            self.logger.info(f"Reading from CSV file: {csv}")
-            return pd.read_csv(csv)
         elif type(csv) == list:
-            self.logger.info(f"Reading CSV data: {csv}")
+            self.logger.info(f"Reading CSV data.")
             return pd.DataFrame(csv)
         else:
-            self.logger.info(f"Creating CSV file at: {csv}")
-            return pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
-
-    def get_response(self, url):
-        """Get the response at the provided url using the provided requests.Session.
-        Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
-        url = ensure_valid_protocol(url)
-
-        try:
-            # Try with HTTPS
-            response = self.requests_session.get(url, timeout=5)
-            return response
-        except requests.exceptions.SSLError:
-            self.logger.error(f"SSL error with {url}, trying HTTP instead.")
-            # Try with HTTP if HTTPS fails
-            url = url.replace("https://", "http://")
             try:
-                response = self.requests_session.get(url, timeout=5)
-                return response
-            except requests.RequestException as e:
-                self.logger.exception(f"Error fetching {url}: {e}")
-                return None
-        except requests.RequestException as e:
-            self.logger.exception(f"Error fetching {url}: {e}")
-            return None
-        
-    async def get_response_async(self, url, session):
-        """Get the response at the provided url using the provided aiohttp.ClientSession.
-        Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
-        # TODO: Can get_response and get_response_async be combined?
-        # Almost the entire function is the same, but the async processing
-        # works differently.
-        url = ensure_valid_protocol(url)
+                if os.path.isfile(csv):
+                    self.logger.info(f"Reading from CSV file: {csv}")
+                    return pd.read_csv(csv)
+                else:
+                    self.logger.info(f"Creating CSV file at: {csv}")
+                    return pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
+            except Exception as e:
+                self.logger.error(e)
 
-        try:
-            # Try with HTTPS
-            async with session.get(url, timeout=10) as response:
-                response_text = await response.text()
-                return response, response_text
-        except requests.exceptions.SSLError:
-            self.logger.exception(f"SSL error with {url}, trying HTTP instead.")
-            # Try with HTTP if HTTPS fails
-            url = url.replace("https://", "http://")
-            try:
-                async with session.get(url, timeout=10) as response:
-                    response_text = await response.text()
-                    return response, response_text
-            except requests.RequestException as e:
-                self.logger.exception(f"Error fetching {url}: {e}")
-                return None
-        except requests.RequestException as e:
-            self.logger.exception(f"Error fetching {url}: {e}")
-            return None
-
-    # Synchronous versions of the URL enriching functions
-
-    def enrich_url(self, url, registration_date, nexus_category, session):
-        """Process an individual URL to get status code and Open Graph data."""
-        status_code = "Error"
-        final_url = "Error"
-        open_graph_metadata = {
-            'title': "Error",
-            'description': "Error",
-            'image': "Error"
-        }
-        created_at = 1
-        last_updated_at = 1
-        
-        response = self.get_response(url)
-
-        if response:
-            status_code = response.status_code
-            final_url = response.url
-            open_graph_metadata = parse_open_graph_metadata(response.content)
+    def generate_row(self, url, registration_date, nexus_category, status_code, final_url, open_graph_metadata) -> dict:
+        """Generate a dict with all provided info."""
 
         # True if no conditions are true:
         #   1. Does the column not have a value?
@@ -155,6 +91,8 @@ class UrlDataEnricher:
         if is_data_found(final_url) and is_data_found(open_graph_metadata['title']): website_status = "is_complete"
         elif is_data_found(final_url): website_status = "is_live"
         else: website_status = "is_down"
+        
+        last_updated_at = datetime.datetime.now()
 
         return {
             # Original data
@@ -170,7 +108,6 @@ class UrlDataEnricher:
             'description': f"'{open_graph_metadata['description']}'",
             'image': open_graph_metadata['image'],
             # Convenience dates
-            'created_at': created_at,
             'last_updated_at': last_updated_at,
             # Convenience bools
             'is_url_found': is_data_found(final_url),
@@ -179,6 +116,79 @@ class UrlDataEnricher:
             # Website status
             'website_status': website_status
         }
+
+
+    def get_response(self, url):
+        """Get the response at the provided url.
+        Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
+        url = ensure_valid_protocol(url)
+
+        try:
+            # Try with HTTPS
+            response = self.requests_session.get(url, timeout=5)
+            return response
+        except requests.exceptions.SSLError:
+            self.logger.warning(f"SSL error with {url}, trying HTTP instead.")
+            # Try with HTTP if HTTPS fails
+            url = url.replace("https://", "http://")
+            try:
+                response = self.requests_session.get(url, timeout=5)
+                return response
+            except requests.RequestException as e:
+                self.logger.error(f"Error fetching {url}: {e}")
+                return None
+        except requests.RequestException as e:
+            self.logger.error(f"Error fetching {url}: {e}")
+            return None
+        
+    async def get_response_async(self, url, session):
+        """Get the response at the provided url using the provided aiohttp.ClientSession.
+        Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
+        # TODO: Can get_response and get_response_async be combined?
+        # Almost the entire function is the same, but the async processing
+        # works differently.
+        url = ensure_valid_protocol(url)
+
+        try:
+            # Try with HTTPS
+            async with session.get(url, timeout=10) as response:
+                response_text = await response.text()
+                return response, response_text
+        except aiohttp.ClientSSLError:
+            self.logger.warning(f"SSL error with {url}, trying HTTP instead.")
+            # Try with HTTP if HTTPS fails
+            url = url.replace("https://", "http://")
+            try:
+                async with session.get(url, timeout=10) as response:
+                    response_text = await response.text()
+                    return response, response_text
+            except requests.RequestException as e:
+                self.logger.error(f"Error fetching {url}: {e}")
+                return None
+        except requests.RequestException as e:
+            self.logger.error(f"Error fetching {url}: {e}")
+            return None
+
+    # Synchronous versions of the URL enriching functions
+
+    def enrich_url(self, url, registration_date, nexus_category):
+        """Process an individual URL to get status code and Open Graph data."""
+        status_code = "Error"
+        final_url = "Error"
+        open_graph_metadata = {
+            'title': "Error",
+            'description': "Error",
+            'image': "Error"
+        }
+        
+        response = self.get_response(url)
+
+        if response:
+            status_code = response.status_code
+            final_url = response.url
+            open_graph_metadata = parse_open_graph_metadata(response.content)
+
+        return self.generate_row(url, registration_date, nexus_category, status_code, final_url, open_graph_metadata)
 
     def enrich_urls(self, input_csv_path, output_csv_path):
         """Read URLs from CSV, process them, and save enriched data to a new CSV file."""
@@ -191,7 +201,7 @@ class UrlDataEnricher:
             input_data = self.read_csv_data(input_csv_path)
 
             if 'domain_name' not in input_data.columns:
-                print("CSV must contain a 'domain_name' column")
+                self.logger.exception("CSV must contain a 'domain_name' column")
                 return
 
             # Iterate through rows, enrich the data, append to the output CSV
@@ -199,7 +209,7 @@ class UrlDataEnricher:
                 if row['domain_name'] in processed_urls:
                     continue # Skip URLs that we've already processed
 
-                enriched_row = self.enrich_url(row['domain_name'], row['domain_registration_date'], row['nexus_category'], self.requests_session)
+                enriched_row = self.enrich_url(row['domain_name'], row['domain_registration_date'], row['nexus_category'])
                 append_row_to_csv(enriched_row, output_csv_path)
                 self.logger.debug(f"Finished processing: {row['domain_name']}")
             
@@ -229,28 +239,20 @@ class UrlDataEnricher:
                     status_code = response.status
                     final_url = response.url
                     open_graph_metadata = parse_open_graph_metadata(response_text)
-            except Exception as e:
-                print(f"Error processing URL {url}: {e}")
-            
-            print(f"Finished processing: {url}")
 
-            return {
-                # Original data
-                'domain_name': url,
-                'domain_registration_date': registration_date,
-                'nexus_category': nexus_category,
-                # Status code from pinging URL
-                'status_code': status_code,
-                # Final URL that the original URL directed to
-                'final_url': final_url,
-                # Metadata available at final URL
-                'title': open_graph_metadata['title'],
-                'description': open_graph_metadata['description'],
-                'image': open_graph_metadata['image']
-            }
+            except Exception as e:
+                self.logger.error(f"Error processing URL {url}: {e}")
+            
+            self.logger.debug(f"Finished processing: {url}")
+
+            return self.generate_row(url, registration_date, nexus_category, status_code, final_url, open_graph_metadata)
 
     async def process_urls(self, input_data, session, processed_urls, output_csv_path):
-        """TODO: Write docstring when I figure out why this is a separate function."""
+        """
+        Asynchronously process URLs. Tasks are performed separately:
+        1. Enrich each URL.
+        2. Add it to the output CSV.
+        """
 
         # Limit the number of async threads to manage network bandwidth and machine resources.
         # TODO: Play around to find the right balance of processing speed and receiving valid responses
@@ -278,7 +280,7 @@ class UrlDataEnricher:
             input_data = self.read_csv_data(input_csv_path)
 
             if 'domain_name' not in input_data.columns:
-                print("CSV must contain a 'domain_name' column")
+                self.logger.exception("CSV must contain a 'domain_name' column")
                 return
             
             # Limit the number of concurrent connections to manage network bandwidth and machine resources.
@@ -293,8 +295,8 @@ class UrlDataEnricher:
                     output_csv_path,
                 )
             
-            print(f'Finished processing all URLs in {input_csv_path}')
+            self.logger.info(f'Finished processing all URLs in {input_csv_path}')
         except FileNotFoundError:
-            print(f"File not found at {input_csv_path}: {e}")
+            self.logger.exception(f"File not found at {input_csv_path}: {e}")
         except Exception as e:
-            print(f"Error during processing: {e}")
+            self.logger.exception(f"Error during processing: {e}")
