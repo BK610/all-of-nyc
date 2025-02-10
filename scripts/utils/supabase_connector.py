@@ -37,13 +37,13 @@ def upsert_to_supabase(table, data, pk, supabase_client):
         print(f"Encountered exception while upserting to {table}: {e}")
         return None
 
-def fetch_from_supabase(table, supabase_client, order_by = "domain_registration_date", limit = 1000, as_csv=False):
+def fetch_from_supabase(table, supabase_client, order_by = "domain_registration_date", order_by_desc=False, limit = 1000, as_csv=False):
     try:
         if as_csv:
             response = (
                 supabase_client.table(table)
                 .select("domain_name, domain_registration_date, nexus_category")
-                .order(order_by, desc=True)
+                .order(order_by, desc=order_by_desc)
                 .limit(limit)
                 .csv()
                 .execute()
@@ -52,7 +52,7 @@ def fetch_from_supabase(table, supabase_client, order_by = "domain_registration_
             response = (
                 supabase_client.table(table)
                 .select("domain_name, domain_registration_date, nexus_category")
-                .order(order_by, desc=True)
+                .order(order_by, desc=order_by_desc)
                 .limit(limit)
                 .execute()
             )
