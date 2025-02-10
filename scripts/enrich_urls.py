@@ -7,6 +7,20 @@ import time
 import os
 from dotenv import load_dotenv
 
+"""
+Run this file to:
+1. Fetch the stalest rows from Supabase
+2. Enrich them with fresh data from pinging the websites, and store it in a temporary local file
+3. Update the enriched data into Supabase
+4. Delete the generated temporary local file
+
+Note: This step only enriches existing data in Supabase, without adding new URLs from NYC Open Data
+
+This is part 2 of the pipeline:
+1. Add new URLs from NYC Open Data to Supabase (add_new_urls.py)
+2. Enrich URLs that don't yet have metadata (enrich_urls.py)
+"""
+
 # Set up the data in this script.
 load_dotenv('.env.local')
 
