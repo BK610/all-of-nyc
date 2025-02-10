@@ -22,16 +22,15 @@ if __name__ == "__main__":
     parser.add_argument('-a', '--asynchronous', action='store_true', help='Run in asynchronous mode. Default False.')
 
     args = parser.parse_args()
-
     url_data_enricher = UrlDataEnricher()
-
     start_time = time.perf_counter()
+
     if args.asynchronous:
         asyncio.run(url_data_enricher.enrich_urls_async(args.input_csv_path, args.output_csv_path))
     else:
-        # url_data_enricher.enrich_urls(args.input_csv_path, args.output_csv_path)
-        url_data_enricher.enrich_urls(test_csv, args.output_csv_path)
+        url_data_enricher.enrich_urls(args.input_csv_path, args.output_csv_path)
+        # url_data_enricher.enrich_urls(test_csv, args.output_csv_path)
     
     end_time = time.perf_counter()
 
-    print(f"Time taken: {end_time - start_time}")
+    print(f"Completed in: {end_time - start_time} seconds")
