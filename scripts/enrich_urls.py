@@ -17,11 +17,20 @@ if __name__ == "__main__":
 
     url_data_enricher = UrlDataEnricher()
 
+    test_csv = [
+        {
+            "domain_name": "coolstuff.nyc",
+            "domain_registration_date": "2025-02-10T00:00:00",
+            "nexus_category": "INDIV"
+        }
+    ]
+
     start_time = time.perf_counter()
     if args.asynchronous:
         asyncio.run(url_data_enricher.enrich_urls_async(args.input_csv_path, args.output_csv_path))
     else:
-        url_data_enricher.enrich_urls(args.input_csv_path, args.output_csv_path)
+        # url_data_enricher.enrich_urls(args.input_csv_path, args.output_csv_path)
+        url_data_enricher.enrich_urls(test_csv, args.output_csv_path)
     
     end_time = time.perf_counter()
 
