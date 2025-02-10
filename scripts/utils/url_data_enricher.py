@@ -66,23 +66,6 @@ class UrlDataEnricher:
         else:
             self.logger.info(f"Creating CSV file at: {csv}")
             return pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
-        # # TODO: Find a better way to identify if the provided path is a URL.
-        # if os.path.isfile(csv):
-        #     return pd.read_csv(csv)
-        # elif csv != None:
-        #     return pd.read_csv(csv)
-        # else:
-        #     existing_data = None
-        #     try:
-        #         file_exists = os.path.isfile(csv)
-        #         if file_exists:
-        #             existing_data = pd.read_csv(csv)
-        #         else:
-        #             existing_data = pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
-        #     except FileNotFoundError:
-        #         existing_data = pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
-            
-        #     return existing_data
 
     def get_response(self, url):
         """Get the response at the provided url using the provided requests.Session.
