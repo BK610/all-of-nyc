@@ -46,49 +46,65 @@ class UrlDataEnricher:
 
         return session
 
-    def read_csv_data(self, file_path):
-        """Read the provided CSV file into a pandas.DataFrame."""
+    def read_csv_data(self, csv):
+        """
+        Read the provided CSV data into a pandas.DataFrame.
+        
+        Scenarios
+        1. Provided CSV data is invalid                 -> Return None
+        2. Provided CSV data is a valid file path       -> Read from that file
+        3. Provided CSV data is a List[Any]             -> Read from that data
+        4. Provided CSV data is an invalid file path    -> Create that file
+        """
 
-        # TODO: Find a better way to identify if the provided path is a URL.
-        if file_path.startswith("http"):
-            open_api_data_processor = OpenApiDataProcessor(file_path)
-            return open_api_data_processor.get_data(file_path)
+        if csv == None:
+            self.logger.error(f"Failed to read invalid CSV: {csv}")
+            return None
+        elif os.path.isfile(csv) or type(csv) == list:
+            self.logger.info(f"Reading from CSV: {csv}")
+            return pd.read_csv(csv)
         else:
-            existing_data = None
-
-            try:
-                file_exists = os.path.isfile(file_path)
-
-                if file_exists:
-                    existing_data = pd.read_csv(file_path)
-                else:
-                    existing_data = pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
-            except FileNotFoundError:
-                existing_data = pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
+            self.logger.info(f"Creating CSV file at: {csv}")
+            return pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
+        # # TODO: Find a better way to identify if the provided path is a URL.
+        # if os.path.isfile(csv):
+        #     return pd.read_csv(csv)
+        # elif csv != None:
+        #     return pd.read_csv(csv)
+        # else:
+        #     existing_data = None
+        #     try:
+        #         file_exists = os.path.isfile(csv)
+        #         if file_exists:
+        #             existing_data = pd.read_csv(csv)
+        #         else:
+        #             existing_data = pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
+        #     except FileNotFoundError:
+        #         existing_data = pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
             
-            return existing_data
+        #     return existing_data
 
-    def get_response(self, url, session):
+    def get_response(self, url):
         """Get the response at the provided url using the provided requests.Session.
         Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
         url = ensure_valid_protocol(url)
 
         try:
             # Try with HTTPS
-            response = session.get(url, timeout=5)
+            response = self.requests_session.get(url, timeout=5)
             return response
         except requests.exceptions.SSLError:
-            print(f"SSL error with {url}, trying HTTP instead.")
+            self.logger.error(f"SSL error with {url}, trying HTTP instead.")
             # Try with HTTP if HTTPS fails
             url = url.replace("https://", "http://")
             try:
-                response = session.get(url, timeout=5)
+                response = self.requests_session.get(url, timeout=5)
                 return response
             except requests.RequestException as e:
-                print(f"Error fetching {url}: {e}")
+                self.logger.exception(f"Error fetching {url}: {e}")
                 return None
         except requests.RequestException as e:
-            print(f"Error fetching {url}: {e}")
+            self.logger.exception(f"Error fetching {url}: {e}")
             return None
         
     async def get_response_async(self, url, session):
@@ -105,7 +121,7 @@ class UrlDataEnricher:
                 response_text = await response.text()
                 return response, response_text
         except requests.exceptions.SSLError:
-            print(f"SSL error with {url}, trying HTTP instead.")
+            self.logger.exception(f"SSL error with {url}, trying HTTP instead.")
             # Try with HTTP if HTTPS fails
             url = url.replace("https://", "http://")
             try:
@@ -113,10 +129,10 @@ class UrlDataEnricher:
                     response_text = await response.text()
                     return response, response_text
             except requests.RequestException as e:
-                print(f"Error fetching {url}: {e}")
+                self.logger.exception(f"Error fetching {url}: {e}")
                 return None
         except requests.RequestException as e:
-            print(f"Error fetching {url}: {e}")
+            self.logger.exception(f"Error fetching {url}: {e}")
             return None
 
     # Synchronous versions of the URL enriching functions
@@ -130,13 +146,29 @@ class UrlDataEnricher:
             'description': "Error",
             'image': "Error"
         }
+        created_at = 1
+        last_updated_at = 1
         
-        response = self.get_response(url, session)
+        response = self.get_response(url)
 
         if response:
             status_code = response.status_code
             final_url = response.url
             open_graph_metadata = parse_open_graph_metadata(response.content)
+
+        # True if no conditions are true:
+        #   1. Does the column not have a value?
+        #   2. Is the value equal to "Error"?
+        #   3. Is the value equal to "Not found"?
+        def is_data_found(data):
+            return (not
+                    ((not data)
+                    or data == "Error"
+                    or data == "Not found"))
+        
+        if is_data_found(final_url) and is_data_found(open_graph_metadata['title']): website_status = "is_complete"
+        elif is_data_found(final_url): website_status = "is_live"
+        else: website_status = "is_down"
 
         return {
             # Original data
@@ -148,9 +180,18 @@ class UrlDataEnricher:
             # Final URL that the original URL directed to
             'final_url': final_url,
             # Metadata available at final URL
-            'title': open_graph_metadata['title'],
-            'description': open_graph_metadata['description'],
-            'image': open_graph_metadata['image']
+            'title': f"'{open_graph_metadata['title']}'",
+            'description': f"'{open_graph_metadata['description']}'",
+            'image': open_graph_metadata['image'],
+            # Convenience dates
+            'created_at': created_at,
+            'last_updated_at': last_updated_at,
+            # Convenience bools
+            'is_url_found': is_data_found(final_url),
+            'is_og_title_found': is_data_found(open_graph_metadata['title']),
+            'is_og_image_found': is_data_found(open_graph_metadata['image']),
+            # Website status
+            'website_status': website_status
         }
 
     def enrich_urls(self, input_csv_path, output_csv_path):
@@ -174,12 +215,12 @@ class UrlDataEnricher:
 
                 enriched_row = self.enrich_url(row['domain_name'], row['domain_registration_date'], row['nexus_category'], self.requests_session)
                 append_row_to_csv(enriched_row, output_csv_path)
-                print(f"Finished processing: {row['domain_name']}")
+                self.logger.debug(f"Finished processing: {row['domain_name']}")
             
-            print(f"Finished processing all of: {input_csv_path}")
+            self.logger.info(f"Finished processing all of: {input_csv_path}")
 
         except Exception as e:
-            print(f"Error during processing: {e}")
+            self.logger.exception(f"Error during processing: {e}")
 
     # Asynchronous versions of the URL enriching functions
 
