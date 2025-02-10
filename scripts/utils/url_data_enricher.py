@@ -1,8 +1,8 @@
 import requests
 import pandas as pd
 from utils.populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
-from utils.open_api_data_processor import get_open_api_data_from_url
-from utils.csv_processing import append_row_to_csv, append_rows_to_csv
+from utils.open_api_data_processor import OpenApiDataProcessor
+from utils.csv_processing import append_row_to_csv
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
 import aiohttp
@@ -47,7 +47,8 @@ class UrlDataEnricher:
 
         # TODO: Find a better way to identify if the provided path is a URL.
         if file_path.startswith("http"):
-            return get_open_api_data_from_url(file_path)
+            open_api_data_processor = OpenApiDataProcessor(file_path)
+            return open_api_data_processor.get_data(file_path)
         else:
             existing_data = None
 
