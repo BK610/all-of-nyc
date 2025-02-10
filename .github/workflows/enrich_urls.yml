@@ -19,7 +19,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: pip install requests pandas supabase python-dotenv aiohttp asyncio argparse
+        run: pip install requests pandas supabase python-dotenv aiohttp asyncio argparse beautifulsoup4
 
       - name: Run Python script
         run: python scripts/enrich_urls.py files/temp.csv -a
