@@ -1,0 +1,25 @@
+name: Add New URLs
+on:
+  schedule:
+    - cron: 0 0 * * *
+  workflow_dispatch:
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+jobs:
+  enrich-urls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install requests pandas supabase python-dotenv aiohttp asyncio argparse
+
+      - name: Run Python script
+        run: python scripts/enrich_urls.py files/temp.csv -a
