@@ -1,4 +1,4 @@
-name: Add New URLs
+name: Enrich URLs
 on:
   schedule:
     - cron: 0 0 * * *
