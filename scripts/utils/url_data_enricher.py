@@ -213,7 +213,7 @@ class UrlDataEnricher:
                 append_row_to_csv(enriched_row, output_csv_path)
                 self.logger.debug(f"Finished processing: {row['domain_name']}")
             
-            self.logger.info(f"Finished processing all of: {input_csv_path}")
+            self.logger.info(f"Finished processing all data")
 
         except Exception as e:
             self.logger.exception(f"Error during processing: {e}")
@@ -295,7 +295,7 @@ class UrlDataEnricher:
                     output_csv_path,
                 )
             
-            self.logger.info(f'Finished processing all URLs in {input_csv_path}')
+            self.logger.info(f'Finished processing all URLs.')
         except FileNotFoundError:
             self.logger.exception(f"File not found at {input_csv_path}: {e}")
         except Exception as e:
