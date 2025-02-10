@@ -3,6 +3,14 @@ import asyncio
 import argparse
 import time
 
+test_csv = [
+        {
+            "domain_name": "coolstuff.nyc",
+            "domain_registration_date": "2025-02-10T00:00:00",
+            "nexus_category": "INDIV"
+        }
+    ]
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog='EnrichUrls',
@@ -16,14 +24,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     url_data_enricher = UrlDataEnricher()
-
-    test_csv = [
-        {
-            "domain_name": "coolstuff.nyc",
-            "domain_registration_date": "2025-02-10T00:00:00",
-            "nexus_category": "INDIV"
-        }
-    ]
 
     start_time = time.perf_counter()
     if args.asynchronous:
