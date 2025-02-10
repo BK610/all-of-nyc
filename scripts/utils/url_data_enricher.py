@@ -104,8 +104,8 @@ class UrlDataEnricher:
             # Final URL that the original URL directed to
             'final_url': final_url,
             # Metadata available at final URL
-            'title': f"'{open_graph_metadata['title']}'",
-            'description': f"'{open_graph_metadata['description']}'",
+            'title': open_graph_metadata['title'],
+            'description': open_graph_metadata['description'],
             'image': open_graph_metadata['image'],
             # Convenience dates
             'last_updated_at': last_updated_at,
