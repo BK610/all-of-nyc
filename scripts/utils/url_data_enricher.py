@@ -1,7 +1,6 @@
 import requests
 import pandas as pd
 from utils.populate_metadata import ensure_valid_protocol, parse_open_graph_metadata
-from utils.open_api_data_processor import OpenApiDataProcessor
 from utils.csv_processing import append_row_to_csv
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import os
