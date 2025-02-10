@@ -60,9 +60,12 @@ class UrlDataEnricher:
         if csv == None:
             self.logger.error(f"Failed to read invalid CSV: {csv}")
             return None
-        elif os.path.isfile(csv) or type(csv) == list:
-            self.logger.info(f"Reading from CSV: {csv}")
+        elif os.path.isfile(str(csv)):
+            self.logger.info(f"Reading from CSV file: {csv}")
             return pd.read_csv(csv)
+        elif type(csv) == list:
+            self.logger.info(f"Reading CSV data: {csv}")
+            return pd.DataFrame(csv)
         else:
             self.logger.info(f"Creating CSV file at: {csv}")
             return pd.DataFrame(columns=self.CSV_ROWS_SCHEMA)
