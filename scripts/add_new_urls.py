@@ -15,7 +15,6 @@ Note: This step only adds the raw data from NYC Open Data to Supabase, without a
 This is part 1 of the pipeline:
 1. Add new URLs from NYC Open Data to Supabase (add_new_urls.py)
 2. Enrich URLs that don't yet have metadata (enrich_urls.py)
-3. Clean up the derived Supabase columns (update_all_urls.py)
 """
 
 # Set up the data in this script.
