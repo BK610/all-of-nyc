@@ -9,13 +9,12 @@ import aiohttp
 import asyncio
 import logging
 
-
 class UrlDataEnricher:
     def __init__(self):
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
-        self.session = self.setup_session()
+        self.requests_session = self.setup_requests_session()
         self.CSV_ROWS_SCHEMA = [
             'domain_name',
             'domain_registration_date',
@@ -24,12 +23,17 @@ class UrlDataEnricher:
             'final_url',
             'title',
             'description',
-            'image'
+            'image',
+            'is_url_found',
+            'is_og_title_found',
+            'is_og_image_found',
+            'created_at',
+            'last_updated_at',
+            'website_status',
         ]
 
-    def setup_session(self):
-        """Create a requests Session to be used for all synchronous requests, with desired configuration.
-        Cleaner than creating a new request and configuring the settings every time."""
+    def setup_requests_session(self):
+        """Create a requests Session to be used for all synchronous requests, with desired configuration."""
         session = requests.Session()
 
         # Disable SSL verification for the session to improve redirect handling
@@ -168,7 +172,7 @@ class UrlDataEnricher:
                 if row['domain_name'] in processed_urls:
                     continue # Skip URLs that we've already processed
 
-                enriched_row = self.enrich_url(row['domain_name'], row['domain_registration_date'], row['nexus_category'], self.session)
+                enriched_row = self.enrich_url(row['domain_name'], row['domain_registration_date'], row['nexus_category'], self.requests_session)
                 append_row_to_csv(enriched_row, output_csv_path)
                 print(f"Finished processing: {row['domain_name']}")
             
