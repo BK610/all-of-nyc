@@ -1,8 +1,20 @@
 const DomainCard = ({ url }) => {
   if (!url) return null;
 
-  const formattedRegistrationDate = url.domain_registration_date;
-  const formattedUpdatedDate = url.last_updated_at;
+  const formattedRegistrationDate = new Date(
+    url.domain_registration_date
+  ).toLocaleString(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  const formattedUpdatedDate = new Date(url.last_updated_at).toLocaleString(
+    undefined,
+    {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }
+  );
 
   return (
     <a
@@ -37,9 +49,9 @@ const DomainCard = ({ url }) => {
         <p className="text-gray-600 pt-2 w-full border-t-2">
           Final URL: {url.final_url}
           <br />
-          Registered: {url.domain_registration_date}
+          Registered at: {formattedRegistrationDate}
           <br />
-          Data updated at: {url.last_updated_at}
+          Data updated at: {formattedUpdatedDate}
         </p>
       </div>
     </a>
