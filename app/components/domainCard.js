@@ -1,6 +1,9 @@
 const DomainCard = ({ url }) => {
   if (!url) return null;
 
+  const formattedRegistrationDate = url.domain_registration_date;
+  const formattedUpdatedDate = url.last_updated_at;
+
   return (
     <a
       href={url.is_url_found ? url.final_url : undefined}
@@ -26,15 +29,17 @@ const DomainCard = ({ url }) => {
           {url.is_url_found ? <>{url.is_og_title_found ? "✅" : "❓"}</> : "💀"}
         </h2>
         <p className="mb-1">
-          <b>Title:</b> {url.is_url_found ? url.title : "N/A"}
+          <b>Title:</b> {url.title}
         </p>
         <p className="mb-1 line-clamp-3">
-          <b>Description:</b> {url.is_url_found ? url.description : "N/A"}
+          <b>Description:</b> {url.description}
         </p>
         <p className="text-gray-600 pt-2 w-full border-t-2">
           Final URL: {url.final_url}
           <br />
           Registered: {url.domain_registration_date}
+          <br />
+          Data updated at: {url.last_updated_at}
         </p>
       </div>
     </a>
