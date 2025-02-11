@@ -1,5 +1,3 @@
-// import Image from "next/image";
-
 const DomainCard = ({ url }) => {
   if (!url) return null;
 
@@ -12,12 +10,11 @@ const DomainCard = ({ url }) => {
         ${!url.is_url_found && "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
     >
       {url.is_og_image_found ? (
-        <div className="w-full">
+        <div className="w-full h-52">
           <img
             className="object-cover w-full h-52 border-b-2"
             src={decodeURI(url.image)}
-            // width={358}
-            // height={208}
+            alt={`OpenGraph image for ${url.title}`}
           />
         </div>
       ) : (
