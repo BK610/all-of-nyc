@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import HomeHeader from "./homeHeader";
-import Filter from "./filter";
-import Search from "./search";
-import Pagination from "./pagination";
-import QueryResultsList from "./queryResultsList";
-import NotebookEmbed from "./notebookEmbed";
+import HomeHeader from "@/components/homeHeader";
+import Filter from "@/components/filter";
+import Search from "@/components/search";
+import Pagination from "@/components/pagination";
+import QueryResultsList from "@/components/queryResultsList";
+import NotebookEmbed from "@/components/notebookEmbed";
 
 interface HomeProps {
   initialUrls: [];
