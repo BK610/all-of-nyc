@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "@/components/button";
+import { Button } from "@/components/ui/button";
 
 export default function Filter({ onFilter }) {
   const [filters, setFilters] = useState({
@@ -34,7 +34,9 @@ export default function Filter({ onFilter }) {
           <option value="">Show all</option>
         </select>
       </div>
-      <Button type="submit">Filter</Button>
+      <Button className="font-semibold" type="submit">
+        Filter
+      </Button>
     </form>
   );
 }
