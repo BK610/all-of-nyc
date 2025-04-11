@@ -8,7 +8,15 @@ import Pagination from "./pagination";
 import QueryResultsList from "./queryResultsList";
 import NotebookEmbed from "./notebookEmbed";
 
-export default function Home({ initialUrls, initialTotalCount }) {
+interface HomeProps {
+  initialUrls: [];
+  initialTotalCount: number;
+}
+
+export default function Home({
+  initialUrls,
+  initialTotalCount,
+}: HomeProps): React.ReactElement {
   // const [urls, setUrls] = useState(initialUrls); // Avoiding using this for now. Weird behavior on initial load
   const [urls, setUrls] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
