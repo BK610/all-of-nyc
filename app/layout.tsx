@@ -12,7 +12,7 @@ export default function RootLayout({ children }): React.ReactElement {
   return (
     <html lang="en">
       <CSPostHogProvider>
-        <body className={`antialiased`}>
+        <body className={`bg-amber-50 antialiased`}>
           <div className="max-w-6xl mx-auto py-10 px-4">{children}</div>
         </body>
       </CSPostHogProvider>
