@@ -73,7 +73,7 @@ export default function Home({
   return (
     <>
       <HomeHeader />
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <Search className="w-full" onSearch={handleSearch} />
         <Filter onFilter={handleFilter} />
       </div>
