@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "./button";
 
-const Filter = ({ onFilter }) => {
+export default function Filter({ onFilter }) {
   const [filters, setFilters] = useState({
     status: "is_complete",
   });
@@ -37,6 +37,4 @@ const Filter = ({ onFilter }) => {
       <Button type="submit">Filter</Button>
     </form>
   );
-};
-
-export default Filter;
+}
