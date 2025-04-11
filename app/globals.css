@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin 'tailwindcss-animate';
 
@@ -72,16 +72,14 @@
 
 @layer utilities {
   /* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
+    :root {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+    }
+  } */
 
   body {
-    font-family:
-      Open Sans,
-      sans-serif;
+    font-family: Open Sans, sans-serif;
   }
 }
 
