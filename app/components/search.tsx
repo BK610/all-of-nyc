@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Button from "./button";
+import { Button } from "@/components/ui/button";
 
 interface SearchProps {
   onSearch: (query: string) => void;
@@ -16,10 +16,7 @@ const Search = ({ onSearch, className }: SearchProps): React.ReactElement => {
   };
 
   return (
-    <form
-      onSubmit={handleSearch}
-      className={`${className} mb-2 flex justify-center items-center`}
-    >
+    <form onSubmit={handleSearch} className={`${className} mb-2 flex`}>
       <input
         id="search"
         type="text"
@@ -28,7 +25,11 @@ const Search = ({ onSearch, className }: SearchProps): React.ReactElement => {
         placeholder="Search all of .nyc"
         className="w-full px-4 py-2 border border-gray-300 rounded-l-lg text-gray-900 placeholder-gray-500"
       />
-      <Button className={"rounded-r-lg"} type="submit">
+
+      <Button
+        className="bg-nyc-orange font-semibold rounded-l-none h-full"
+        type="submit"
+      >
         Search
       </Button>
     </form>
