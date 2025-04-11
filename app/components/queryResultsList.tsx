@@ -10,7 +10,7 @@ export default function QueryResultsList({
   return (
     <>
       {urls.length > 0 ? (
-        <div className="border-b-2 pb-6 columns-1 md:columns-2 lg:columns-3 gap-5">
+        <div className="columns-1 md:columns-2 lg:columns-3 space-y-4">
           {urls.map((url, index) => (
             <DomainCard key={index} url={url} />
           ))}
