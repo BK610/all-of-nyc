@@ -2,16 +2,11 @@ import { useState, useEffect } from "react";
 import { clamp } from "../../utils/math.utils";
 import Button from "@/app/components/button";
 
-/**
- * One thing that's tough about this codebase is that it's not typescript.
- * That puts more pressure on the variables names to communicate
- * their types.
- *
- * See my feedback on pages about how to make these more clear.
- * I think something like "currentPageIndex" is much more clear
- * than currentPage.
- */
-const Pagination = ({ currentPageIndex, totalPages, onPageChange }) => {
+export default function Pagination({
+  currentPageIndex,
+  totalPages,
+  onPageChange,
+}): React.ReactElement {
   const [inputPage, setInputPage] = useState(currentPageIndex); // it seems like it would be better to make this a string right away, so it's not a mix of types
 
   useEffect(() => {
@@ -95,6 +90,4 @@ const Pagination = ({ currentPageIndex, totalPages, onPageChange }) => {
       </Button>
     </div>
   );
-};
-
-export default Pagination;
+}
