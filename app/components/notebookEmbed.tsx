@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 
-const NotebookEmbed = ({ src, fallbackUrl }) => {
+interface NoteBookEmbedProps {
+  src: string;
+  fallbackUrl: string;
+}
+
+export default function NotebookEmbed({
+  src,
+  fallbackUrl,
+}: NoteBookEmbedProps): React.ReactElement {
   const [html, setHtml] = useState("");
 
   useEffect(() => {
@@ -37,6 +45,4 @@ const NotebookEmbed = ({ src, fallbackUrl }) => {
       )}
     </div>
   );
-};
-
-export default NotebookEmbed;
+}
