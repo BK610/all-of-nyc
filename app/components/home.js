@@ -75,12 +75,12 @@ export default function Home({ initialUrls, initialTotalCount }) {
         onPageChange={(page) => setCurrentPageIndex(page)}
       />
       <QueryResultsList urls={urls} />
-      <NotebookEmbed
+      {/* <NotebookEmbed
         src={"/Results.html"}
         fallbackUrl={
           "https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb"
         }
-      />
+      /> */}
     </>
   );
 }
