@@ -8,7 +8,7 @@ export const metadata = {
   url: "https://www.allof.nyc/",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }): React.ReactElement {
   return (
     <html lang="en">
       <CSPostHogProvider>
