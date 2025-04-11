@@ -26,10 +26,7 @@ const Search = ({ onSearch, className }: SearchProps): React.ReactElement => {
         className="w-full px-4 py-2 border border-gray-300 rounded-l-lg text-gray-900 placeholder-gray-500"
       />
 
-      <Button
-        className="bg-nyc-orange font-semibold rounded-l-none h-full"
-        type="submit"
-      >
+      <Button className="font-semibold rounded-l-none h-full" type="submit">
         Search
       </Button>
     </form>
