@@ -1,4 +1,10 @@
-const DomainCard = ({ url }) => {
+interface DomainCardProps {
+  url: any;
+}
+
+export default function DomainCard({
+  url,
+}: DomainCardProps): React.ReactElement {
   if (!url) return null;
 
   const formattedRegistrationDate = new Date(
@@ -56,6 +62,4 @@ const DomainCard = ({ url }) => {
       </div>
     </a>
   );
-};
-
-export default DomainCard;
+}
