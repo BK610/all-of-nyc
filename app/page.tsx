@@ -1,7 +1,7 @@
 import Home from "./components/home";
 import { createClient } from "@supabase/supabase-js";
 
-export default async function Page() {
+export default async function Page(): Promise<React.ReactElement> {
   const initialUrls = await fetchInitialData();
   const initialTotalCount = await getTableCount();
 
@@ -29,7 +29,7 @@ const supabaseClient = createClient(
  * Fetches data in batches of 1000 rows, as Supabase has a default limit of 1000 rows per request.
  * Repeats until all data is fetched.
  */
-async function fetchInitialData() {
+async function fetchInitialData(): Promise<[any]> {
   const { data, error } = await supabaseClient
     .from("enriched_url_data")
     .select("*")
@@ -46,7 +46,7 @@ async function fetchInitialData() {
 }
 
 /** Helper function to get the total count of rows in the table. */
-async function getTableCount() {
+async function getTableCount(): Promise<number> {
   const { count, error } = await supabaseClient
     .from("enriched_url_data")
     .select("*", { count: "exact", head: true });
