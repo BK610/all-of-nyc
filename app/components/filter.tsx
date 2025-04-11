@@ -18,8 +18,14 @@ export default function Filter({ onFilter }) {
       className="mb-2 flex justify-center items-center gap-4"
     >
       {/* <div>Filters</div> */}
-      <div className="p-2 flex flex-col justify-center border border-gray-300 rounded-lg">
-        <label className="text-gray-500" htmlFor="website-status-select">
+      <div
+        className="p-2 flex flex-col justify-center rounded-lg bg-nyc-light-gray hover:bg-white focus-within:bg-white
+          outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange"
+      >
+        <label
+          className="font-semibold text-sm text-gray-700"
+          htmlFor="website-status-select"
+        >
           Website status
         </label>
         <select
