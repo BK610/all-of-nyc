@@ -1,6 +1,12 @@
 import DomainCard from "./domainCard";
 
-const QueryResultsList = ({ urls }) => {
+interface QueryResultsListProps {
+  urls: [];
+}
+
+export default function QueryResultsList({
+  urls,
+}: QueryResultsListProps): React.ReactElement {
   return (
     <>
       {urls.length > 0 ? (
@@ -14,6 +20,4 @@ const QueryResultsList = ({ urls }) => {
       )}
     </>
   );
-};
-
-export default QueryResultsList;
+}
