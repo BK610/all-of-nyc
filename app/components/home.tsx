@@ -9,7 +9,7 @@ import QueryResultsList from "@/components/queryResultsList";
 import NotebookEmbed from "@/components/notebookEmbed";
 
 interface HomeProps {
-  initialUrls: [];
+  initialUrls: [any];
   initialTotalCount: number;
 }
 
