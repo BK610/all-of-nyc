@@ -71,7 +71,9 @@ export default function Pagination({
           type="text"
           value={inputPage}
           onChange={handleInputChange}
-          className="w-16 text-center border border-gray-300 rounded-md p-2"
+          className="w-16 text-center rounded-md p-2 transition-all duration-75
+          bg-nyc-light-gray hover:bg-white focus:bg-white
+          outline-2 outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange"
         />
         <span> of {totalPages}</span>
         <Button type="submit">Go</Button>
