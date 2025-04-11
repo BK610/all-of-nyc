@@ -1,7 +1,7 @@
 import Image from "next/image";
 import nycLogo from "/public/nycLogo.png";
 
-const HomeHeader = () => {
+export default function HomeHeader(): React.ReactElement {
   return (
     <div className="border-b-2 mb-4 text-center">
       <h1 className="text-3xl font-bold text-nyc-blue mb-2">
@@ -26,6 +26,4 @@ const HomeHeader = () => {
       </p>
     </div>
   );
-};
-
-export default HomeHeader;
+}
