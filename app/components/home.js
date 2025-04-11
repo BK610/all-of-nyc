@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import HomeLayout from "./homeLayout";
 import HomeHeader from "./homeHeader";
 import Filter from "./filter";
 import Search from "./search";
@@ -64,13 +63,12 @@ export default function Home({ initialUrls, initialTotalCount }) {
   };
 
   return (
-    <HomeLayout>
+    <>
       <HomeHeader />
-      <Filter onFilter={handleFilter} />
-      {/* TODO: Consider combining Search, Pagination, and QueryResultsList into a single component.
-       * State and logic could be handled on that level too.
-       */}
-      <Search onSearch={handleSearch} />
+      <div className="flex flex-row gap-2">
+        <Search className="w-full" onSearch={handleSearch} />
+        <Filter onFilter={handleFilter} />
+      </div>
       <Pagination
         currentPageIndex={currentPageIndex}
         totalPages={totalPagesCount}
@@ -83,6 +81,6 @@ export default function Home({ initialUrls, initialTotalCount }) {
           "https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb"
         }
       />
-    </HomeLayout>
+    </>
   );
 }
