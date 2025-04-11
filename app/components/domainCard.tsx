@@ -1,3 +1,23 @@
+import { MoveRight } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  CardDescription,
+  CardAction,
+} from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Badge } from "@/components/ui/badge";
+
 interface DomainCardProps {
   url: any;
 }
@@ -22,44 +42,98 @@ export default function DomainCard({
     }
   );
 
+  const status = url.is_url_found
+    ? url.is_og_title_found
+      ? "✅ Complete"
+      : "❓ Live"
+    : "💀 Down";
+
   return (
-    <a
-      href={url.is_url_found ? url.final_url : undefined}
-      target={url.is_url_found ? "_blank" : undefined}
-      rel="noopener noreferrer"
-      className={`inline-block w-full mb-4 overflow-hidden bg-white shadow-lg rounded-lg border border-gray-200 transition-transform transform hover:scale-105 hover:shadow-xl
-        ${!url.is_url_found && "pointer-events-none bg-gray-100 opacity-70"}`} // Set disabled-esque styling if found_url is false
+    <Card
+      className={`gap-2 w-full overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
+        outline outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange
+        bg-nyc-light-gray hover:bg-white focus:bg-white
+      ${!url.is_url_found && "pointer-events-none opacity-70"}`} // Set disabled-esque styling if found_url is false
+      tabIndex={0}
     >
-      {url.is_og_image_found ? (
-        <div className="w-full h-52">
-          <img
-            className="object-cover w-full h-52 border-b-2"
-            src={decodeURI(url.image)}
-            alt={`OpenGraph image for ${url.title}`}
-          />
+      <CardHeader className="gap-2">
+        <CardTitle className="pb-2 w-full overflow-hidden">
+          <div className="space-y-0.5 w-full overflow-hidden">
+            <label
+              htmlFor="domainName"
+              className="text-gray-700 font-semibold text-sm"
+            >
+              Domain Name
+            </label>
+            <h2
+              id="domainName"
+              className="w-full font-mono text-xl text-nowrapp truncate"
+            >
+              {url.domain_name}
+            </h2>
+          </div>
+        </CardTitle>
+        <CardDescription>
+          <div className="text-base text-gray-700 space-y-0.5">
+            <h3 className=" font-semibold text-sm">Title</h3>
+            <p className="line-clamp-2">{url.title}</p>
+          </div>
+        </CardDescription>
+        {url.is_og_image_found ? (
+          <AspectRatio ratio={1200 / 627}>
+            <div className="h-full w-full rounded-md bg-nyc-medium-gray">
+              <img
+                className="bg-amber-200 h-full w-full object-cover rounded-md shadow-md"
+                src={decodeURI(url.image)}
+                alt={`OpenGraph image for ${url.title}`}
+              />
+            </div>
+          </AspectRatio>
+        ) : null}
+      </CardHeader>
+      <CardContent className="grow flex flex-col gap-2">
+        <div className="h-full flex flex-col gap-2">
+          <div className="text-base text-gray-700 space-y-0.5">
+            <p className="font-semibold text-sm">Description</p>
+            <p className="line-clamp-5">{url.description}</p>
+          </div>
         </div>
-      ) : (
-        ""
-      )}
-      <div className="p-5">
-        <h2 className="text-nyc-blue text-xl font-semibold mb-2">
-          {url.domain_name}&nbsp;
-          {url.is_url_found ? <>{url.is_og_title_found ? "✅" : "❓"}</> : "💀"}
-        </h2>
-        <p className="mb-1">
-          <b>Title:</b> {url.title}
-        </p>
-        <p className="mb-1 line-clamp-3">
-          <b>Description:</b> {url.description}
-        </p>
-        <p className="text-gray-600 pt-2 w-full border-t-2">
-          Final URL: {url.final_url}
-          <br />
-          Registered at: {formattedRegistrationDate}
-          <br />
-          Data updated at: {formattedUpdatedDate}
-        </p>
-      </div>
-    </a>
+        <CardAction className="w-full">
+          <Button
+            className="w-full font-semibold hover:bg-accent text-white"
+            asChild
+          >
+            <a
+              href={url.is_url_found ? url.final_url : undefined}
+              target={url.is_url_found ? "_blank" : undefined}
+            >
+              Visit <MoveRight />
+            </a>
+          </Button>
+        </CardAction>
+      </CardContent>
+      <CardFooter>
+        <Accordion className="w-full overflow-hidden" type="single" collapsible>
+          <AccordionItem value="metadata">
+            <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
+              View metadata
+            </AccordionTrigger>
+            <AccordionContent className="overflow-hidden">
+              <ul className="font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
+                <li>
+                  Status:{" "}
+                  <Badge className="font-semibold" variant="secondary">
+                    {status}
+                  </Badge>
+                </li>
+                <li>Final URL: {url.final_url}</li>
+                <li>Registered: {formattedRegistrationDate}</li>
+                <li>Updated: {formattedUpdatedDate}</li>
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardFooter>
+    </Card>
   );
 }
