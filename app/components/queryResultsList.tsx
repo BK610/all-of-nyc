@@ -1,7 +1,7 @@
 import DomainCard from "./domainCard";
 
 interface QueryResultsListProps {
-  urls: [];
+  urls: any[];
 }
 
 export default function QueryResultsList({
