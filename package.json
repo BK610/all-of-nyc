@@ -11,12 +11,17 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.47.7",
     "axios": "^1.7.7",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "fs": "^0.0.1-security",
+    "lucide-react": "^0.487.0",
     "next": "^15.1.0",
     "papaparse": "^5.4.1",
     "posthog-js": "^1.188.0",
     "react": "^19.0.0-rc-66855b96-20241106",
-    "react-dom": "^19.0.0-rc-66855b96-20241106"
+    "react-dom": "^19.0.0-rc-66855b96-20241106",
+    "tailwind-merge": "^3.2.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/react": "19.0.8",
