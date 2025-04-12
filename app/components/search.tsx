@@ -37,7 +37,7 @@ export default function Search({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoFocus
-          placeholder="Search all of .nyc"
+          placeholder={"Search all .nyc domains (Hint: type '/')"}
           className="w-full px-4 py-2 rounded-l-lg text-gray-900 placeholder-gray-600
           bg-gray-50 hover:bg-white focus:bg-white"
         />
