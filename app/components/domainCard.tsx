@@ -187,13 +187,8 @@ export function SkeletonDomainCard(): React.ReactElement {
           </div>
         </div>
         <CardAction className="w-full">
-          <Button
-            className="w-full font-semibold hover:bg-accent text-white"
-            asChild
-          >
-            <a>
-              Visit <MoveRight />
-            </a>
+          <Button className="w-full font-semibold hover:bg-accent text-white">
+            <Skeleton className="bg-gray-600 h-5 w-20" />
           </Button>
         </CardAction>
       </CardContent>
