@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 interface DomainCardProps {
   url: any;
@@ -32,6 +33,8 @@ interface DomainCardProps {
 export default function DomainCard({
   url,
 }: DomainCardProps): React.ReactElement {
+  const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
+
   if (!url) return null;
 
   const formattedRegistrationDate = new Date(
@@ -55,6 +58,20 @@ export default function DomainCard({
       : "❓ Live"
     : "💀 Down";
 
+  const handleCopy = async () => {
+    const shareUrl = new URL(window.location.origin);
+    shareUrl.searchParams.set("q", url.domain_name);
+    shareUrl.hash = `domain-${url.domain_name}`;
+
+    try {
+      await navigator.clipboard.writeText(shareUrl.toString());
+      setShowCopiedTooltip(true);
+      setTimeout(() => setShowCopiedTooltip(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
+    }
+  };
+
   return (
     <Card
       id={`domain-${url.domain_name}`}
@@ -77,12 +94,14 @@ export default function DomainCard({
             >
               Domain Name
             </label>
-            <h2
-              id="domainName"
-              className="w-full font-mono text-xl text-nowrapp truncate"
-            >
-              {url.domain_name}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2
+                id="domainName"
+                className="w-full font-mono text-xl text-nowrapp truncate"
+              >
+                {url.domain_name}
+              </h2>
+            </div>
           </div>
         </CardTitle>
         <CardDescription>
@@ -123,18 +142,19 @@ export default function DomainCard({
             </a>
           </Button>
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip open={showCopiedTooltip}>
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
                   className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+                  onClick={handleCopy}
                 >
                   <Copy />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Copy link to view on allof.nyc</p>
+                <p>URL copied to clipboard!</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
