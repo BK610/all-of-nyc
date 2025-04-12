@@ -38,6 +38,28 @@ export default function Home({
   const [currentQuery, setCurrentQuery] = useState(searchParams.get("q") || "");
   const [loading, setLoading] = useState(true);
 
+  // Add keyboard shortcut to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "/" &&
+        !e.shiftKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        !e.metaKey
+      ) {
+        e.preventDefault();
+        const searchInput = document.getElementById("search");
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
    *
    * Uses the base GET endpoint defined in api/route.js.
