@@ -65,6 +65,23 @@ export default function Home({
     fetchUrls(currentPageIndex, currentQuery, currentFilters);
   }, [fetchUrls, pageSize, currentPageIndex, currentQuery, currentFilters]);
 
+  // Handle focus and scrolling after domain cards are loaded
+  useEffect(() => {
+    if (!loading && urls.length > 0) {
+      const hash = window.location.hash;
+      if (hash) {
+        // Small delay to ensure DOM is fully rendered
+        setTimeout(() => {
+          const element = document.getElementById(hash.substring(1));
+          if (element) {
+            element.focus();
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }, 100);
+      }
+    }
+  }, [loading, urls]);
+
   const handleFilter = (filters) => {
     resetPaginationToFirstPage();
     setCurrentFilters(filters);
