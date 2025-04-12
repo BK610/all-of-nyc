@@ -125,7 +125,11 @@ export default function DomainCard({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon" className="hover:bg-">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+                >
                   <Copy />
                 </Button>
               </TooltipTrigger>
