@@ -35,6 +35,7 @@ export default function Home({
     status: "is_complete",
   });
   const [currentQuery, setCurrentQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
    *
@@ -43,6 +44,7 @@ export default function Home({
   const fetchUrls = useCallback(
     async (currentPageIndex, currentQuery, currentFilters) => {
       try {
+        setLoading(true);
         const response = await fetch(
           `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}&status=${currentFilters.status}`
         );
@@ -50,6 +52,7 @@ export default function Home({
         setUrls(result.urls);
         // setTotalResultsCount(result.total);
         setTotalPagesCount(result.totalPages);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -88,7 +91,7 @@ export default function Home({
         totalPages={totalPagesCount}
         onPageChange={(page) => setCurrentPageIndex(page)}
       />
-      <QueryResultsList urls={urls} />
+      <QueryResultsList urls={urls} loading={loading} />
       {/* <NotebookEmbed
         src={"/Results.html"}
         fallbackUrl={
