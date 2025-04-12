@@ -19,7 +19,7 @@ export default function Filter({ onFilter }) {
     >
       {/* <div>Filters</div> */}
       <div
-        className="p-2 flex flex-col justify-center rounded-lg bg-nyc-light-gray hover:bg-white focus-within:bg-white
+        className="p-2 flex flex-col justify-center rounded-lg bg-gray-50 hover:bg-white focus-within:bg-white
           outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange"
       >
         <label
