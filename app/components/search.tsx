@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 interface SearchProps {
   onSearch: (query: string) => void;
   className?: string;
+  initialQuery?: string;
 }
 
 export default function Search({
   onSearch,
   className,
+  initialQuery = "",
 }: SearchProps): React.ReactElement {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   // Handle search submission
   const handleSearch = (e) => {

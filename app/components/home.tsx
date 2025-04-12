@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import HomeHeader from "@/components/homeHeader";
 import Filter from "@/components/filter";
 import Search from "@/components/search";
@@ -23,10 +24,10 @@ export default function Home({
   initialUrls,
   initialTotalCount,
 }: HomeProps): React.ReactElement {
-  // const [urls, setUrls] = useState(initialUrls); // Avoiding using this for now. Weird behavior on initial load
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [urls, setUrls] = useState([]);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
-  // const [totalResultsCount, setTotalResultsCount] = useState(0);
   const [pageSize] = useState(15);
   const [totalPagesCount, setTotalPagesCount] = useState(
     Math.ceil(initialTotalCount / pageSize)
@@ -34,7 +35,7 @@ export default function Home({
   const [currentFilters, setCurrentFilters] = useState({
     status: "is_complete",
   });
-  const [currentQuery, setCurrentQuery] = useState("");
+  const [currentQuery, setCurrentQuery] = useState(searchParams.get("q") || "");
   const [loading, setLoading] = useState(true);
 
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
@@ -50,7 +51,6 @@ export default function Home({
         );
         const result = await response.json();
         setUrls(result.urls);
-        // setTotalResultsCount(result.total);
         setTotalPagesCount(result.totalPages);
         setLoading(false);
       } catch (error) {
@@ -73,6 +73,15 @@ export default function Home({
   const handleSearch = (query) => {
     resetPaginationToFirstPage();
     setCurrentQuery(query);
+
+    // Update URL with search query
+    const params = new URLSearchParams(searchParams);
+    if (query) {
+      params.set("q", query);
+    } else {
+      params.delete("q");
+    }
+    router.push(`?${params.toString()}`);
   };
 
   const resetPaginationToFirstPage = () => {
@@ -83,7 +92,11 @@ export default function Home({
     <>
       <HomeHeader />
       <div className="flex flex-col sm:flex-row gap-2">
-        <Search className="w-full" onSearch={handleSearch} />
+        <Search
+          className="w-full"
+          onSearch={handleSearch}
+          initialQuery={currentQuery}
+        />
         <Filter onFilter={handleFilter} />
       </div>
       <Pagination
