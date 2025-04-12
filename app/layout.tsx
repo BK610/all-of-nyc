@@ -1,4 +1,5 @@
 import Footer from "@/components/footer";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { CSPostHogProvider } from "./providers";
 
@@ -14,8 +15,9 @@ export default function RootLayout({ children }): React.ReactElement {
     <html lang="en">
       <CSPostHogProvider>
         <body className={`bg-amber-50 antialiased`}>
-          <div className="max-w-6xl mx-auto pt-10 pb-2 px-4">{children}</div>
+          <main className="max-w-6xl mx-auto pt-10 pb-2 px-4">{children}</main>
           <Footer />
+          <Toaster position="top-right" />
         </body>
       </CSPostHogProvider>
     </html>
