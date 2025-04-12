@@ -84,7 +84,7 @@ export default function DomainCard({
           <AspectRatio ratio={1200 / 627}>
             <div className="h-full w-full rounded-md bg-nyc-medium-gray">
               <img
-                className="bg-amber-200 h-full w-full object-cover rounded-md shadow-md"
+                className="h-full w-full object-cover rounded-md shadow-md"
                 src={decodeURI(url.image)}
                 alt={`OpenGraph image for ${url.title}`}
               />
