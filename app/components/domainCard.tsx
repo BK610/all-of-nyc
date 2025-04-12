@@ -52,7 +52,7 @@ export default function DomainCard({
     <Card
       className={`gap-2 w-full overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
         outline outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange
-        bg-nyc-light-gray hover:bg-white focus:bg-white focus-within:bg-white
+        bg-gray-50 hover:bg-white focus-within:bg-gradient-to-br focus:bg-gradient-to-br from-white to-amber-100
       ${!url.is_url_found && "pointer-events-none opacity-70"}`} // Set disabled-esque styling if found_url is false
       tabIndex={0}
     >
