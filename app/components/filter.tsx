@@ -40,7 +40,7 @@ export default function Filter({ onFilter }) {
           <option value="">Show all</option>
         </select>
       </div>
-      <Button className="font-semibold" type="submit">
+      <Button className="font-semibold hover:cursor-pointer" type="submit">
         Filter
       </Button>
     </form>
