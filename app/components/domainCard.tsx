@@ -1,3 +1,5 @@
+import Image from "next/image";
+import favicon from "/public/favicon.png";
 import { MoveRight, Copy } from "lucide-react";
 import {
   Card,
@@ -24,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
 
 interface DomainCardProps {
   url: any;
@@ -33,8 +34,6 @@ interface DomainCardProps {
 export default function DomainCard({
   url,
 }: DomainCardProps): React.ReactElement {
-  const [showCopiedTooltip, setShowCopiedTooltip] = useState(false);
-
   if (!url) return null;
 
   const formattedRegistrationDate = new Date(
@@ -58,15 +57,21 @@ export default function DomainCard({
       : "❓ Live"
     : "💀 Down";
 
-  const handleCopy = async () => {
+  const handleCopyDomain = async () => {
+    try {
+      await navigator.clipboard.writeText(url.domain_name);
+    } catch (err) {
+      console.error("Failed to copy domain name:", err);
+    }
+  };
+
+  const handleCopyUrl = async () => {
     const shareUrl = new URL(window.location.origin);
     shareUrl.searchParams.set("q", url.domain_name);
     shareUrl.hash = `domain-${url.domain_name}`;
 
     try {
       await navigator.clipboard.writeText(shareUrl.toString());
-      setShowCopiedTooltip(true);
-      setTimeout(() => setShowCopiedTooltip(false), 2000);
     } catch (err) {
       console.error("Failed to copy URL:", err);
     }
@@ -101,6 +106,23 @@ export default function DomainCard({
               >
                 {url.domain_name}
               </h2>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="outline hover:cursor-pointer hover:opacity-80 active:opacity-60"
+                      onClick={handleCopyUrl}
+                    >
+                      <Image src={favicon} alt=".nyc logo" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Copy link on allof.nyc to clipboard</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
         </CardTitle>
@@ -142,19 +164,19 @@ export default function DomainCard({
             </a>
           </Button>
           <TooltipProvider>
-            <Tooltip open={showCopiedTooltip}>
+            <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
                   className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
-                  onClick={handleCopy}
+                  onClick={handleCopyDomain}
                 >
                   <Copy />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>URL copied to clipboard!</p>
+                <p>Copy URL to clipboard</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
