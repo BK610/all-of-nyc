@@ -1,4 +1,4 @@
-import { MoveRight } from "lucide-react";
+import { MoveRight, Copy } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -14,6 +14,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
@@ -54,7 +60,11 @@ export default function DomainCard({
       id={`domain-${url.domain_name}`}
       className={`gap-2 w-full overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
         outline outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange
-        bg-gray-50 hover:bg-gradient-to-br hover:from-gray-50 hover:to-amber-50 focus-within:bg-gradient-to-br focus:bg-gradient-to-br from-white to-amber-100 hover:focus:from-white hover:focus:to-amber-100
+        bg-gray-50 from-white to-amber-100
+        hover:bg-gradient-to-br hover:from-gray-50 hover:to-amber-50
+        focus:bg-gradient-to-br focus-within:bg-gradient-to-br
+        hover:focus:from-white hover:focus:to-amber-100
+        hover:focus-within:from-white hover:focus-within:to-amber-100
       ${!url.is_url_found && "pointer-events-none opacity-70"}`} // Set disabled-esque styling if found_url is false
       tabIndex={0}
     >
@@ -100,9 +110,9 @@ export default function DomainCard({
             <p className="line-clamp-5">{url.description}</p>
           </div>
         </div>
-        <CardAction className="w-full">
+        <div className="w-full flex gap-2">
           <Button
-            className="w-full font-semibold hover:bg-accent text-white"
+            className="flex-1 font-semibold hover:bg-accent text-white"
             asChild
           >
             <a
@@ -112,7 +122,19 @@ export default function DomainCard({
               Visit <MoveRight />
             </a>
           </Button>
-        </CardAction>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="hover:bg-">
+                  <Copy />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Copy link to view on allof.nyc</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </CardContent>
       <CardFooter>
         <Accordion className="w-full overflow-hidden" type="single" collapsible>
