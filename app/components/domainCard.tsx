@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 interface DomainCardProps {
   url: any;
@@ -60,6 +61,12 @@ export default function DomainCard({
   const handleCopyDomain = async () => {
     try {
       await navigator.clipboard.writeText(url.domain_name);
+      toast.success(
+        <div className="flex flex-col w-full">
+          <p className="text-sm">Copied domain name to clipboard!</p>
+          <p className="line-clamp-1 text-gray-700">{url.domain_name}</p>
+        </div>
+      );
     } catch (err) {
       console.error("Failed to copy domain name:", err);
     }
@@ -71,7 +78,15 @@ export default function DomainCard({
     shareUrl.hash = `domain-${url.domain_name}`;
 
     try {
-      await navigator.clipboard.writeText(shareUrl.toString());
+      const stringShareUrl = shareUrl.toString();
+
+      await navigator.clipboard.writeText(stringShareUrl);
+      toast.success(
+        <div className="flex flex-col w-full">
+          <p className="text-sm">Copied allof.nyc link to clipboard!</p>
+          <p className="w-full line-clamp-1 text-gray-700">{stringShareUrl}</p>
+        </div>
+      );
     } catch (err) {
       console.error("Failed to copy URL:", err);
     }
@@ -102,7 +117,7 @@ export default function DomainCard({
             <div className="flex items-center gap-2">
               <h2
                 id="domainName"
-                className="w-full font-mono text-xl text-nowrapp truncate"
+                className="w-full font-mono text-xl text-nowrap truncate"
               >
                 {url.domain_name}
               </h2>
@@ -115,7 +130,11 @@ export default function DomainCard({
                       className="outline hover:cursor-pointer hover:opacity-80 active:opacity-60"
                       onClick={handleCopyUrl}
                     >
-                      <Image src={favicon} alt=".nyc logo" />
+                      <Image
+                        className="rounded-sm"
+                        src={favicon}
+                        alt=".nyc logo"
+                      />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
