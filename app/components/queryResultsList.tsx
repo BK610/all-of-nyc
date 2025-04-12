@@ -1,23 +1,19 @@
-import DomainCard from "./domainCard";
+import DomainCard, { SkeletonDomainCard } from "@/components/domainCard";
 
 interface QueryResultsListProps {
   urls: any[];
+  loading: boolean;
 }
 
 export default function QueryResultsList({
   urls,
+  loading,
 }: QueryResultsListProps): React.ReactElement {
   return (
-    <>
-      {urls.length > 0 ? (
-        <div className="columns-1 md:columns-2 lg:columns-3 space-y-4">
-          {urls.map((url, index) => (
-            <DomainCard key={index} url={url} />
-          ))}
-        </div>
-      ) : (
-        <p className="text-center">Loading some sweet, sweet data...</p>
-      )}
-    </>
+    <div className="columns-1 md:columns-2 lg:columns-3 space-y-4">
+      {loading
+        ? [...Array(15)].map(() => <SkeletonDomainCard />)
+        : urls.map((url, index) => <DomainCard key={index} url={url} />)}
+    </div>
   );
 }
