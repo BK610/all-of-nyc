@@ -33,12 +33,12 @@ export default function Search({
           autoFocus
           placeholder="Search all of .nyc"
           className="w-full px-4 py-2 rounded-l-lg text-gray-900 placeholder-gray-600
-        bg-nyc-light-gray hover:bg-white focus:bg-white"
+          bg-gray-50 hover:bg-white focus:bg-white"
         />
 
         <Button
           tabIndex={-1}
-          className="font-semibold rounded-l-none h-full"
+          className="font-semibold rounded-l-none h-full hover:cursor-pointer"
           type="submit"
         >
           Search
