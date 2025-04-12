@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DomainCardProps {
   url: any;
@@ -131,6 +132,77 @@ export default function DomainCard({
                 <li>Updated: {formattedUpdatedDate}</li>
               </ul>
             </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function SkeletonDomainCard(): React.ReactElement {
+  return (
+    <Card
+      className={`gap-2 w-full overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
+        outline outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange
+        bg-gray-50 hover:bg-white focus-within:bg-gradient-to-br focus:bg-gradient-to-br from-white to-amber-100
+      `}
+      tabIndex={-1}
+    >
+      <CardHeader className="gap-2">
+        <CardTitle className="pb-2 w-full overflow-hidden">
+          <div className="space-y-0.5 w-full overflow-hidden">
+            <label
+              htmlFor="domainName"
+              className="text-gray-700 font-semibold text-sm"
+            >
+              Domain Name
+            </label>
+            <h2
+              id="domainName"
+              className="w-full font-mono text-xl text-nowrapp truncate"
+            >
+              <Skeleton className="bg-nyc-medium-gray h-7 w-1/2" />
+            </h2>
+          </div>
+        </CardTitle>
+        <CardDescription>
+          <div className="text-base text-gray-700 space-y-0.5">
+            <h3 className=" font-semibold text-sm">Title</h3>
+            <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
+          </div>
+        </CardDescription>
+        <AspectRatio ratio={1200 / 627}>
+          <Skeleton className="bg-nyc-medium-gray h-full w-full" />
+        </AspectRatio>
+      </CardHeader>
+      <CardContent className="grow flex flex-col gap-2">
+        <div className="h-full flex flex-col gap-2">
+          <div className="text-base text-gray-700 space-y-1">
+            <p className="font-semibold text-sm">Description</p>
+            <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
+            <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
+            <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
+            <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
+            <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
+          </div>
+        </div>
+        <CardAction className="w-full">
+          <Button
+            className="w-full font-semibold hover:bg-accent text-white"
+            asChild
+          >
+            <a>
+              Visit <MoveRight />
+            </a>
+          </Button>
+        </CardAction>
+      </CardContent>
+      <CardFooter>
+        <Accordion className="w-full overflow-hidden" type="single" collapsible>
+          <AccordionItem value="metadata">
+            <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
+              View metadata
+            </AccordionTrigger>
           </AccordionItem>
         </Accordion>
       </CardFooter>
