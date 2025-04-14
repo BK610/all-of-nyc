@@ -138,7 +138,7 @@ export default function DomainCard({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Copy link on allof.nyc to clipboard</p>
+                    <p>Copy link to this domain on allof.nyc</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -195,7 +195,7 @@ export default function DomainCard({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Copy URL to clipboard</p>
+                <p>Copy domain name</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
