@@ -96,7 +96,7 @@ export default function DomainCard({
     <Card
       id={`domain-${url.domain_name}`}
       className={`gap-2 w-full overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
-        outline outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange
+        outline outline-nyc-medium-gray hover:outline-nyc-blue focus:outline-4 focus:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange hover:focus-within:outline-nyc-orange
         bg-gray-50 from-white to-amber-100
         hover:bg-gradient-to-br hover:from-gray-50 hover:to-amber-50
         focus:bg-gradient-to-br focus-within:bg-gradient-to-br
