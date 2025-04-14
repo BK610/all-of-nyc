@@ -32,6 +32,7 @@ export default function Home({
   const [totalPagesCount, setTotalPagesCount] = useState(
     Math.ceil(initialTotalCount / pageSize)
   );
+  const [totalUrlsCount, setTotalUrlsCount] = useState(0);
   const [currentFilters, setCurrentFilters] = useState({
     status: "is_complete",
   });
@@ -73,6 +74,7 @@ export default function Home({
         );
         const result = await response.json();
         setUrls(result.urls);
+        setTotalUrlsCount(result.total);
         setTotalPagesCount(result.totalPages);
         setLoading(false);
       } catch (error) {
@@ -128,7 +130,7 @@ export default function Home({
   };
 
   return (
-    <>
+    <section>
       <HomeHeader />
       <div className="flex flex-col sm:flex-row gap-2">
         <Search
@@ -143,6 +145,15 @@ export default function Home({
         totalPages={totalPagesCount}
         onPageChange={(page) => setCurrentPageIndex(page)}
       />
+      <p className={`w-full text-center pb-2`}>
+        {loading ? (
+          <>Loading some sweet, sweet data...</>
+        ) : (
+          <>
+            Found <b>{totalUrlsCount}</b> matching .nyc domains.
+          </>
+        )}
+      </p>
       <QueryResultsList urls={urls} loading={loading} />
       {/* <NotebookEmbed
         src={"/Results.html"}
@@ -150,6 +161,6 @@ export default function Home({
           "https://github.com/BK610/all-of-nyc/blob/main/jupyter/Results.ipynb"
         }
       /> */}
-    </>
+    </section>
   );
 }
