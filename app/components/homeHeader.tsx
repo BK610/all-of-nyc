@@ -12,7 +12,9 @@ export default function HomeHeader(): React.ReactElement {
           alt="Logo of the .nyc domain registration program."
         />
       </h1>
-      <h2 className="text-xl mb-2">Discover how .nyc domains are used.</h2>
+      <h2 className="text-xl mb-2">
+        Discover how <code>.nyc</code> is used.
+      </h2>
     </div>
   );
 }

@@ -150,7 +150,7 @@ export default function Home({
           <>Loading some sweet, sweet data...</>
         ) : (
           <>
-            Found <b>{totalUrlsCount}</b> matching .nyc domains.
+            Found <b>{totalUrlsCount}</b> matching <code>.nyc</code> domains.
           </>
         )}
       </p>
