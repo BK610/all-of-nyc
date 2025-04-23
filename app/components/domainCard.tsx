@@ -114,7 +114,7 @@ export default function DomainCard({
                 alt={`OpenGraph image for ${url.domain_name}`}
               />
             ) : (
-              <p className="text-center w-full font-mono text-lg overflow-scroll">
+              <p className="text-center w-full font-mono text-lg overflow-x-clip">
                 {url.domain_name}
               </p>
             )}
