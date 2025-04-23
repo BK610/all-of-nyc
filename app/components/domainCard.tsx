@@ -128,14 +128,12 @@ export default function DomainCard({
             >
               Domain Name
             </label>
-            <div className="flex items-center gap-2">
-              <h2
-                id="domainName"
-                className="w-full font-mono text-xl text-nowrap truncate"
-              >
-                {url.domain_name}
-              </h2>
-            </div>
+            <h2
+              id="domainName"
+              className="w-full font-mono text-xl text-nowrap truncate"
+            >
+              {url.domain_name}
+            </h2>
           </div>
         </CardTitle>
         <CardDescription>
@@ -236,7 +234,10 @@ export function SkeletonDomainCard(): React.ReactElement {
       tabIndex={-1}
     >
       <CardHeader className="gap-2">
-        <CardTitle className="pb-2 w-full overflow-hidden">
+        <AspectRatio ratio={1200 / 627}>
+          <Skeleton className="bg-nyc-medium-gray h-full w-full" />
+        </AspectRatio>
+        <CardTitle className="w-full overflow-hidden">
           <div className="space-y-0.5 w-full overflow-hidden">
             <label
               htmlFor="domainName"
@@ -258,9 +259,6 @@ export function SkeletonDomainCard(): React.ReactElement {
             <Skeleton className="bg-nyc-medium-gray h-5 w-full" />
           </div>
         </CardDescription>
-        <AspectRatio ratio={1200 / 627}>
-          <Skeleton className="bg-nyc-medium-gray h-full w-full" />
-        </AspectRatio>
       </CardHeader>
       <CardContent className="grow flex flex-col gap-2">
         <div className="h-full flex flex-col gap-2">
