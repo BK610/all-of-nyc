@@ -151,17 +151,21 @@ export default function DomainCard({
             <p className="line-clamp-2">{url.title}</p>
           </div>
         </CardDescription>
-        {url.is_og_image_found ? (
-          <AspectRatio ratio={1200 / 627}>
-            <div className="h-full w-full rounded-md bg-nyc-medium-gray">
+        <AspectRatio ratio={1200 / 627}>
+          <div className="h-full w-full flex items-center rounded-md bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md">
+            {url.is_og_image_found ? (
               <img
-                className="h-full w-full object-cover rounded-md shadow-md"
+                className="h-full w-full object-cover rounded-md"
                 src={decodeURI(url.image)}
                 alt={`OpenGraph image for ${url.domain_name}`}
               />
-            </div>
-          </AspectRatio>
-        ) : null}
+            ) : (
+              <p className="text-center w-full font-mono text-lg">
+                {url.domain_name}
+              </p>
+            )}
+          </div>
+        </AspectRatio>
       </CardHeader>
       <CardContent className="grow flex flex-col gap-2">
         <div className="h-full flex flex-col gap-2">
