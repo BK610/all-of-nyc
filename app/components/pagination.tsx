@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { clamp } from "../../utils/math.utils";
+import { clamp } from "@/utils/math.utils";
 import Button from "@/app/components/button";
 
 export default function Pagination({
