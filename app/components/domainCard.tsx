@@ -1,6 +1,5 @@
 import Image from "next/image";
-import favicon from "/public/favicon.png";
-import { MoveRight, Copy } from "lucide-react";
+import { MoveRight, Copy, Share } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -136,27 +135,6 @@ export default function DomainCard({
               >
                 {url.domain_name}
               </h2>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="outline hover:cursor-pointer hover:opacity-80 active:opacity-60"
-                      onClick={handleCopyUrl}
-                    >
-                      <Image
-                        className="rounded-sm"
-                        src={favicon}
-                        alt=".nyc logo"
-                      />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Share this domain</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
             </div>
           </div>
         </CardTitle>
@@ -200,6 +178,23 @@ export default function DomainCard({
               </TooltipTrigger>
               <TooltipContent>
                 <p>Copy domain name</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+                  onClick={handleCopyUrl}
+                >
+                  <Share />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Share this domain</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
