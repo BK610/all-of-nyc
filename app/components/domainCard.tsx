@@ -106,22 +106,22 @@ export default function DomainCard({
       tabIndex={0}
     >
       <CardHeader className="gap-2">
+        <AspectRatio ratio={1200 / 627} className="pb-2 font-medium">
+          <div className="h-full w-full flex items-center rounded-md bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md">
+            {url.is_og_image_found ? (
+              <img
+                className="h-full w-full object-cover rounded-md"
+                src={decodeURI(url.image)}
+                alt={`OpenGraph image for ${url.domain_name}`}
+              />
+            ) : (
+              <p className="text-center w-full font-mono text-lg">
+                {url.domain_name}
+              </p>
+            )}
+          </div>
+        </AspectRatio>
         <CardTitle className="w-full overflow-hidden">
-          <AspectRatio ratio={1200 / 627} className="pb-2 font-medium">
-            <div className="h-full w-full flex items-center rounded-md bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md">
-              {url.is_og_image_found ? (
-                <img
-                  className="h-full w-full object-cover rounded-md"
-                  src={decodeURI(url.image)}
-                  alt={`OpenGraph image for ${url.domain_name}`}
-                />
-              ) : (
-                <p className="text-center w-full font-mono text-lg">
-                  {url.domain_name}
-                </p>
-              )}
-            </div>
-          </AspectRatio>
           <div className="space-y-0.5 w-full overflow-hidden">
             <label
               htmlFor="domainName"
