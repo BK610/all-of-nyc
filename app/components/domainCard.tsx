@@ -63,7 +63,7 @@ export default function DomainCard({
       await navigator.clipboard.writeText(url.domain_name);
       toast.success(
         <div className="flex flex-col w-full">
-          <p className="text-sm">Copied domain name to clipboard!</p>
+          <p className="text-sm">Copied domain name!</p>
           <p className="line-clamp-1 text-gray-700">{url.domain_name}</p>
         </div>
       );
@@ -83,7 +83,7 @@ export default function DomainCard({
       await navigator.clipboard.writeText(stringShareUrl);
       toast.success(
         <div className="flex flex-col w-full">
-          <p className="text-sm">Copied allof.nyc link to clipboard!</p>
+          <p className="text-sm">Copied sharable link!</p>
           <p className="w-full line-clamp-1 text-gray-700">{stringShareUrl}</p>
         </div>
       );
@@ -153,7 +153,7 @@ export default function DomainCard({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Copy link to this domain on allof.nyc</p>
+                    <p>Share this domain</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
