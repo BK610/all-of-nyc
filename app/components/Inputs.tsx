@@ -11,25 +11,30 @@ import {
 } from "@/components/ui/pagination";
 import { clamp } from "@/utils/math.utils";
 
-interface SearchAndPaginationProps {
+interface InputsProps {
   onSearch: (query: string) => void;
   onPageChange: (page: number) => void;
+  onFilter: (filters: { status: string }) => void;
   currentPageIndex: number;
   totalPages: number;
   className?: string;
   initialQuery?: string;
 }
 
-export default function SearchAndPagination({
+export default function Inputs({
   onSearch,
   onPageChange,
+  onFilter,
   currentPageIndex,
   totalPages,
   className,
   initialQuery = "",
-}: SearchAndPaginationProps): React.ReactElement {
+}: InputsProps): React.ReactElement {
   const [query, setQuery] = useState(initialQuery);
   const [inputPage, setInputPage] = useState<string | number>(currentPageIndex);
+  const [filters, setFilters] = useState({
+    status: "is_complete",
+  });
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -58,6 +63,11 @@ export default function SearchAndPagination({
     onPageChange(pageNumber);
   };
 
+  const handleFilter = (e: React.FormEvent) => {
+    e.preventDefault();
+    onFilter(filters);
+  };
+
   const getValidPageNumber = (maybePageNumber: string | number) => {
     const parsedPageNumber = parseInt(String(maybePageNumber), 10);
     if (isNaN(parsedPageNumber)) return currentPageIndex;
@@ -66,33 +76,68 @@ export default function SearchAndPagination({
 
   return (
     <div className={`${className} space-y-4`}>
-      <form onSubmit={handleSearch} className="mb-2 h-fit">
-        <Label htmlFor="search" className="pb-2">
-          <b className="text-gray-700">Search</b>(hint: type
-          <kbd className="h-5 w-5 text-center border-2 border-b-gray-300 border-r-gray-300 rounded-sm bg-nyc-light-gray">
-            /
-          </kbd>
-          to focus the search bar)
-        </Label>
-        <div className="h-10 w-full transition-all duration-75 rounded-lg flex outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange focus-within:shadow-xl">
-          <Input
-            id="search"
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            autoFocus
-            placeholder="Search all .nyc domains"
-            className="h-full flex-1 px-4 py-2 rounded-l-lg text-gray-900 placeholder-gray-600 bg-gray-50 hover:bg-white focus:bg-white"
-          />
-          <Button
-            tabIndex={-1}
-            className="font-semibold rounded-l-none h-full hover:cursor-pointer"
-            type="submit"
+      <div className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleSearch} className="w-full mb-2 h-fit">
+          <Label htmlFor="search" className="pb-2">
+            <b className="text-gray-700">Search</b>(hint: type
+            <kbd className="h-5 w-5 text-center border-2 border-b-gray-300 border-r-gray-300 rounded-sm bg-nyc-light-gray">
+              /
+            </kbd>
+            to focus the search bar)
+          </Label>
+          <div className="h-10 w-full transition-all duration-75 rounded-lg flex outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange focus-within:shadow-xl">
+            <Input
+              id="search"
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoFocus
+              placeholder="Search all .nyc domains"
+              className="h-full flex-1 px-4 py-2 rounded-l-lg text-gray-900 placeholder-gray-600 bg-gray-50 hover:bg-white focus:bg-white"
+            />
+            <Button
+              tabIndex={-1}
+              className="font-semibold rounded-l-none h-full hover:cursor-pointer"
+              type="submit"
+            >
+              Search
+            </Button>
+          </div>
+        </form>
+
+        <form
+          onSubmit={handleFilter}
+          className="mb-2 flex justify-center items-center gap-4"
+        >
+          <div
+            className="p-2 flex flex-col justify-center rounded-lg bg-gray-50 hover:bg-white focus-within:bg-white
+              outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange"
           >
-            Search
+            <label
+              className="font-semibold text-sm text-gray-700"
+              htmlFor="website-status-select"
+            >
+              Website status
+            </label>
+            <select
+              className="px-2 py-2 border-b-2 border-gray-300 text-sm"
+              name="status"
+              id="status-select"
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+            >
+              <option value="is_complete">✅ Complete</option>
+              <option value="is_live">❓ Live</option>
+              <option value="is_down">💀 Down</option>
+              <option value="">Show all</option>
+            </select>
+          </div>
+          <Button className="font-semibold hover:cursor-pointer" type="submit">
+            Filter
           </Button>
-        </div>
-      </form>
+        </form>
+      </div>
 
       <PaginationComponent className="pb-2">
         <PaginationContent className="gap-4">
