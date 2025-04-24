@@ -56,14 +56,14 @@ function Search({ onSearch, initialQuery = "" }: SearchProps) {
     <Form {...searchForm}>
       <form
         onSubmit={searchForm.handleSubmit(handleSearch)}
-        className="w-full mb-2 h-fit"
+        className="w-full h-fit"
       >
         <FormField
           control={searchForm.control}
           name="query"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="pb-2">
+              <FormLabel>
                 <b className="text-gray-700">Search</b>(hint: type
                 <kbd className="h-5 w-5 text-center border-2 border-b-gray-300 border-r-gray-300 rounded-sm bg-nyc-light-gray">
                   /
@@ -118,42 +118,34 @@ function Filters({ onFilter }: FiltersProps) {
     <Form {...filterForm}>
       <form
         onSubmit={filterForm.handleSubmit(handleFilter)}
-        className="mb-2 flex justify-center items-center gap-4"
+        className=" flex justify-center items-center"
       >
         <FormField
           control={filterForm.control}
           name="status"
           render={({ field }) => (
             <FormItem>
-              <div
-                className="p-2 flex flex-col justify-center rounded-lg bg-gray-50 hover:bg-white focus-within:bg-white
-                  outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange"
+              <FormLabel
+                className="font-semibold text-sm text-gray-700"
+                htmlFor="website-status-select"
               >
-                <FormLabel
-                  className="font-semibold text-sm text-gray-700"
-                  htmlFor="website-status-select"
+                Website status
+              </FormLabel>
+              <FormControl className="h-10">
+                <select
+                  className="h-full px-1 rounded-lg py-2 outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
+                  id="status-select"
+                  {...field}
                 >
-                  Website status
-                </FormLabel>
-                <FormControl>
-                  <select
-                    className="px-2 py-2 border-b-2 border-gray-300 text-sm"
-                    id="status-select"
-                    {...field}
-                  >
-                    <option value="is_complete">✅ Complete</option>
-                    <option value="is_live">❓ Live</option>
-                    <option value="is_down">💀 Down</option>
-                    <option value="">Show all</option>
-                  </select>
-                </FormControl>
-              </div>
+                  <option value="is_complete">✅ Complete</option>
+                  <option value="is_live">❓ Live</option>
+                  <option value="is_down">💀 Down</option>
+                  <option value="">Show all</option>
+                </select>
+              </FormControl>
             </FormItem>
           )}
         />
-        <Button className="font-semibold hover:cursor-pointer" type="submit">
-          Filter
-        </Button>
       </form>
     </Form>
   );
