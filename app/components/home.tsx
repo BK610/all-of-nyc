@@ -6,12 +6,6 @@ import HomeHeader from "@/components/homeHeader";
 import Inputs from "@/components/Inputs";
 import QueryResultsList from "@/components/queryResultsList";
 import NotebookEmbed from "@/components/notebookEmbed";
-import { z } from "zod";
-
-const formSchema = z.object({
-  query: z.string(),
-  status: z.enum(["is_complete", "is_live", "is_down", ""]),
-});
 
 interface HomeProps {
   initialUrls: [any];
