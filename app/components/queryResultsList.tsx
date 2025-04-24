@@ -18,7 +18,8 @@ export default function QueryResultsList({
           <>Loading some sweet, sweet data...</>
         ) : (
           <>
-            Found <b>{totalUrlsCount}</b> matching <code>.nyc</code> domains.
+            Showing <b>{urls.length}</b> of <b>{totalUrlsCount}</b> matching{" "}
+            <code>.nyc</code> domains.
           </>
         )}
       </p>
