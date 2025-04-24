@@ -136,6 +136,10 @@ function Filters({ onFilter }: FiltersProps) {
                   className="h-full px-1 rounded-lg py-2 outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
                   id="status-select"
                   {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    filterForm.handleSubmit(handleFilter)();
+                  }}
                 >
                   <option value="is_complete">✅ Complete</option>
                   <option value="is_live">❓ Live</option>
