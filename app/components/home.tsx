@@ -131,7 +131,6 @@ export default function Home({
     <section>
       <HomeHeader />
       <Inputs
-        className="w-full"
         onSearch={handleSearch}
         onPageChange={(page) => setCurrentPageIndex(page)}
         onFilter={handleFilter}
@@ -139,16 +138,11 @@ export default function Home({
         totalPages={totalPagesCount}
         initialQuery={currentQuery}
       />
-      <p className={`w-full text-center pb-2`}>
-        {loading ? (
-          <>Loading some sweet, sweet data...</>
-        ) : (
-          <>
-            Found <b>{totalUrlsCount}</b> matching <code>.nyc</code> domains.
-          </>
-        )}
-      </p>
-      <QueryResultsList urls={urls} loading={loading} />
+      <QueryResultsList
+        urls={urls}
+        loading={loading}
+        totalUrlsCount={totalUrlsCount}
+      />
       {/* <NotebookEmbed
         src={"/Results.html"}
         fallbackUrl={
