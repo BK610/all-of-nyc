@@ -71,7 +71,7 @@ function Search({ onSearch, initialQuery = "" }: SearchProps) {
                 to focus the search bar)
               </FormLabel>
               <FormControl>
-                <div className="h-10 w-full transition-all duration-75 rounded-lg flex outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange focus-within:shadow-xl">
+                <div className="h-10 w-full transition-all duration-75 rounded-lg flex outline outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange focus-within:shadow-xl">
                   <Input
                     id="search"
                     type="text"
