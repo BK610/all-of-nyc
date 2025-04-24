@@ -1,6 +1,16 @@
 import { useState, useEffect } from "react";
 import { clamp } from "@/utils/math.utils";
 import Button from "@/app/components/button";
+import {
+  Pagination as PaginationComponent,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Input } from "@/components/ui/input";
 
 export default function Pagination({
   currentPageIndex,
@@ -52,44 +62,40 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex items-center justify-center space-x-4 mb-4">
-      <Button
-        onClick={() => onPageChange(currentPageIndex - 1)}
-        disabled={currentPageIndex === 1}
-        className={`px-4 py-2 bg-nyc-orange text-white rounded-lg ${
-          currentPageIndex === 1
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-orange-700"
-        }`}
-      >
-        Previous
-      </Button>
-
-      {/* Page Input */}
-      <form onSubmit={handlePageSubmit} className="flex items-center space-x-2">
-        <input
-          type="text"
-          value={inputPage}
-          onChange={handleInputChange}
-          className="w-16 text-center rounded-md p-2 transition-all duration-75
+    <PaginationComponent className="pb-2">
+      <PaginationContent className="gap-4">
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={() =>
+              onPageChange(getValidPageNumber(currentPageIndex - 1))
+            }
+            className="cursor-pointer bg-nyc-blue text-white hover:bg-nyc-blue/80 hover:text-white focus:outline-nyc-orange"
+            tabIndex={0}
+          />
+        </PaginationItem>
+        <PaginationItem className="inline-flex items-center text-sm">
+          <form onSubmit={handlePageSubmit} className="flex items-center">
+            <span>Page&nbsp;</span>
+            <Input
+              value={inputPage}
+              onChange={handleInputChange}
+              className="w-16 text-center rounded-md transition-all duration-75
           bg-gray-50 hover:bg-white focus:bg-white
-          outline-2 outline-nyc-medium-gray focus:outline-4 focus:outline-nyc-orange"
-        />
-        <span> of {totalPages}</span>
-        <Button type="submit">Go</Button>
-      </form>
-
-      <Button
-        onClick={() => onPageChange(currentPageIndex + 1)}
-        disabled={currentPageIndex === totalPages}
-        className={`${
-          currentPageIndex === totalPages
-            ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-orange-700"
-        }`}
-      >
-        Next
-      </Button>
-    </div>
+          outline-2 outline-nyc-medium-gray actiasdfve:outline-4 focus:outline-nyc-orange"
+            />
+            <span>&nbsp;of {totalPages}</span>
+          </form>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext
+            onClick={() =>
+              onPageChange(getValidPageNumber(currentPageIndex + 1))
+            }
+            className="cursor-pointer bg-nyc-blue text-white hover:bg-nyc-blue/80 hover:text-white"
+            tabIndex={0}
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </PaginationComponent>
   );
 }
