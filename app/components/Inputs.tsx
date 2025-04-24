@@ -133,7 +133,7 @@ function Filters({ onFilter }: FiltersProps) {
               </FormLabel>
               <FormControl className="h-10">
                 <select
-                  className="h-full px-1 rounded-lg py-2 outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
+                  className="h-full transition-all duration-75 px-1 rounded-lg py-2 outline-2 outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
                   id="status-select"
                   {...field}
                   onChange={(e) => {
