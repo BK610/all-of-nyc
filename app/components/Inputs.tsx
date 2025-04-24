@@ -78,7 +78,7 @@ function Search({ onSearch, initialQuery = "" }: SearchProps) {
                     {...field}
                     autoFocus
                     placeholder="Search all .nyc domains"
-                    className="h-full flex-1 px-4 py-2 rounded-l-lg text-gray-900 placeholder-gray-600 bg-gray-50 hover:bg-white focus:bg-white"
+                    className="h-full flex-1 px-4 py-2 rounded-l-lg rounded-r-none text-gray-900 placeholder-gray-600 bg-gray-50 hover:bg-white focus:bg-white"
                   />
                   <Button
                     tabIndex={-1}
