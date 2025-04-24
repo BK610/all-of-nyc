@@ -4,8 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import HomeHeader from "@/components/homeHeader";
 import Filter from "@/components/filter";
-import Search from "@/components/search";
-import Pagination from "@/components/pagination";
+import SearchAndPagination from "@/components/SearchAndPagination";
 import QueryResultsList from "@/components/queryResultsList";
 import NotebookEmbed from "@/components/notebookEmbed";
 import { z } from "zod";
@@ -133,18 +132,16 @@ export default function Home({
     <section>
       <HomeHeader />
       <div className="flex flex-col sm:flex-row gap-2">
-        <Search
+        <SearchAndPagination
           className="w-full"
           onSearch={handleSearch}
+          onPageChange={(page) => setCurrentPageIndex(page)}
+          currentPageIndex={currentPageIndex}
+          totalPages={totalPagesCount}
           initialQuery={currentQuery}
         />
         <Filter onFilter={handleFilter} />
       </div>
-      <Pagination
-        currentPageIndex={currentPageIndex}
-        totalPages={totalPagesCount}
-        onPageChange={(page) => setCurrentPageIndex(page)}
-      />
       <p className={`w-full text-center pb-2`}>
         {loading ? (
           <>Loading some sweet, sweet data...</>
