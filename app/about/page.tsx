@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import nycLogo from "@/public/nyclogo.png";
+import nycLogo from "@/public/nycLogo.png";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
