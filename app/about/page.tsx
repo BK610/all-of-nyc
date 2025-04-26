@@ -36,8 +36,8 @@ export default function AboutPage(): React.ReactElement {
       <h2 className="text-2xl font-semibold mt-8 mb-4">Project Overview</h2>
       <p className="mb-2">
         New York City is full of passionate people doing important, meaningful,
-        interesting things. But, it's nearly impossible to keep track of it all
-        and find new things to experience and people to meet.
+        interesting things. But, it&apos;s nearly impossible to keep track of it
+        all and find new things to experience and people to meet.
       </p>
       <p className="mb-2">
         Luckily, the{" "}
@@ -94,7 +94,7 @@ export default function AboutPage(): React.ReactElement {
           >
             NYC Digital Services
           </a>{" "}
-          - NYC's digital services and technology initiatives.
+          - NYC&apos;s digital services and technology initiatives.
         </li>
         <li>
           <a
@@ -116,7 +116,7 @@ export default function AboutPage(): React.ReactElement {
           >
             NYC Open Data
           </a>{" "}
-          - NYC's open data portal.
+          - NYC&apos;s open data portal.
         </li>
       </ul>
 
