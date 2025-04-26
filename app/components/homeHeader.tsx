@@ -1,15 +1,19 @@
 import Image from "next/image";
 import nycLogo from "/public/nycLogo.png";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
 export default function HomeHeader(): React.ReactElement {
   return (
     <section>
       <div className="max-w-6xl flex justify-end">
-        <Link
-          href="/about"
-          className="text-sm text-nyc-blue font-semibold underline hover:decoration-2"
-        >
-          About
+        <Link href="/about">
+          <Button
+            size="sm"
+            className="text-sm font-semibold hover:cursor-pointer"
+          >
+            About
+          </Button>
         </Link>
       </div>
       <div className="mb-4 text-center w-fit mx-auto">
