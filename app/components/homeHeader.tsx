@@ -1,5 +1,5 @@
 import Image from "next/image";
-import nycLogo from "/public/nycLogo.png";
+import nycLogo from "@/public/nycLogo.png";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
