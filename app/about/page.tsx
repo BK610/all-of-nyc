@@ -1,17 +1,35 @@
 import Link from "next/link";
+import Image from "next/image";
+import nycLogo from "@/public/nyclogo.png";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
 export default function AboutPage(): React.ReactElement {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <Link href="/">
-        <Button className="mb-10 bg-nyc-blue text-white font-semibold hover:bg-nyc-blue/80 hover:text-white focus:outline-nyc-orange cursor-pointer">
-          <ArrowLeft className="h-4 w-4" />
-          Explore
-        </Button>
-      </Link>
-
+    <div className="max-w-4xl mx-auto px-4">
+      <div className="flex justify-end">
+        <Link href="/">
+          <Button
+            size="sm"
+            className="bg-nyc-blue text-white font-semibold hover:bg-nyc-blue/80 hover:text-white focus:outline-nyc-orange cursor-pointer"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+        </Link>
+      </div>
+      <div className="flex">
+        <Link href="/" className="w-fit mx-auto hover:underline">
+          <h1 className="text-3xl font-bold text-nyc-blue mb-2">
+            All of{" "}
+            <Image
+              className="inline w-20 h-20"
+              src={nycLogo}
+              alt="Logo of the .nyc domain registration program."
+            />
+          </h1>
+        </Link>
+      </div>
       <h1 className="text-3xl font-bold mb-4">About</h1>
       <p className="mb-4">
         <strong>
