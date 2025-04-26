@@ -13,7 +13,11 @@ export default function HomeHeader(): React.ReactElement {
         />
       </h1>
       <h2 className="text-xl mb-2">
-        Discover how <code>.nyc</code> is used.
+        Discover how{" "}
+        <code className="bg-nyc-light-gray rounded-md px-1 border-2 border-nyc-medium-gray">
+          .nyc
+        </code>{" "}
+        is used.
       </h2>
     </div>
   );
