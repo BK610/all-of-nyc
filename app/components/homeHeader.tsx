@@ -14,9 +14,13 @@ export default function HomeHeader(): React.ReactElement {
       </h1>
       <h2 className="text-xl mb-2">
         Discover how{" "}
-        <code className="bg-nyc-light-gray rounded-md px-1 border-2 border-nyc-medium-gray">
-          .nyc
-        </code>{" "}
+        <a
+          href="https://www.ownit.nyc/"
+          target="_blank"
+          className="bg-gray-50 rounded-md px-1 outline outline-nyc-medium-gray hover:outline-nyc-blue"
+        >
+          <code className="">.nyc</code>
+        </a>{" "}
         is used.
       </h2>
     </div>
