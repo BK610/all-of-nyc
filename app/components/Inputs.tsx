@@ -124,14 +124,14 @@ function Filters({ onFilter }: FiltersProps) {
           control={filterForm.control}
           name="status"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="h-full">
               <FormLabel
                 className="font-semibold text-sm text-gray-700"
                 htmlFor="website-status-select"
               >
                 Website status
               </FormLabel>
-              <FormControl className="h-10">
+              <FormControl>
                 <select
                   className="h-full transition-all duration-75 px-1 py-2 rounded-lg outline outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
                   id="status-select"
