@@ -71,14 +71,14 @@ function Search({ onSearch, initialQuery = "" }: SearchProps) {
                 to focus the search bar)
               </FormLabel>
               <FormControl>
-                <div className="h-10 w-full transition-all duration-75 rounded-lg flex focus-within:outline-4 focus-within:outline-nyc-orange focus-within:shadow-xl">
+                <div className="h-10 w-full transition-all duration-75 rounded-lg flex outline hover:outline-nyc-blue hover:focus-within:outline-nyc-orange hover:focus-within:outline-4 focus-within:outline-4 focus-within:outline-nyc-orange focus-within:shadow-xl">
                   <Input
                     id="search"
                     type="text"
                     {...field}
                     autoFocus
                     placeholder="Search all .nyc domains"
-                    className="h-full flex-1 px-4 py-2 rounded-l-lg rounded-r-none text-gray-900 placeholder-gray-600 bg-gray-50 hover:bg-white focus:bg-white"
+                    className="h-full flex-1 px-4 py-2 rounded-l-lg rounded-r-none border-0 text-gray-900 placeholder-gray-600 bg-gray-50 hover:bg-white focus:bg-white"
                   />
                   <Button
                     tabIndex={-1}
@@ -133,7 +133,7 @@ function Filters({ onFilter }: FiltersProps) {
               </FormLabel>
               <FormControl>
                 <select
-                  className="h-full transition-all duration-75 px-1 py-2 rounded-lg outline outline-nyc-medium-gray focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
+                  className="h-full transition-all duration-75 px-1 py-2 rounded-lg outline outline-nyc-medium-gray hover:outline-nyc-blue hover:focus-within:outline-nyc-orange focus-within:outline-4 focus-within:outline-nyc-orange bg-gray-50 hover:bg-white focus:bg-white text-sm"
                   id="status-select"
                   {...field}
                   onChange={(e) => {
