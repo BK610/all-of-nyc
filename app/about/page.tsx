@@ -25,6 +25,11 @@ export default function AboutPage(): React.ReactElement {
         >
           the <code>.nyc</code> domain name program
         </a>
+        ,{" "}
+        <strong>
+          aiming to make it easier to discover and celebrate what folks are
+          doing in New York City
+        </strong>
         .
       </p>
 
@@ -55,12 +60,7 @@ export default function AboutPage(): React.ReactElement {
       </p>
       <p className="mb-2">
         This project uses that dataset, enhances it with data scraped from each
-        website, and makes the data searchable, ultimately{" "}
-        <strong>
-          aiming to make it easier to discover and celebrate what folks are
-          doing in New York City
-        </strong>
-        .
+        website, and makes the data searchable.
       </p>
 
       <h2 className="text-2xl font-semibold mt-8 mb-4">Learn more</h2>
