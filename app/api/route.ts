@@ -50,8 +50,17 @@ function getUrlParams(
     request.nextUrl.searchParams.get("pageSize") || "15"
   );
   const query = request.nextUrl.searchParams.get("query")?.toLowerCase() || "";
-  const status =
+
+  const statusSearchParam =
     request.nextUrl.searchParams.get("status")?.toLowerCase() || "";
+
+  let status = "";
+
+  if (statusSearchParam === "default") {
+    status = "";
+  } else {
+    status = statusSearchParam;
+  }
 
   return [pageIndex, pageSize, query, status];
 }
