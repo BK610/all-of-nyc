@@ -141,10 +141,10 @@ function Filters({ onFilter }: FiltersProps) {
                     filterForm.handleSubmit(handleFilter)();
                   }}
                 >
-                  <option value="is_complete">✅ Complete</option>
-                  <option value="is_live">❓ Live</option>
-                  <option value="is_down">💀 Down</option>
-                  <option value="">Show all</option>
+                  <option value="is_complete">Complete ✅</option>
+                  <option value="is_live">Live ❓</option>
+                  <option value="is_down">Down 💀</option>
+                  <option value="default">Show all</option>
                 </select>
               </FormControl>
             </FormItem>
