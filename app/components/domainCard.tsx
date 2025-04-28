@@ -227,7 +227,7 @@ export default function DomainCard({
                 <Button
                   variant="outline"
                   size="icon"
-                  className={`outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 ${
+                  className={`outline hover:cursor-pointer disabled:opacity-100 hover:bg-gray-100 active:bg-gray-200 ${
                     hasUpvoted ? "bg-blue-100" : ""
                   } ${isUpvoting ? "opacity-50" : ""}`}
                   onClick={handleUpvote}
