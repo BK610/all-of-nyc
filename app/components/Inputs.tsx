@@ -207,7 +207,7 @@ function Pagination({
             onClick={() =>
               onPageChange(getValidPageNumber(currentPageIndex - 1))
             }
-            className="cursor-pointer bg-nyc-blue text-white hover:bg-nyc-blue/80 hover:text-white focus:outline-nyc-orange"
+            className="cursor-pointer bg-nyc-blue font-semibold text-white hover:bg-nyc-blue/80 hover:text-white focus:outline-nyc-orange"
             tabIndex={0}
           />
         </PaginationItem>
@@ -247,7 +247,7 @@ function Pagination({
             onClick={() =>
               onPageChange(getValidPageNumber(currentPageIndex + 1))
             }
-            className="cursor-pointer bg-nyc-blue text-white hover:bg-nyc-blue/80 hover:text-white"
+            className="cursor-pointer bg-nyc-blue font-semibold text-white hover:bg-nyc-blue/80 hover:text-white"
             tabIndex={0}
           />
         </PaginationItem>
