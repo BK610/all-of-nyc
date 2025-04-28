@@ -82,7 +82,7 @@ function Search({ onSearch, initialQuery = "" }: SearchProps) {
                   />
                   <Button
                     tabIndex={-1}
-                    className="font-semibold rounded-l-none h-full hover:cursor-pointer"
+                    className="font-semibold rounded-l-none h-full transition-all duration-75 hover:bg-nyc-blue/80 hover:cursor-pointer"
                     type="submit"
                   >
                     Search
