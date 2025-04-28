@@ -39,6 +39,7 @@ export default function DomainCard({
 
   const [upvotes, setUpvotes] = useState(url.upvotes || 0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
+  const [isUpvoting, setIsUpvoting] = useState(false);
 
   useEffect(() => {
     // Check if this session has upvoted this domain
@@ -46,34 +47,52 @@ export default function DomainCard({
     localStorage.setItem("sessionId", sessionId);
 
     const checkUpvote = async () => {
-      const response = await fetch(
-        `/api/upvote?domain=${url.domain_name}&sessionId=${sessionId}&check=true`
-      );
-      const data = await response.json();
-      setHasUpvoted(data.hasUpvoted);
+      try {
+        const response = await fetch(
+          `/api/upvote?domain=${url.domain_name}&sessionId=${sessionId}&check=true`
+        );
+        if (!response.ok) throw new Error("Failed to check upvote status");
+        const data = await response.json();
+        setHasUpvoted(data.hasUpvoted);
+      } catch (error) {
+        console.error("Error checking upvote status:", error);
+        toast.error("Failed to check upvote status");
+      }
     };
 
     checkUpvote();
   }, [url.domain_name]);
 
   const handleUpvote = async () => {
-    if (hasUpvoted) return;
+    if (hasUpvoted || isUpvoting) return;
 
-    const sessionId = localStorage.getItem("sessionId");
-    const response = await fetch("/api/upvote", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        domain: url.domain_name,
-        sessionId,
-      }),
-    });
+    setIsUpvoting(true);
+    try {
+      const sessionId = localStorage.getItem("sessionId");
+      const response = await fetch("/api/upvote", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          domain: url.domain_name,
+          sessionId,
+        }),
+      });
 
-    const data = await response.json();
-    setUpvotes(data.upvotes);
-    setHasUpvoted(true);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to upvote");
+      }
+
+      const data = await response.json();
+      setUpvotes(data.upvotes);
+      setHasUpvoted(true);
+    } catch (error) {
+      console.error("Error upvoting:", error);
+    } finally {
+      setIsUpvoting(false);
+    }
   };
 
   const formattedRegistrationDate = new Date(
@@ -210,9 +229,9 @@ export default function DomainCard({
                   size="icon"
                   className={`outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 ${
                     hasUpvoted ? "bg-blue-100" : ""
-                  }`}
+                  } ${isUpvoting ? "opacity-50" : ""}`}
                   onClick={handleUpvote}
-                  disabled={hasUpvoted}
+                  disabled={hasUpvoted || isUpvoting}
                 >
                   <div className="flex items-center gap-1">
                     <ThumbsUp size={16} />
