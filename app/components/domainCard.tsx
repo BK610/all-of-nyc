@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MoveRight, Copy, Share } from "lucide-react";
+import { MoveRight, Copy, Share, ThumbsUp } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,6 +26,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useState, useEffect } from "react";
 
 interface DomainCardProps {
   url: any;
@@ -35,6 +36,45 @@ export default function DomainCard({
   url,
 }: DomainCardProps): React.ReactElement {
   if (!url) return null;
+
+  const [upvotes, setUpvotes] = useState(url.upvotes || 0);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+
+  useEffect(() => {
+    // Check if this session has upvoted this domain
+    const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
+    localStorage.setItem("sessionId", sessionId);
+
+    const checkUpvote = async () => {
+      const response = await fetch(
+        `/api/upvote?domain=${url.domain_name}&sessionId=${sessionId}&check=true`
+      );
+      const data = await response.json();
+      setHasUpvoted(data.hasUpvoted);
+    };
+
+    checkUpvote();
+  }, [url.domain_name]);
+
+  const handleUpvote = async () => {
+    if (hasUpvoted) return;
+
+    const sessionId = localStorage.getItem("sessionId");
+    const response = await fetch("/api/upvote", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        domain: url.domain_name,
+        sessionId,
+      }),
+    });
+
+    const data = await response.json();
+    setUpvotes(data.upvotes);
+    setHasUpvoted(true);
+  };
 
   const formattedRegistrationDate = new Date(
     url.domain_registration_date
@@ -162,6 +202,29 @@ export default function DomainCard({
               Visit <MoveRight />
             </a>
           </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 ${
+                    hasUpvoted ? "bg-blue-100" : ""
+                  }`}
+                  onClick={handleUpvote}
+                  disabled={hasUpvoted}
+                >
+                  <div className="flex items-center gap-1">
+                    <ThumbsUp size={16} />
+                    <span className="text-sm">{upvotes}</span>
+                  </div>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{!hasUpvoted && "Upvote this domain"}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
