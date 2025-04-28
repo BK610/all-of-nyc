@@ -10,7 +10,7 @@ export default function HomeHeader(): React.ReactElement {
         <Link href="/about">
           <Button
             size="sm"
-            className="text-sm font-semibold hover:cursor-pointer"
+            className="text-sm font-semibold hover:cursor-pointer hover:bg-nyc-blue/80"
           >
             About
           </Button>
