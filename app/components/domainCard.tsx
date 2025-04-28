@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { MoveRight, Copy, Share, ThumbsUp } from "lucide-react";
 import {
   Card,
@@ -35,13 +34,13 @@ interface DomainCardProps {
 export default function DomainCard({
   url,
 }: DomainCardProps): React.ReactElement {
-  if (!url) return null;
-
-  const [upvotes, setUpvotes] = useState(url.upvotes || 0);
+  const [upvotes, setUpvotes] = useState(url?.upvotes || 0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [isUpvoting, setIsUpvoting] = useState(false);
 
   useEffect(() => {
+    if (!url) return;
+
     // Check if this session has upvoted this domain
     const sessionId = localStorage.getItem("sessionId") || crypto.randomUUID();
     localStorage.setItem("sessionId", sessionId);
@@ -56,12 +55,13 @@ export default function DomainCard({
         setHasUpvoted(data.hasUpvoted);
       } catch (error) {
         console.error("Error checking upvote status:", error);
-        toast.error("Failed to check upvote status");
       }
     };
 
     checkUpvote();
-  }, [url.domain_name]);
+  }, [url?.domain_name]);
+
+  if (!url) return null;
 
   const handleUpvote = async () => {
     if (hasUpvoted || isUpvoting) return;
