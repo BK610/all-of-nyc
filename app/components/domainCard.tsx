@@ -122,7 +122,6 @@ export default function DomainCard({
       toast.success(
         <div className="flex flex-col w-full">
           <p className="text-sm">Copied domain name!</p>
-          <p className="line-clamp-1 text-gray-700">{url.domain_name}</p>
         </div>
       );
     } catch (err) {
@@ -142,7 +141,6 @@ export default function DomainCard({
       toast.success(
         <div className="flex flex-col w-full">
           <p className="text-sm">Copied sharable link!</p>
-          <p className="w-full line-clamp-1 text-gray-700">{stringShareUrl}</p>
         </div>
       );
     } catch (err) {
@@ -166,6 +164,26 @@ export default function DomainCard({
       <CardHeader className="gap-2">
         <AspectRatio ratio={1200 / 627} className="pb-2 font-medium">
           <div className="h-full w-full flex items-center rounded-md bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className={`absolute top-1 right-1 hover:cursor-pointer hover:border-nyc-blue hover:bg-gradient-to-br hover:from-amber-50 hover:to-amber-300 active:bg-gray-200 shadow-md ${
+                      hasUpvoted && "bg-gray-200"
+                    } ${isUpvoting && "opacity-50"}`}
+                    onClick={handleUpvote}
+                    disabled={hasUpvoted || isUpvoting}
+                  >
+                    <ThumbsUp size={16} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{hasUpvoted ? "Upvoted!" : "Upvote this domain"}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             {url.is_og_image_found ? (
               <img
                 className="h-full w-full object-cover rounded-md"
@@ -209,6 +227,12 @@ export default function DomainCard({
             <p className="line-clamp-5">{url.description}</p>
           </div>
         </div>
+        <div className="h-full flex flex-col gap-2">
+          <div className="text-base text-gray-700 space-y-0.5">
+            <p className="font-semibold text-sm">Upvotes</p>
+            <p className="font-mono">{upvotes}</p>
+          </div>
+        </div>
         <div className="w-full flex gap-2">
           <Button
             className="flex-1 font-semibold hover:bg-accent text-white"
@@ -221,29 +245,6 @@ export default function DomainCard({
               Visit <MoveRight />
             </a>
           </Button>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className={`outline hover:cursor-pointer disabled:opacity-100 hover:bg-gray-100 active:bg-gray-200 ${
-                    hasUpvoted ? "bg-blue-100" : ""
-                  } ${isUpvoting ? "opacity-50" : ""}`}
-                  onClick={handleUpvote}
-                  disabled={hasUpvoted || isUpvoting}
-                >
-                  <div className="flex items-center gap-1">
-                    <ThumbsUp size={16} />
-                    <span className="text-sm">{upvotes}</span>
-                  </div>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{!hasUpvoted && "Upvote this domain"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
