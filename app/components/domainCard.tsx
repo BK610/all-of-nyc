@@ -1,4 +1,5 @@
 import { MoveRight, Copy, Share, ThumbsUp } from "lucide-react";
+import confetti from "canvas-confetti";
 import {
   Card,
   CardContent,
@@ -88,6 +89,35 @@ export default function DomainCard({
       const data = await response.json();
       setUpvotes(data.upvotes);
       setHasUpvoted(true);
+
+      // Get the button element and its position
+      const button = document.getElementById(`upvote-${url.domain_name}`);
+      console.log("Button found:", button);
+
+      if (button) {
+        const rect = button.getBoundingClientRect();
+        console.log("Button position:", rect);
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+        console.log("Confetti origin:", { x, y });
+
+        // Trigger confetti from the button's position
+        confetti({
+          particleCount: 100,
+          spread: 80,
+          origin: { x, y },
+          ticks: 200,
+        });
+      } else {
+        console.log("Button not found, falling back to center");
+        // Fallback to center if button not found
+        confetti({
+          particleCount: 100,
+          spread: 80,
+          origin: { x: 0.5, y: 0.5 },
+          ticks: 200,
+        });
+      }
     } catch (error) {
       console.error("Error upvoting:", error);
     } finally {
@@ -170,6 +200,7 @@ export default function DomainCard({
                   <Button
                     variant="outline"
                     size="icon"
+                    id={`upvote-${url.domain_name}`}
                     className={`absolute top-1 right-1 hover:cursor-pointer hover:border-nyc-blue hover:bg-gradient-to-br hover:from-amber-50 hover:to-amber-300 active:bg-gray-200 shadow-md ${
                       hasUpvoted && "bg-gray-200"
                     } ${isUpvoting && "opacity-50"}`}
