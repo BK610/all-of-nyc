@@ -74,7 +74,11 @@ async function fetchData(
   pageIndex: number,
   pageSize: number,
   query: string,
-  status: string
+  status: string,
+  sortBy: { fieldName: string; ascending: boolean } = {
+    fieldName: "last_updated_at",
+    ascending: false,
+  }
 ): Promise<Array<any>> {
   const startSearchIndex = (pageIndex - 1) * pageSize;
   const endSearchIndex = startSearchIndex + (pageSize - 1);
@@ -82,6 +86,7 @@ async function fetchData(
   let supabaseQuery = supabaseClient
     .from("enriched_url_data")
     .select("*")
+    .order(sortBy.fieldName, { ascending: sortBy.ascending })
     .ilike("domain_name", `%${query}%`);
 
   if (status) supabaseQuery = supabaseQuery.eq("website_status", status);
