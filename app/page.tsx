@@ -1,15 +1,19 @@
-import Home from "./components/home";
+import Home from "@/components/home";
 import { createClient } from "@supabase/supabase-js";
 import { Suspense } from "react";
+import HomeHeader from "@/components/homeHeader";
 
 export default async function Page(): Promise<React.ReactElement> {
   const initialUrls = await fetchInitialData();
   const initialTotalCount = await getTableCount();
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Home initialUrls={initialUrls} initialTotalCount={initialTotalCount} />
-    </Suspense>
+    <>
+      <HomeHeader />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Home initialUrls={initialUrls} initialTotalCount={initialTotalCount} />
+      </Suspense>
+    </>
   );
 }
 

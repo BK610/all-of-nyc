@@ -2,10 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import HomeHeader from "@/components/homeHeader";
 import Inputs from "@/components/Inputs";
 import QueryResultsList from "@/components/queryResultsList";
-import NotebookEmbed from "@/components/notebookEmbed";
+// import NotebookEmbed from "@/components/notebookEmbed";
 
 interface HomeProps {
   initialUrls: [any];
@@ -123,7 +122,6 @@ export default function Home({
 
   return (
     <section>
-      <HomeHeader />
       <Inputs
         onSearch={handleSearch}
         onPageChange={(page) => setCurrentPageIndex(page)}
