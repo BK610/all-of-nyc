@@ -34,7 +34,7 @@ export default function DomainModal({
         <motion.div className="relative w-full max-w-5xl">
           <motion.button
             onClick={onClose}
-            className="absolute -right-2 -top-2 z-10 rounded-full bg-white p-2 shadow-lg hover:bg-gray-100"
+            className="absolute -right-2 -top-2 z-10 rounded-full bg-white p-2 shadow-lg hover:bg-gray-100 cursor-pointer"
           >
             <X className="h-5 w-5" />
           </motion.button>
