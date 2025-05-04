@@ -196,16 +196,31 @@ export default function DomainCard({
     // Prevent default hash scrolling behavior
     e.preventDefault();
 
+    // Store current scroll position
+    const scrollPosition = window.scrollY;
+
     // Update hash without triggering scroll
     window.location.hash = `domain-${url.domain_name}`;
+
+    // Restore scroll position
+    window.scrollTo(0, scrollPosition);
   };
+
+  // Prevent automatic scrolling on mount
+  useEffect(() => {
+    if (window.location.hash === `#domain-${url.domain_name}`) {
+      const scrollPosition = window.scrollY;
+      window.scrollTo(0, scrollPosition);
+    }
+  }, [url.domain_name]);
 
   return (
     <motion.div
-      layoutId={layoutId}
+      layoutId={`card-${url.domain_name}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      className="w-full"
     >
       <Card
         id={`domain-${url.domain_name}`}
