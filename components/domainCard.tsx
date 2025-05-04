@@ -283,7 +283,9 @@ export default function DomainCard({
           <CardDescription>
             <div className="text-base text-gray-700 space-y-0.5">
               <h3 className=" font-semibold text-sm">Title</h3>
-              <p className="line-clamp-2">{url.title}</p>
+              <p className={`${mode == "card" && "line-clamp-2"}`}>
+                {url.title}
+              </p>
             </div>
           </CardDescription>
         </CardHeader>
@@ -291,7 +293,9 @@ export default function DomainCard({
           <div className="h-full flex flex-col gap-2">
             <div className="text-base text-gray-700 space-y-0.5">
               <p className="font-semibold text-sm">Description</p>
-              <p className="line-clamp-5">{url.description}</p>
+              <p className={`${mode == "card" && "line-clamp-5"}`}>
+                {url.description}
+              </p>
             </div>
           </div>
           <div className="h-full flex flex-col gap-2">
