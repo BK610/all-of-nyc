@@ -1,3 +1,5 @@
+"use client";
+
 import { MoveRight, Copy, Share, ThumbsUp } from "lucide-react";
 import confetti from "canvas-confetti";
 import {
@@ -27,14 +29,19 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
 interface DomainCardProps {
   url: any;
+  layoutId?: string;
 }
 
 export default function DomainCard({
   url,
+  layoutId,
 }: DomainCardProps): React.ReactElement {
+  const router = useRouter();
   const [upvotes, setUpvotes] = useState(url?.upvotes || 0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [isUpvoting, setIsUpvoting] = useState(false);
@@ -178,10 +185,33 @@ export default function DomainCard({
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    console.log("Card clicked", url.domain_name);
+    // Prevent navigation if clicking on buttons or interactive elements
+    if (
+      (e.target as HTMLElement).closest("button") ||
+      (e.target as HTMLElement).closest("a")
+    ) {
+      console.log("Click prevented - button or link clicked");
+      return;
+    }
+    console.log(
+      "Navigating to:",
+      `/domain/${encodeURIComponent(url.domain_name)}`
+    );
+    router.push(`/domain/${encodeURIComponent(url.domain_name)}`);
+  };
+
   return (
-    <Card
-      id={`domain-${url.domain_name}`}
-      className={`gap-2 w-full overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
+    <motion.div
+      layoutId={layoutId}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <Card
+        id={`domain-${url.domain_name}`}
+        className={`gap-2 w-full cursor-pointer overflow-hidden text-primary rounded-lg shadow-lg hover:shadow-xl transition-all duration-75
         outline outline-nyc-medium-gray hover:outline-nyc-blue focus:outline-nyc-orange focus:outline-4 focus-within:outline-4 focus-within:outline-nyc-orange hover:focus-within:outline-nyc-orange
         bg-gradient-to-br from-gray-50 to-gray-50
         hover:not-focus:to-amber-50
@@ -189,152 +219,158 @@ export default function DomainCard({
         focus-within:from-white focus-within:to-amber-100
         hover:focus-within:from-white hover:focus-within:to-amber-100
       ${!url.is_url_found && "pointer-events-none opacity-70"}`} // Set disabled-esque styling if found_url is false
-      tabIndex={0}
-    >
-      <CardHeader className="gap-2">
-        <AspectRatio ratio={1200 / 627} className="pb-2 font-medium">
-          <div className="h-full w-full flex items-center rounded-md bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md">
+        tabIndex={0}
+        onClick={handleCardClick}
+      >
+        <CardHeader className="gap-2">
+          <AspectRatio ratio={1200 / 627} className="pb-2 font-medium">
+            <div className="h-full w-full flex items-center rounded-md bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      id={`upvote-${url.domain_name}`}
+                      className={`absolute top-1 right-1 hover:cursor-pointer hover:border-nyc-blue hover:bg-gradient-to-br hover:from-amber-50 hover:to-amber-300 active:bg-gray-200 shadow-md ${
+                        hasUpvoted && "bg-gray-200"
+                      } ${isUpvoting && "opacity-50"}`}
+                      onClick={handleUpvote}
+                      disabled={hasUpvoted || isUpvoting}
+                    >
+                      <ThumbsUp size={16} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{hasUpvoted ? "Upvoted!" : "Upvote this domain"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {url.is_og_image_found ? (
+                <img
+                  className="h-full w-full object-cover rounded-md"
+                  src={decodeURI(url.image)}
+                  alt={`OpenGraph image for ${url.domain_name}`}
+                />
+              ) : (
+                <p className="text-center w-full font-mono text-lg overflow-x-clip">
+                  {url.domain_name}
+                </p>
+              )}
+            </div>
+          </AspectRatio>
+          <CardTitle className="w-full overflow-hidden">
+            <div className="space-y-0.5 w-full overflow-hidden">
+              <label
+                htmlFor="domainName"
+                className="text-gray-700 font-semibold text-sm"
+              >
+                Domain Name
+              </label>
+              <h2
+                id="domainName"
+                className="w-full font-mono text-xl text-nowrap truncate"
+              >
+                {url.domain_name}
+              </h2>
+            </div>
+          </CardTitle>
+          <CardDescription>
+            <div className="text-base text-gray-700 space-y-0.5">
+              <h3 className=" font-semibold text-sm">Title</h3>
+              <p className="line-clamp-2">{url.title}</p>
+            </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grow flex flex-col gap-2">
+          <div className="h-full flex flex-col gap-2">
+            <div className="text-base text-gray-700 space-y-0.5">
+              <p className="font-semibold text-sm">Description</p>
+              <p className="line-clamp-5">{url.description}</p>
+            </div>
+          </div>
+          <div className="h-full flex flex-col gap-2">
+            <div className="text-base text-gray-700 space-y-0.5">
+              <p className="font-semibold text-sm">Upvotes</p>
+              <p className="font-mono">{upvotes}</p>
+            </div>
+          </div>
+          <div className="w-full flex gap-2">
+            <Button
+              className="flex-1 font-semibold hover:bg-accent text-white"
+              asChild
+            >
+              <a
+                href={url.is_url_found ? url.final_url : undefined}
+                target={url.is_url_found ? "_blank" : undefined}
+              >
+                Visit <MoveRight />
+              </a>
+            </Button>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="outline"
                     size="icon"
-                    id={`upvote-${url.domain_name}`}
-                    className={`absolute top-1 right-1 hover:cursor-pointer hover:border-nyc-blue hover:bg-gradient-to-br hover:from-amber-50 hover:to-amber-300 active:bg-gray-200 shadow-md ${
-                      hasUpvoted && "bg-gray-200"
-                    } ${isUpvoting && "opacity-50"}`}
-                    onClick={handleUpvote}
-                    disabled={hasUpvoted || isUpvoting}
+                    className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+                    onClick={handleCopyDomain}
                   >
-                    <ThumbsUp size={16} />
+                    <Copy />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{hasUpvoted ? "Upvoted!" : "Upvote this domain"}</p>
+                  <p>Copy domain name</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            {url.is_og_image_found ? (
-              <img
-                className="h-full w-full object-cover rounded-md"
-                src={decodeURI(url.image)}
-                alt={`OpenGraph image for ${url.domain_name}`}
-              />
-            ) : (
-              <p className="text-center w-full font-mono text-lg overflow-x-clip">
-                {url.domain_name}
-              </p>
-            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
+                    onClick={handleCopyUrl}
+                  >
+                    <Share />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Share this domain</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-        </AspectRatio>
-        <CardTitle className="w-full overflow-hidden">
-          <div className="space-y-0.5 w-full overflow-hidden">
-            <label
-              htmlFor="domainName"
-              className="text-gray-700 font-semibold text-sm"
-            >
-              Domain Name
-            </label>
-            <h2
-              id="domainName"
-              className="w-full font-mono text-xl text-nowrap truncate"
-            >
-              {url.domain_name}
-            </h2>
-          </div>
-        </CardTitle>
-        <CardDescription>
-          <div className="text-base text-gray-700 space-y-0.5">
-            <h3 className=" font-semibold text-sm">Title</h3>
-            <p className="line-clamp-2">{url.title}</p>
-          </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="grow flex flex-col gap-2">
-        <div className="h-full flex flex-col gap-2">
-          <div className="text-base text-gray-700 space-y-0.5">
-            <p className="font-semibold text-sm">Description</p>
-            <p className="line-clamp-5">{url.description}</p>
-          </div>
-        </div>
-        <div className="h-full flex flex-col gap-2">
-          <div className="text-base text-gray-700 space-y-0.5">
-            <p className="font-semibold text-sm">Upvotes</p>
-            <p className="font-mono">{upvotes}</p>
-          </div>
-        </div>
-        <div className="w-full flex gap-2">
-          <Button
-            className="flex-1 font-semibold hover:bg-accent text-white"
-            asChild
+        </CardContent>
+        <CardFooter>
+          <Accordion
+            className="w-full overflow-hidden"
+            type="single"
+            collapsible
           >
-            <a
-              href={url.is_url_found ? url.final_url : undefined}
-              target={url.is_url_found ? "_blank" : undefined}
-            >
-              Visit <MoveRight />
-            </a>
-          </Button>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
-                  onClick={handleCopyDomain}
-                >
-                  <Copy />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Copy domain name</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="outline hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200"
-                  onClick={handleCopyUrl}
-                >
-                  <Share />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Share this domain</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-      </CardContent>
-      <CardFooter>
-        <Accordion className="w-full overflow-hidden" type="single" collapsible>
-          <AccordionItem value="metadata">
-            <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
-              View metadata
-            </AccordionTrigger>
-            <AccordionContent className="overflow-hidden">
-              <ul className="font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
-                <li>
-                  Status:{" "}
-                  <Badge className="font-semibold" variant="secondary">
-                    {status}
-                  </Badge>
-                </li>
-                <li>Final URL: {url.final_url}</li>
-                <li>Registered: {formattedRegistrationDate}</li>
-                <li>Updated: {formattedUpdatedDate}</li>
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardFooter>
-    </Card>
+            <AccordionItem value="metadata">
+              <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
+                View metadata
+              </AccordionTrigger>
+              <AccordionContent className="overflow-hidden">
+                <ul className="font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
+                  <li>
+                    Status:{" "}
+                    <Badge className="font-semibold" variant="secondary">
+                      {status}
+                    </Badge>
+                  </li>
+                  <li>Final URL: {url.final_url}</li>
+                  <li>Registered: {formattedRegistrationDate}</li>
+                  <li>Updated: {formattedUpdatedDate}</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 }
 
