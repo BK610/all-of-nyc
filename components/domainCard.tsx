@@ -206,14 +206,6 @@ export default function DomainCard({
     window.scrollTo(0, scrollPosition);
   };
 
-  // Prevent automatic scrolling on mount
-  useEffect(() => {
-    if (window.location.hash === `#domain-${url.domain_name}`) {
-      const scrollPosition = window.scrollY;
-      window.scrollTo(0, scrollPosition);
-    }
-  }, [url.domain_name]);
-
   return (
     <motion.div
       layoutId={`card-${url.domain_name}`}
