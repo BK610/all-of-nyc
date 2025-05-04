@@ -31,10 +31,9 @@ const supabaseClient = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-/** Fetch all available data from Supabase.
+/** Fetch initial URL data from Supabase.
  *
- * Fetches data in batches of 1000 rows, as Supabase has a default limit of 1000 rows per request.
- * Repeats until all data is fetched.
+ * Fetches data for first 15 URLs.
  */
 async function fetchInitialData(): Promise<[any]> {
   const { data, error } = await supabaseClient
