@@ -186,16 +186,17 @@ export default function DomainCard({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    console.log("Card clicked", url.domain_name);
     // Prevent navigation if clicking on buttons or interactive elements
     if (
       (e.target as HTMLElement).closest("button") ||
       (e.target as HTMLElement).closest("a")
     ) {
-      // console.log("Click prevented - button or link clicked");
       return;
     }
-    // Update the hash without triggering a page reload
+    // Prevent default hash scrolling behavior
+    e.preventDefault();
+
+    // Update hash without triggering scroll
     window.location.hash = `domain-${url.domain_name}`;
   };
 
