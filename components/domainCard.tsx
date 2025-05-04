@@ -29,19 +29,19 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 interface DomainCardProps {
   url: any;
   layoutId?: string;
+  mode?: "modal" | "card";
 }
 
 export default function DomainCard({
   url,
   layoutId,
+  mode = "card",
 }: DomainCardProps): React.ReactElement {
-  const router = useRouter();
   const [upvotes, setUpvotes] = useState(url?.upvotes || 0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [isUpvoting, setIsUpvoting] = useState(false);
@@ -349,30 +349,49 @@ export default function DomainCard({
           </div>
         </CardContent>
         <CardFooter>
-          <Accordion
-            className="w-full overflow-hidden"
-            type="single"
-            collapsible
-          >
-            <AccordionItem value="metadata">
-              <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
-                View metadata
-              </AccordionTrigger>
-              <AccordionContent className="overflow-hidden">
-                <ul className="font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
-                  <li>
-                    Status:{" "}
-                    <Badge className="font-semibold" variant="secondary">
-                      {status}
-                    </Badge>
-                  </li>
-                  <li>Final URL: {url.final_url}</li>
-                  <li>Registered: {formattedRegistrationDate}</li>
-                  <li>Updated: {formattedUpdatedDate}</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          {mode == "modal" ? (
+            <div className="w-full">
+              <h3 className="font-semibold text-gray-700 hover:cursor-pointer">
+                Metadata
+              </h3>
+              <ul className="font-mono w-full list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
+                <li>
+                  Status:{" "}
+                  <Badge className="font-semibold" variant="secondary">
+                    {status}
+                  </Badge>
+                </li>
+                <li>Final URL: {url.final_url}</li>
+                <li>Registered: {formattedRegistrationDate}</li>
+                <li>Updated: {formattedUpdatedDate}</li>
+              </ul>
+            </div>
+          ) : (
+            <Accordion
+              className="w-full overflow-hidden"
+              type="single"
+              collapsible
+            >
+              <AccordionItem value="metadata">
+                <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
+                  View metadata
+                </AccordionTrigger>
+                <AccordionContent className="overflow-hidden">
+                  <ul className="font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
+                    <li>
+                      Status:{" "}
+                      <Badge className="font-semibold" variant="secondary">
+                        {status}
+                      </Badge>
+                    </li>
+                    <li>Final URL: {url.final_url}</li>
+                    <li>Registered: {formattedRegistrationDate}</li>
+                    <li>Updated: {formattedUpdatedDate}</li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          )}
         </CardFooter>
       </Card>
     </motion.div>

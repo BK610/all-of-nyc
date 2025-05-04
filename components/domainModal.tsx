@@ -40,7 +40,11 @@ export default function DomainModal({
             <X className="h-5 w-5" />
           </motion.button>
           <motion.div layoutId={`card-${url.domain_name}`} className="w-full">
-            <DomainCard url={url} layoutId={`card-${url.domain_name}`} />
+            <DomainCard
+              url={url}
+              layoutId={`card-${url.domain_name}`}
+              mode="modal"
+            />
           </motion.div>
         </motion.div>
       </motion.div>
