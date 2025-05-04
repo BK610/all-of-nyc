@@ -192,14 +192,11 @@ export default function DomainCard({
       (e.target as HTMLElement).closest("button") ||
       (e.target as HTMLElement).closest("a")
     ) {
-      console.log("Click prevented - button or link clicked");
+      // console.log("Click prevented - button or link clicked");
       return;
     }
-    console.log(
-      "Navigating to:",
-      `/domain/${encodeURIComponent(url.domain_name)}`
-    );
-    router.push(`/domain/${encodeURIComponent(url.domain_name)}`);
+    // Update the hash without triggering a page reload
+    window.location.hash = `domain-${url.domain_name}`;
   };
 
   return (

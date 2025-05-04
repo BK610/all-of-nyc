@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Inputs from "@/components/Inputs";
 import QueryResultsList from "@/components/queryResultsList";
+import DomainModal from "@/components/domainModal";
 // import NotebookEmbed from "@/components/notebookEmbed";
 
 interface HomeProps {
@@ -29,6 +30,7 @@ export default function Home({
   });
   const [currentQuery, setCurrentQuery] = useState(searchParams.get("q") || "");
   const [loading, setLoading] = useState(true);
+  const [selectedDomain, setSelectedDomain] = useState<any>(null);
 
   // Add keyboard shortcut to focus search
   useEffect(() => {
@@ -80,22 +82,28 @@ export default function Home({
     fetchUrls(currentPageIndex, currentQuery, currentFilters);
   }, [fetchUrls, pageSize, currentPageIndex, currentQuery, currentFilters]);
 
-  // Handle focus and scrolling after domain cards are loaded
+  // Handle hash changes for modal
   useEffect(() => {
-    if (!loading && urls.length > 0) {
+    const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash) {
-        // Small delay to ensure DOM is fully rendered
-        setTimeout(() => {
-          const element = document.getElementById(hash.substring(1));
-          if (element) {
-            element.focus();
-            element.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-        }, 100);
+      if (hash && hash.startsWith("#domain-")) {
+        const domainName = hash.replace("#domain-", "");
+        const domain = urls.find((url) => url.domain_name === domainName);
+        if (domain) {
+          setSelectedDomain(domain);
+        }
+      } else {
+        setSelectedDomain(null);
       }
-    }
-  }, [loading, urls]);
+    };
+
+    // Initial check
+    handleHashChange();
+
+    // Listen for hash changes
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [urls]);
 
   const handleFilter = (filters) => {
     resetPaginationToFirstPage();
@@ -120,6 +128,16 @@ export default function Home({
     setCurrentPageIndex(1);
   };
 
+  const handleCloseModal = () => {
+    setSelectedDomain(null);
+    // Remove the hash without triggering a page reload
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search
+    );
+  };
+
   return (
     <section>
       <Inputs
@@ -134,6 +152,11 @@ export default function Home({
         urls={urls}
         loading={loading}
         totalUrlsCount={totalUrlsCount}
+      />
+      <DomainModal
+        url={selectedDomain}
+        isOpen={!!selectedDomain}
+        onClose={handleCloseModal}
       />
       {/* <NotebookEmbed
         src={"/Results.html"}
