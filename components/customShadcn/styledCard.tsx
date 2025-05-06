@@ -14,7 +14,7 @@ interface CustomCardProps {
   [key: string]: any;
 }
 
-export default function CustomCard({
+export default function StyledCard({
   className,
   children,
   ...props
