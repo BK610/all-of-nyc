@@ -34,12 +34,10 @@ import { useState, useEffect } from "react";
 
 interface DomainCardProps {
   url: any;
-  layoutId?: string;
 }
 
 export default function DomainCard({
   url,
-  layoutId,
 }: DomainCardProps): React.ReactElement {
   const [upvotes, setUpvotes] = useState(url?.upvotes || 0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
