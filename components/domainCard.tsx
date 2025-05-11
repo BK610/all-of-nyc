@@ -1,7 +1,6 @@
 "use client";
 
 import { MoveRight, Copy, Share, ThumbsUp } from "lucide-react";
-import confetti from "canvas-confetti";
 import {
   Card,
   CardContent,
