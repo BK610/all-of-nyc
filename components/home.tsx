@@ -42,8 +42,32 @@ export default function Home({
   };
 
   const resetFilters = () => {
+    // Default filter state is "is_complete"
     setCurrentFilters({ status: "is_complete" });
   };
+
+  /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
+   *
+   * Uses the base GET endpoint defined in api/route.js.
+   */
+  const fetchUrls = useCallback(
+    async (currentPageIndex, currentQuery, currentFilters) => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}&status=${currentFilters.status}`
+        );
+        const result = await response.json();
+        setUrls(result.urls);
+        setTotalUrlsCount(result.total);
+        setTotalPagesCount(result.totalPages);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    [pageSize]
+  );
 
   // Add keyboard shortcut to focus search
   useEffect(() => {
@@ -73,36 +97,26 @@ export default function Home({
       resetQuery();
       resetFilters();
       resetPaginationToFirstPage();
-      // Clear the search query from URL
-      router.push("/");
+
+      // Redirect to homepage without any query parameters
+      if (window.location.search || window.location.hash) {
+        router.push("/");
+      }
+
+      // If we're already on the homepage without query parameters,
+      // manually trigger a data refresh
+      else if (
+        currentQuery !== "" ||
+        currentFilters.status !== "is_complete" ||
+        currentPageIndex !== 1
+      ) {
+        fetchUrls(1, "", { status: "is_complete" });
+      }
     };
 
     const unsubscribe = subscribeToSearchReset(handleReset);
     return () => unsubscribe();
-  }, [router, searchParams, resetPaginationToFirstPage]);
-
-  /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
-   *
-   * Uses the base GET endpoint defined in api/route.js.
-   */
-  const fetchUrls = useCallback(
-    async (currentPageIndex, currentQuery, currentFilters) => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          `/api?pageIndex=${currentPageIndex}&pageSize=${pageSize}&query=${currentQuery}&status=${currentFilters.status}`
-        );
-        const result = await response.json();
-        setUrls(result.urls);
-        setTotalUrlsCount(result.total);
-        setTotalPagesCount(result.totalPages);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    },
-    [pageSize]
-  );
+  }, [router, currentQuery, currentFilters, currentPageIndex, fetchUrls]);
 
   // Reminder: useEffect runs on initial page load and when the page changes.
   useEffect(() => {
@@ -169,7 +183,8 @@ export default function Home({
         onFilter={handleFilter}
         currentPageIndex={currentPageIndex}
         totalPages={totalPagesCount}
-        initialQuery={currentQuery}
+        currentQueryValue={currentQuery}
+        currentFilterValue={currentFilters.status}
       />
       <QueryResultsList
         urls={urls}

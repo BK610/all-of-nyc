@@ -34,19 +34,19 @@ interface PageFormValues {
 
 interface SearchProps {
   onSearch: (query: string) => void;
-  initialQuery?: string;
+  currentQueryValue?: string;
 }
 
-function Search({ onSearch, initialQuery = "" }: SearchProps) {
+function Search({ onSearch, currentQueryValue = "" }: SearchProps) {
   const searchForm = useForm<SearchFormValues>({
     defaultValues: {
-      query: initialQuery,
+      query: currentQueryValue,
     },
   });
 
   useEffect(() => {
-    searchForm.setValue("query", initialQuery);
-  }, [initialQuery, searchForm]);
+    searchForm.setValue("query", currentQueryValue);
+  }, [currentQueryValue, searchForm]);
 
   const handleSearch = (values: SearchFormValues) => {
     onSearch(values.query);
@@ -101,14 +101,22 @@ function Search({ onSearch, initialQuery = "" }: SearchProps) {
 
 interface FiltersProps {
   onFilter: (filters: { status: string }) => void;
+  currentFilterValue?: string;
 }
 
-function Filters({ onFilter }: FiltersProps) {
+function Filters({
+  onFilter,
+  currentFilterValue = "is_complete",
+}: FiltersProps) {
   const filterForm = useForm<FilterFormValues>({
     defaultValues: {
-      status: "is_complete",
+      status: currentFilterValue,
     },
   });
+
+  useEffect(() => {
+    filterForm.setValue("status", currentFilterValue);
+  }, [currentFilterValue, filterForm]);
 
   const handleFilter = (values: FilterFormValues) => {
     onFilter({ status: values.status });
@@ -265,7 +273,8 @@ interface InputsProps {
   currentPageIndex: number;
   totalPages: number;
   className?: string;
-  initialQuery?: string;
+  currentQueryValue?: string;
+  currentFilterValue?: string;
 }
 
 export default function Inputs({
@@ -275,13 +284,14 @@ export default function Inputs({
   currentPageIndex,
   totalPages,
   className,
-  initialQuery = "",
+  currentQueryValue = "",
+  currentFilterValue = "is_complete",
 }: InputsProps): React.ReactElement {
   return (
     <div className={`${className} w-full space-y-4`}>
       <div className="flex flex-col sm:flex-row gap-2">
-        <Search onSearch={onSearch} initialQuery={initialQuery} />
-        <Filters onFilter={onFilter} />
+        <Search onSearch={onSearch} currentQueryValue={currentQueryValue} />
+        <Filters onFilter={onFilter} currentFilterValue={currentFilterValue} />
       </div>
       <Pagination
         onPageChange={onPageChange}
