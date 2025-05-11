@@ -2,6 +2,15 @@
 
 import { X } from "lucide-react";
 import DomainCard from "@/components/domainCard";
+import StyledCard from "@/components/customShadcn/styledCard";
+import {
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+  CardDescription,
+  CardAction,
+} from "@/components/ui/card";
 
 interface DomainModalProps {
   url: any;
@@ -33,10 +42,24 @@ export default function DomainModal({
             <X className="h-5 w-5" />
           </button>
           <div className="w-full">
-            <DomainCard url={url} />
+            <StyledCard url={url}>
+              <CardHeader>
+                <CardTitle>Heyyo</CardTitle>
+              </CardHeader>
+            </StyledCard>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function DomainModalCard({ url }: { url: any }) {
+  return (
+    <StyledCard url={url}>
+      <CardHeader>
+        <CardTitle>Heyyo</CardTitle>
+      </CardHeader>
+    </StyledCard>
   );
 }
