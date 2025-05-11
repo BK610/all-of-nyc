@@ -1,7 +1,9 @@
+"use client";
 import Image from "next/image";
 import nycLogo from "@/public/nycLogo.png";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { triggerSearchReset } from "@/utils/searchState";
 
 export default function HomeHeader(): React.ReactElement {
   return (
@@ -17,7 +19,14 @@ export default function HomeHeader(): React.ReactElement {
         </Link>
       </div>
       <div className="mb-4 text-center w-fit mx-auto">
-        <Link href="/" className="w-fit mx-auto hover:underline">
+        <Link
+          href="/"
+          className="w-fit mx-auto hover:underline"
+          onClick={(e) => {
+            e.preventDefault();
+            triggerSearchReset();
+          }}
+        >
           <h1 className="text-3xl font-bold text-nyc-blue mb-2">
             All of{" "}
             <Image

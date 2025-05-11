@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Inputs from "@/components/Inputs";
 import QueryResultsList from "@/components/queryResultsList";
 import DomainModal from "@/components/domainModal";
+import { subscribeToSearchReset } from "@/utils/searchState";
 // import NotebookEmbed from "@/components/notebookEmbed";
 
 interface HomeProps {
@@ -53,6 +54,20 @@ export default function Home({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  // Subscribe to search reset events
+  useEffect(() => {
+    const unsubscribe = subscribeToSearchReset(() => {
+      setCurrentQuery("");
+      resetPaginationToFirstPage();
+      // Clear the search query from URL
+      const params = new URLSearchParams(searchParams);
+      params.delete("q");
+      router.push(`?${params.toString()}`);
+    });
+
+    return () => unsubscribe();
+  }, [router, searchParams]);
 
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
    *
@@ -136,6 +151,15 @@ export default function Home({
       "",
       window.location.pathname + window.location.search
     );
+  };
+
+  const handleReset = () => {
+    setCurrentQuery("");
+    resetPaginationToFirstPage();
+    // Clear the search query from URL
+    const params = new URLSearchParams(searchParams);
+    params.delete("q");
+    router.push(`?${params.toString()}`);
   };
 
   return (
