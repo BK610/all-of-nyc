@@ -203,7 +203,9 @@ export default function DomainCard({
   return (
     <StyledCard
       id={`domain-${url.domain_name}`}
-      className={`${!url.is_url_found && "pointer-events-none opacity-70"}`} // Set disabled-esque styling if found_url is false
+      className={`cursor-pointer ${
+        !url.is_url_found && "pointer-events-none opacity-70"
+      }`} // Set disabled-esque styling if found_url is false
       tabIndex={0}
       onClick={handleCardClick}
     >
