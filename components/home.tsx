@@ -33,6 +33,11 @@ export default function Home({
   const [loading, setLoading] = useState(true);
   const [selectedDomain, setSelectedDomain] = useState<any>(null);
 
+  // Define resetPaginationToFirstPage function before it's used
+  const resetPaginationToFirstPage = () => {
+    setCurrentPageIndex(1);
+  };
+
   // Add keyboard shortcut to focus search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,17 +62,18 @@ export default function Home({
 
   // Subscribe to search reset events
   useEffect(() => {
-    const unsubscribe = subscribeToSearchReset(() => {
+    const handleReset = () => {
       setCurrentQuery("");
       resetPaginationToFirstPage();
       // Clear the search query from URL
       const params = new URLSearchParams(searchParams);
       params.delete("q");
       router.push(`?${params.toString()}`);
-    });
+    };
 
+    const unsubscribe = subscribeToSearchReset(handleReset);
     return () => unsubscribe();
-  }, [router, searchParams]);
+  }, [router, searchParams, resetPaginationToFirstPage]);
 
   /** Fetches a list of URLs with the currentPageIndex, pageSize, and currentQuery values.
    *
@@ -139,10 +145,6 @@ export default function Home({
     router.push(`?${params.toString()}`);
   };
 
-  const resetPaginationToFirstPage = () => {
-    setCurrentPageIndex(1);
-  };
-
   const handleCloseModal = () => {
     setSelectedDomain(null);
     // Remove the hash without triggering a page reload
@@ -151,15 +153,6 @@ export default function Home({
       "",
       window.location.pathname + window.location.search
     );
-  };
-
-  const handleReset = () => {
-    setCurrentQuery("");
-    resetPaginationToFirstPage();
-    // Clear the search query from URL
-    const params = new URLSearchParams(searchParams);
-    params.delete("q");
-    router.push(`?${params.toString()}`);
   };
 
   return (
