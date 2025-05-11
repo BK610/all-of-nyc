@@ -33,9 +33,16 @@ export default function Home({
   const [loading, setLoading] = useState(true);
   const [selectedDomain, setSelectedDomain] = useState<any>(null);
 
-  // Define resetPaginationToFirstPage function before it's used
   const resetPaginationToFirstPage = () => {
     setCurrentPageIndex(1);
+  };
+
+  const resetQuery = () => {
+    setCurrentQuery("");
+  };
+
+  const resetFilters = () => {
+    setCurrentFilters({ status: "is_complete" });
   };
 
   // Add keyboard shortcut to focus search
@@ -63,12 +70,11 @@ export default function Home({
   // Subscribe to search reset events
   useEffect(() => {
     const handleReset = () => {
-      setCurrentQuery("");
+      resetQuery();
+      resetFilters();
       resetPaginationToFirstPage();
       // Clear the search query from URL
-      const params = new URLSearchParams(searchParams);
-      params.delete("q");
-      router.push(`?${params.toString()}`);
+      router.push("/");
     };
 
     const unsubscribe = subscribeToSearchReset(handleReset);
