@@ -38,10 +38,10 @@ export default function DomainModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm overflow-y-auto"
       onClick={onClose}
     >
-      <div className="fixed inset-4 flex items-center justify-center">
+      <div className="min-h-screen px-4 py-8 flex items-center justify-center">
         <div
           className="relative w-full max-w-5xl"
           onClick={(e) => e.stopPropagation()}
