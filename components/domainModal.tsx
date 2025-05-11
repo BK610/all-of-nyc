@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardDescription,
 } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,7 +53,7 @@ export default function DomainModal({
             <X className="h-5 w-5" />
           </button>
           <div className="w-full">
-            <DomainModalCard url={url} />
+            <DomainModalCard url={url} isOpen={isOpen} />
           </div>
         </div>
       </div>
@@ -61,10 +61,18 @@ export default function DomainModal({
   );
 }
 
-function DomainModalCard({ url }: { url: any }) {
+function DomainModalCard({ url, isOpen }: { url: any; isOpen: boolean }) {
   const [upvotes, setUpvotes] = useState(url?.upvotes || 0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [isUpvoting, setIsUpvoting] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Auto-focus the card when the modal opens
+    if (isOpen && cardRef.current) {
+      cardRef.current.focus();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!url) return;
@@ -167,8 +175,25 @@ function DomainModalCard({ url }: { url: any }) {
     : "💀 Down";
 
   return (
-    <StyledCard url={url} className="w-full">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+    <StyledCard
+      url={url}
+      className="w-full"
+      tabIndex={0}
+      ref={cardRef}
+      onClick={(e) => {
+        // Prevent action if clicking on buttons or interactive elements
+        if (
+          (e.target as HTMLElement).closest("button") ||
+          (e.target as HTMLElement).closest("a")
+        ) {
+          return;
+        }
+
+        // Set focus on the card element
+        e.currentTarget.focus();
+      }}
+    >
+      <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-4">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-mono font-bold break-all">
             {url.domain_name}
