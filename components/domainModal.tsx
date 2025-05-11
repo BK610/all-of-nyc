@@ -8,7 +8,6 @@ import {
   CardTitle,
   CardFooter,
   CardDescription,
-  CardAction,
 } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -236,14 +235,14 @@ function DomainModalCard({ url }: { url: any }) {
       <CardFooter className="flex flex-col gap-6 pt-4">
         <div className="w-full flex flex-row gap-2">
           <Button
-            className="flex-1 font-semibold hover:bg-accent text-white min-w-[120px]"
+            className="flex-1 font-semibold hover:bg-accent shadow-md hover:shadow-lg text-white min-w-[120px]"
             asChild
           >
             <a
               href={url.is_url_found ? url.final_url : undefined}
               target={url.is_url_found ? "_blank" : undefined}
             >
-              Visit Website <MoveRight className="ml-2" />
+              Visit <MoveRight />
             </a>
           </Button>
           <TooltipProvider>
@@ -285,7 +284,7 @@ function DomainModalCard({ url }: { url: any }) {
         </div>
         <div className="w-full space-y-2">
           <h3 className="text-gray-700 text-lg font-semibold">Metadata</h3>
-          <ul className="text-sm p-2 font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md overflow-y-hidden overflow-x-auto text-nowrap">
+          <ul className="text-sm p-2 font-mono list-inside bg-gradient-to-br from-nyc-light-gray to-nyc-medium-gray shadow-md rounded-md overflow-y-hidden overflow-x-auto text-nowrap">
             <li>
               Status:{" "}
               <Badge className="font-semibold" variant="secondary">
