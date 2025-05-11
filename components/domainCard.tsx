@@ -156,6 +156,7 @@ export default function DomainCard({
   const handleCopyUrl = async () => {
     const shareUrl = new URL(window.location.origin);
     shareUrl.searchParams.set("q", url.domain_name);
+    // shareUrl.searchParams.set("filter", "is_complete");
     shareUrl.hash = `domain-${url.domain_name}`;
 
     try {
@@ -329,28 +330,6 @@ export default function DomainCard({
           </TooltipProvider>
         </div>
       </CardContent>
-      <CardFooter>
-        <Accordion className="w-full overflow-hidden" type="single" collapsible>
-          <AccordionItem value="metadata">
-            <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
-              View metadata
-            </AccordionTrigger>
-            <AccordionContent className="overflow-hidden">
-              <ul className="font-mono list-inside border border-gray-300 bg-nyc-medium-gray rounded-md px-1 py-1 overflow-y-hidden overflow-x-auto text-nowrap">
-                <li>
-                  Status:{" "}
-                  <Badge className="font-semibold" variant="secondary">
-                    {status}
-                  </Badge>
-                </li>
-                <li>Final URL: {url.final_url}</li>
-                <li>Registered: {formattedRegistrationDate}</li>
-                <li>Updated: {formattedUpdatedDate}</li>
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardFooter>
     </StyledCard>
   );
 }
@@ -405,15 +384,6 @@ export function SkeletonDomainCard(): React.ReactElement {
           </Button>
         </CardAction>
       </CardContent>
-      <CardFooter>
-        <Accordion className="w-full overflow-hidden" type="single" collapsible>
-          <AccordionItem value="metadata">
-            <AccordionTrigger className="font-semibold text-gray-700 hover:cursor-pointer">
-              View metadata
-            </AccordionTrigger>
-          </AccordionItem>
-        </Accordion>
-      </CardFooter>
     </StyledCard>
   );
 }
