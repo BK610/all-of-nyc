@@ -217,12 +217,12 @@ function DomainModalCard({ url, isOpen }: { url: any; isOpen: boolean }) {
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-12">
         {/* Left column: text content */}
-        <div className="order-2 md:order-1 flex-1 flex flex-col gap-4">
-          <div className="space-y-2">
+        <div className="order-2 md:order-1 flex-1 flex flex-col gap-2 md:gap-4">
+          <div className="md:space-y-2">
             <h3 className="text-gray-700 text-lg font-semibold">Title</h3>
             <p className="break-words whitespace-pre-line">{url.title}</p>
           </div>
-          <div className="space-y-2">
+          <div className="md:space-y-2">
             <h3 className="text-gray-700 text-lg font-semibold">Description</h3>
             <p className="whitespace-pre-wrap break-words">{url.description}</p>
           </div>
@@ -246,7 +246,7 @@ function DomainModalCard({ url, isOpen }: { url: any; isOpen: boolean }) {
           </AspectRatio>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col gap-6 pt-4">
+      <CardFooter className="flex flex-col gap-4 md:gap-6 pt-2 md:pt-4">
         <div className="w-full flex flex-row gap-2">
           <Button
             className="flex-1 font-semibold hover:bg-accent shadow-md hover:shadow-lg text-white min-w-[120px]"
