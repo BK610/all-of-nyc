@@ -23,7 +23,7 @@ export default function QueryResultsList({
           </>
         )}
       </p>
-      <div className="columns-1 md:columns-2 lg:columns-3 space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading
           ? [...Array(15)].map((index) => <SkeletonDomainCard key={index} />)
           : urls.map((url) => <DomainCard key={url.domain_name} url={url} />)}
