@@ -180,18 +180,7 @@ function DomainModalCard({ url, isOpen }: { url: any; isOpen: boolean }) {
       className="w-full"
       tabIndex={0}
       ref={cardRef}
-      onClick={(e) => {
-        // Prevent action if clicking on buttons or interactive elements
-        if (
-          (e.target as HTMLElement).closest("button") ||
-          (e.target as HTMLElement).closest("a")
-        ) {
-          return;
-        }
-
-        // Set focus on the card element
-        e.currentTarget.focus();
-      }}
+      autoFocus
     >
       <CardHeader className="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-4">
         <div className="min-w-0 flex-1">
