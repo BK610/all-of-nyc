@@ -185,7 +185,7 @@ class UrlDataEnricher:
         if response:
             status_code = response.status_code
             final_url = response.url
-            open_graph_metadata = parse_open_graph_metadata(response.content)
+            open_graph_metadata = parse_open_graph_metadata(response.content, final_url)
 
         return self.generate_row(url, registration_date, nexus_category, status_code, final_url, open_graph_metadata)
 
@@ -237,7 +237,7 @@ class UrlDataEnricher:
                 if response:
                     status_code = response.status
                     final_url = response.url
-                    open_graph_metadata = parse_open_graph_metadata(response_text)
+                    open_graph_metadata = parse_open_graph_metadata(response_text, final_url)
 
             except Exception as e:
                 self.logger.error(f"Error processing URL {url}: {e}")
