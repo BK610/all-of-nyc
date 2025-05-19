@@ -43,7 +43,7 @@ if __name__ == "__main__":
     start_time = time.perf_counter()
 
     # 1. Pull data from Supabase
-    response = fetch_from_supabase(table=table, supabase_client=supabase_client, limit=1000, order_by="last_updated_at", order_by_desc=False)
+    response = fetch_from_supabase(table=table, supabase_client=supabase_client, limit=2000, order_by="last_updated_at", order_by_desc=False)
     fetched_data = response.data
 
     step_1_time = time.perf_counter()
