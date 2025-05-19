@@ -5,8 +5,20 @@ def ensure_valid_protocol(url: str) -> str:
     if not url.startswith(('http://', 'https://')):
         return 'https://' + url
     return url
-    
-def parse_open_graph_metadata(webpage_content):
+
+def ensure_absolute_url(base_url: str, path: str) -> str:
+    """Convert a relative path to an absolute URL using the base URL."""
+    if not path:
+        return 'Not found'
+    if path.startswith(('http://', 'https://')):
+        return path
+    # Remove any leading slashes from the path
+    path = path.lstrip('/')
+    # Remove any trailing slashes from the base URL
+    base_url = base_url.rstrip('/')
+    return f"{base_url}/{path}"
+
+def parse_open_graph_metadata(webpage_content, base_url: str = None):
     """Parse Open Graph metadata from the provided webpage_content."""
     try:
         # Use lxml parser for better HTML5 support
@@ -70,6 +82,10 @@ def parse_open_graph_metadata(webpage_content):
             img_tag = soup.find('img')
             if img_tag and img_tag.has_attr('src'):
                 image = img_tag['src']
+        
+        # Ensure image URL is absolute if base_url is provided
+        if base_url and image != 'Not found':
+            image = ensure_absolute_url(base_url, image)
 
         # Clean up the data
         def clean_text(text):
