@@ -177,11 +177,25 @@ function Pagination({
   totalPages,
 }: PaginationProps) {
   const [inputPage, setInputPage] = useState<string | number>(currentPageIndex);
+  const [isSticky, setIsSticky] = useState(false);
   const pageForm = useForm<PageFormValues>({
     defaultValues: {
       page: String(currentPageIndex),
     },
   });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const paginationElement = document.querySelector("[data-pagination]");
+      if (paginationElement) {
+        const rect = paginationElement.getBoundingClientRect();
+        setIsSticky(rect.top < 20); // 20px threshold for when to show shadow
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     setInputPage(currentPageIndex);
@@ -208,8 +222,15 @@ function Pagination({
   };
 
   return (
-    <PaginationComponent className="pb-2">
-      <PaginationContent className="gap-4">
+    <PaginationComponent
+      data-pagination
+      className="mt-2 mb-1 sticky top-4 z-10"
+    >
+      <PaginationContent
+        className={`p-2 bg-amber-50 rounded-md gap-4 ${
+          isSticky && "shadow-lg"
+        }`}
+      >
         <PaginationItem>
           <PaginationPrevious
             onClick={() =>
@@ -288,7 +309,7 @@ export default function Inputs({
   currentFilterValue = "is_complete",
 }: InputsProps): React.ReactElement {
   return (
-    <div className={`${className} w-full space-y-4`}>
+    <>
       <div className="flex flex-col sm:flex-row gap-2">
         <Search onSearch={onSearch} currentQueryValue={currentQueryValue} />
         <Filters onFilter={onFilter} currentFilterValue={currentFilterValue} />
@@ -298,6 +319,6 @@ export default function Inputs({
         currentPageIndex={currentPageIndex}
         totalPages={totalPages}
       />
-    </div>
+    </>
   );
 }
