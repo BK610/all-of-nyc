@@ -140,7 +140,7 @@ class UrlDataEnricher:
             self.logger.error(f"Error fetching {url}: {e}")
             return None
         
-    async def get_response_async(self, url, session):
+    async def get_response_async(self, url: str, session: aiohttp.ClientSession) -> tuple[aiohttp.ClientResponse, str] | None:
         """Get the response at the provided url using the provided aiohttp.ClientSession.
         Attempts using both HTTPS and HTTP protocols to Handle SSL issues."""
         # TODO: Can get_response and get_response_async be combined?
