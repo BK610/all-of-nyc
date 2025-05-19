@@ -184,6 +184,13 @@ function Pagination({
     },
   });
 
+  const scrollToResults = () => {
+    const resultsList = document.querySelector("[data-inputs]");
+    if (resultsList) {
+      resultsList.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const paginationElement = document.querySelector("[data-pagination]");
@@ -213,6 +220,7 @@ function Pagination({
     const pageNumber = getValidPageNumber(values.page);
     setInputPage(pageNumber);
     onPageChange(pageNumber);
+    scrollToResults();
   };
 
   const getValidPageNumber = (maybePageNumber: string | number) => {
@@ -233,9 +241,10 @@ function Pagination({
       >
         <PaginationItem>
           <PaginationPrevious
-            onClick={() =>
-              onPageChange(getValidPageNumber(currentPageIndex - 1))
-            }
+            onClick={() => {
+              onPageChange(getValidPageNumber(currentPageIndex - 1));
+              scrollToResults();
+            }}
             className="cursor-pointer bg-nyc-blue font-semibold text-white hover:bg-nyc-blue/80 hover:text-white focus:outline-nyc-orange"
             tabIndex={0}
           />
@@ -273,9 +282,10 @@ function Pagination({
         </PaginationItem>
         <PaginationItem>
           <PaginationNext
-            onClick={() =>
-              onPageChange(getValidPageNumber(currentPageIndex + 1))
-            }
+            onClick={() => {
+              onPageChange(getValidPageNumber(currentPageIndex + 1));
+              scrollToResults();
+            }}
             className="cursor-pointer bg-nyc-blue font-semibold text-white hover:bg-nyc-blue/80 hover:text-white"
             tabIndex={0}
           />
@@ -310,7 +320,7 @@ export default function Inputs({
 }: InputsProps): React.ReactElement {
   return (
     <>
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col sm:flex-row gap-2" data-inputs>
         <Search onSearch={onSearch} currentQueryValue={currentQueryValue} />
         <Filters onFilter={onFilter} currentFilterValue={currentFilterValue} />
       </div>
